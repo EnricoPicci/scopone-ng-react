@@ -1,0 +1,63 @@
+<!-- Inspired by https://codepen.io/goodo73/pen/wbtug -->
+<div class="main">
+  <div class="table">
+    <div class="board">
+      <table class="players-table">
+        <tr class="table-row">
+          <td></td>
+          <td>
+            <div
+              class="player player-3"
+              [class.player-absent]="playerLeft(1, 0)"
+              [class.current-player]="isCurrentPlayer(1, 0)"
+            >
+              {{ playerName(1, 0) }}
+            </div>
+          </td>
+          <td></td>
+        </tr>
+        <tr class="table-row">
+          <td>
+            <div
+              class="player player-1"
+              [class.player-absent]="playerLeft(0, 0)"
+              [class.current-player]="isCurrentPlayer(0, 0)"
+            >
+              {{ playerName(0, 0) }}
+            </div>
+          </td>
+          <td></td>
+          <td>
+            <div
+              class="player player-2"
+              [class.player-absent]="playerLeft(0, 1)"
+              [class.current-player]="isCurrentPlayer(0, 1)"
+            >
+              {{ playerName(0, 1) }}
+            </div>
+          </td>
+        </tr>
+        <tr class="table-row">
+          <td></td>
+          <td
+            class="player player-4"
+            [class.player-absent]="playerLeft(1, 1)"
+            [class.current-player]="isCurrentPlayer(1, 1)"
+          >
+            <div>{{ playerName(1, 1) }}</div>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+
+      <div *ngFor="let card of cards; index as i">
+        <scopone-card
+          [card]="card"
+          class="card"
+          [style.margin-left]="marginLeft(i)"
+        >
+        </scopone-card>
+      </div>
+    </div>
+  </div>
+</div>

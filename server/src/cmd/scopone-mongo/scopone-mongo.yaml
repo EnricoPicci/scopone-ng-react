@@ -1,0 +1,10 @@
+runtime: go
+env: flex
+
+instance_class: F1
+automatic_scaling:
+  max_num_instances: 1
+  min_num_instances: 1
+
+  env_variables:
+    MONGO_CONNECTION: "mongodb://user:password@host:port/test?authSource=admin&replicaSet=Cluster0-shard-0&readPreference=primary&appname=MongoDB%20Compass&ssl=true"

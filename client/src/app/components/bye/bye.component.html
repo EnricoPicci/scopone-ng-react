@@ -1,0 +1,11 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>
+      Game {{ gameClosedName$ | async }} has been terminated by
+      {{ gameCloserPlayer$ | async }}
+    </mat-card-title>
+  </mat-card-header>
+  <mat-card-actions>
+    <button mat-button (click)="goToGameList()">Continue</button>
+  </mat-card-actions>
+</mat-card>

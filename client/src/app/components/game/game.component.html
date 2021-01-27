@@ -1,0 +1,11 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title [class.observing]="scoponeServer.observing">{{
+      title$ | async
+    }}</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <router-outlet></router-outlet>
+  </mat-card-content>
+  <mat-card-footer class="error">{{ error$ | async }}</mat-card-footer>
+</mat-card>

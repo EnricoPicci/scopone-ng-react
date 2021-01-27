@@ -1,0 +1,8 @@
+
+From the server folder 
+
+docker build -t scopone-server .
+
+docker build -t scopone-server -f Dockerfile-minimal-mongo-atlas .
+
+docker run -p 8080:8080 scopone-server

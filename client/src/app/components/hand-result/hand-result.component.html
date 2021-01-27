@@ -1,0 +1,24 @@
+<mat-card>
+  <mat-card-title>
+    {{ finalHandScore$ | async }}
+  </mat-card-title>
+  <mat-card-subtitle> {{ gameScore$ | async }}</mat-card-subtitle>
+  <mat-card-content>
+    <scopone-cards [cards]="ourCards$ | async" name="Our Cards"></scopone-cards>
+    <scopone-cards
+      [cards]="theirCards$ | async"
+      name="Their Cards"
+    ></scopone-cards>
+    <scopone-cards [cards]="ourScope$ | async" name="Our Scope"></scopone-cards>
+    <scopone-cards
+      [cards]="theirScope$ | async"
+      name="Their Scope"
+    ></scopone-cards>
+  </mat-card-content>
+  <mat-card-actions>
+    <button mat-button (click)="continue()">Continue</button>
+    <button mat-button (click)="close()" *ngIf="!scoponeService.observing">
+      Terminate
+    </button>
+  </mat-card-actions>
+</mat-card>

@@ -1,0 +1,15 @@
+<scopone-table
+  [cards]="table"
+  [teams]="teams"
+  [currentPlayerName]="currentPlayerName"
+></scopone-table>
+<scopone-cards
+  [cards]="playerCards"
+  name="My cards"
+  [enabled]="enablePlay$ | async"
+  (cardClicked)="play($event)"
+></scopone-cards>
+<scopone-cards [cards]="ourScope" name="Our Scope"></scopone-cards>
+<scopone-cards [cards]="theirScope" name="Their Scope"></scopone-cards>
+
+<button mat-button (click)="start()" *ngIf="showStartButton">START</button>

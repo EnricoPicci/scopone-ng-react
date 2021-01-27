@@ -1,0 +1,18 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>Create New Game</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <form class="new-game-form" (ngSubmit)="newGame(name.value)">
+      <mat-form-field class="full-width">
+        <mat-label>Name</mat-label>
+        <input matInput placeholder="The name of the new game" #name />
+        <mat-hint align="start"
+          ><strong
+            >Give the new game a name so that other players can join it</strong
+          >
+        </mat-hint>
+      </mat-form-field>
+    </form>
+  </mat-card-content>
+</mat-card>

@@ -1,0 +1,13 @@
+<mat-selection-list
+  #games
+  [multiple]="false"
+  (selectionChange)="gameSelected(games.selectedOptions.selected)"
+>
+  <mat-list-option
+    *ngFor="let game of games$ | async"
+    [value]="game"
+    [class.gameObservable]="isGameObservable(game)"
+  >
+    {{ gameName(game) }}
+  </mat-list-option>
+</mat-selection-list>

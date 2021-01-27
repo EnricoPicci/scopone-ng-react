@@ -1,0 +1,35 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+
+## Dependency directories (remove the comment below to include it)
+## vendor/
+#bin/
+#pkg/
+client/src/environments/environment.prod.ts
+
+server/src/go-scopone/src
+server/command-gcloud.txt
+
+go-scopone-server
+server/src/server/server-prod.yaml
+server/commands.txt
+server/src/cmd/scopone-in-memory-only/scopone-in-memory-only
+server/src/cmd/scopone-mongo/scopone-mongo
+server/src/cmd/scopone-mongo/scopone-mongo-prod.yaml
+server/src/cmd/scopone-mongo/.env-prod
+server/.env-prod
+server/src/cmd/scopone-mongo/__debug_bin
+server/scopone-app
+server/Dockerfile-minimal-mongo-atlas
+server/command-lambda-mongo.txt
+server/command-gcloud.txt

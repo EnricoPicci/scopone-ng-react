@@ -1,0 +1,22 @@
+<mat-card *ngIf="(hideAddPlayer$ | async) !== true">
+  <mat-card-header>
+    <mat-card-title>Player</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <form class="add-player-form" (ngSubmit)="playerEntersOsteria(name.value)">
+      <mat-form-field class="full-width">
+        <mat-label>Name</mat-label>
+        <input matInput placeholder="Your name as player" autofocus #name />
+        <mat-hint align="start"
+          ><strong
+            >Use the same name if you loose session and want to
+            riconnect</strong
+          >
+        </mat-hint>
+      </mat-form-field>
+    </form>
+  </mat-card-content>
+  <mat-card-actions>
+    <button mat-button (click)="playerEntersOsteria(name.value)">Enter</button>
+  </mat-card-actions>
+</mat-card>
