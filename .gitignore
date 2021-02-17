@@ -15,7 +15,7 @@
 ## vendor/
 #bin/
 #pkg/
-client/src/environments/environment.prod.ts
+client-ng/src/environments/environment.prod.ts
 
 server/src/go-scopone/src
 server/command-gcloud.txt
