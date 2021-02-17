@@ -175,10 +175,10 @@ export class HandComponent implements OnInit, OnDestroy {
         },
       });
 
-    this.enablePlay$ = combineLatest(
+    this.enablePlay$ = combineLatest([
       this.scoponeService.isMyTurnToPlay$,
-      this.scoponeService.myCurrentOpenGameWithAll4PlayersIn_ShareReplay$
-    ).pipe(
+      this.scoponeService.myCurrentOpenGameWithAll4PlayersIn_ShareReplay$,
+    ]).pipe(
       map(([isMyTurn, all4PlayersIn]) => {
         const enable = isMyTurn && all4PlayersIn;
         this.canSendCardToServer = enable;

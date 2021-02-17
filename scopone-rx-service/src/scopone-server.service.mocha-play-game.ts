@@ -123,6 +123,22 @@ describe(`When a hand is played until the last card`, () => {
       );
     });
 
+    // When entering Osteria each Player should be notified that he does not have any game
+    const allGamesOfEachPlayer = services.map((s, i) => {
+      return s.allMyGames$.pipe(
+        // consider just the first message in the stream allMyGames$ - subsequent messages of this stream
+        // may actually signal that the Players have some games, e.g. the one just created above
+        take(1),
+        tap((games) => {
+          expect(games.length).equal(0);
+          console.log(
+            `"allMyGames$" (for ${players[i]}) notification received correctly after a player has joined the game`
+          );
+        }),
+        ignoreElements()
+      );
+    });
+
     // One player creates a new game after all players have entered the Osteria and receieves notification of game creation
     let myGameMessageReceived = false;
     const playerCreatesGame = services[0].players$.pipe(
@@ -344,6 +360,7 @@ describe(`When a hand is played until the last card`, () => {
     merge(
       ...playersEnterOsteria,
       ...playersEntered,
+      ...allGamesOfEachPlayer,
       playerCreatesGame,
       ...gameCreated,
       ...gamesUpdates,
@@ -365,6 +382,7 @@ describe(`When a hand is played until the last card`, () => {
           //
           // Test gamesNotYetStarted$ expected behaviour
           // see the comment close to the definition of "gamesNotYetStarted$_numberOfNotifications" to understand the logic
+          // if you encounter an error here, it is worth restarting the server to make sure it has the correct state
           gamesNotYetStarted$_numberOfNotifications.forEach(
             (numberOfNotifications) => {
               expect(numberOfNotifications).equal(4);

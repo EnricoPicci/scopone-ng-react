@@ -186,12 +186,9 @@ export class ScoponeServerService {
       map((allGames) =>
         allGames
           ? allGames.filter((g) => {
-              const pp = g.players;
-              const oo = g.observers;
-              console.log("ggg", g, pp, oo);
               return [
-                ...Object.keys(g.players),
-                ...Object.keys(g.observers),
+                ...Object.keys(g.players || []),
+                ...Object.keys(g.observers || []),
               ].includes(this.playerName);
             })
           : []
@@ -232,7 +229,9 @@ export class ScoponeServerService {
       map((myObservedGames) =>
         myObservedGames.filter(
           (g) =>
-            g.state !== GameState.GameClosed && g.observers[this.playerName]
+            g.state !== GameState.GameClosed &&
+            g.observers &&
+            g.observers[this.playerName]
         )
       ),
       filter((games) => games.length > 0),
