@@ -7,7 +7,10 @@
       "path": "server"
     },
     {
-      "path": "client"
+      "path": "client-ng"
+    },
+    {
+      "path": "client-react"
     }
   ],
   "settings": {

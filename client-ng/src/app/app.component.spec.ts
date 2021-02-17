@@ -16,10 +16,10 @@
 //     expect(app).toBeTruthy();
 //   });
 
-//   it(`should have as title 'client'`, () => {
+//   it(`should have as title 'client-ng'`, () => {
 //     const fixture = TestBed.createComponent(AppComponent);
 //     const app = fixture.componentInstance;
-//     expect(app.title).toEqual('client');
+//     expect(app.title).toEqual('client-ng');
 //   });
 
 //   it('should render title', () => {
@@ -27,7 +27,7 @@
 //     fixture.detectChanges();
 //     const compiled = fixture.nativeElement;
 //     expect(compiled.querySelector('.content span').textContent).toContain(
-//       'client app is running!'
+//       'client-ng app is running!'
 //     );
 //   });
 // });
