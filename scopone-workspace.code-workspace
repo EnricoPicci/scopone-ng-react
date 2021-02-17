@@ -11,6 +11,9 @@
     },
     {
       "path": "client-react"
+    },
+    {
+      "path": "scopone-rx-service"
     }
   ],
   "settings": {

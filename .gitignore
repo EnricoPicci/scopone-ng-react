@@ -33,3 +33,4 @@ server/scopone-app
 server/Dockerfile-minimal-mongo-atlas
 server/command-lambda-mongo.txt
 server/command-gcloud.txt
+scopone-rx-service/src/environments/environment.test.ts

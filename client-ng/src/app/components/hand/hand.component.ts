@@ -1,13 +1,17 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ScoponeServerService } from 'src/app/scopone/scopone-server.service';
-import { Card, TypeValues } from 'src/app/scopone/card';
+import { ScoponeServerService } from '../../../../../scopone-rx-service/src/scopone-server.service';
+import { Card, TypeValues } from '../../../../../scopone-rx-service/src/card';
 import { tap, takeUntil, concatMap, switchMap, map } from 'rxjs/operators';
 import { Observable, Subject, merge, combineLatest } from 'rxjs';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { CardsPickerDialogueComponent } from './cards-picker-dialogue.component';
 import { Router } from '@angular/router';
 import { ErrorService } from 'src/app/errors/error-service';
-import { Player, HandState, Team } from 'src/app/scopone/messages';
+import {
+  Player,
+  HandState,
+  Team,
+} from '../../../../../scopone-rx-service/src/messages';
 import { CardsTakenDialogueComponent } from './cards-taken-dialogue.component';
 
 @Component({

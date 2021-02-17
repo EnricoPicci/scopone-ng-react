@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { ScoponeServerService } from 'src/app/scopone/scopone-server.service';
+import { ScoponeServerService } from '../../../../../scopone-rx-service/src/scopone-server.service';
 
 @Component({
   selector: 'scopone-new-game',

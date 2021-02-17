@@ -2,7 +2,7 @@
 // Can be used to rapidely bring a game to a certain stage and then check its behaviour manually
 // e.g. we want to have a game which is almost closed and then close it manually
 
-import { describe, it } from 'mocha';
+import { describe, it } from "mocha";
 
 import {
   concatMap,
@@ -14,20 +14,20 @@ import {
   filter,
   takeUntil,
   ignoreElements,
-} from 'rxjs/operators';
+} from "rxjs/operators";
 
-import { ScoponeServerService } from './scopone-server.service';
-import { environment } from '../../environments/environment';
+import { ScoponeServerService } from "./scopone-server.service";
+import { environment } from "./environments/environment";
 // import { environment } from '../../environments/environment.prod';
-import { MessageFromServer } from './messages';
-import { merge, interval, Subject } from 'rxjs';
+import { MessageFromServer } from "./messages";
+import { merge, interval, Subject } from "rxjs";
 
-(global as any).WebSocket = require('ws');
+(global as any).WebSocket = require("ws");
 
 describe(`Games are created`, () => {
-  it('creates a game and plays 39 cards', (done) => {
+  it("creates a game and plays 39 cards", (done) => {
     const numberOfCardsPlayed = 9;
-    const gameName = 'Game39' + new Date().toISOString();
+    const gameName = "Game39" + new Date().toISOString();
     const players = new Array(4)
       .fill(null)
       .map((_, i) => `P${i} - ` + new Date().toISOString());
@@ -153,7 +153,7 @@ describe(`Games are created`, () => {
           return handView.currentPlayerName === players[i];
         }),
         // Filter only the hand views where the status is not closed
-        filter((handView) => handView.status !== 'closed'),
+        filter((handView) => handView.status !== "closed"),
         delay(delayBetweenCommands),
         // the player plays the card using the mechanical rules which will lead
         // the first team to take no cards while the second team will take all cards
@@ -184,7 +184,7 @@ describe(`Games are created`, () => {
       );
     });
 
-    let count = 0;
+    //let count = 0;
     merge(
       ...playersEnterOsteria,
       playerCreatesGame,
@@ -196,12 +196,12 @@ describe(`Games are created`, () => {
     )
       .pipe(takeUntil(endTest))
       .subscribe({
-        next: (d) => {
-          count++;
+        next: (_d) => {
+          //count++;
           // console.log(count, d);
         },
         complete: () => {
-          console.log('Messages received from the server', messagesFromServer);
+          console.log("Messages received from the server", messagesFromServer);
           services.forEach((s) => s.close());
           // timeout added just to give the time to print on the console the messages that the connections have been closed
           // without timeout some of these messages do not get the time to be written on the console

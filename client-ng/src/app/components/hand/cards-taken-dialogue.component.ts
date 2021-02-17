@@ -1,8 +1,8 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Card } from 'src/app/scopone/card';
-import { Player } from 'src/app/scopone/messages';
-import { ScoponeServerService } from 'src/app/scopone/scopone-server.service';
+import { Card } from '../../../../../scopone-rx-service/src/card';
+import { Player } from '../../../../../scopone-rx-service/src/messages';
+import { ScoponeServerService } from '../../../../../scopone-rx-service/src/scopone-server.service';
 
 @Component({
   template: `

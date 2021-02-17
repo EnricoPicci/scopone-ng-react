@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { ScoponeServerService } from 'src/app/scopone/scopone-server.service';
+import { ScoponeServerService } from '../../../../../scopone-rx-service/src/scopone-server.service';
 import { MatDialog } from '@angular/material/dialog';
 import { CloseGameDialogueComponent } from './close-game-dialogue.component';
 import { Observable } from 'rxjs';
-import { PlayerView } from 'src/app/scopone/player-view';
+import { PlayerView } from '../../../../../scopone-rx-service/src/player-view';
 import { map, share, tap } from 'rxjs/operators';
-import { Card } from 'src/app/scopone/card';
+import { Card } from '../../../../../scopone-rx-service/src/card';
 
 @Component({
   selector: 'scopone-hand-result',

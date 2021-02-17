@@ -1,9 +1,9 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import { ScoponeServerService } from 'src/app/scopone/scopone-server.service';
+import { ScoponeServerService } from '../../../../../scopone-rx-service/src/scopone-server.service';
 import { Observable, Subscription, merge } from 'rxjs';
 import { startWith, map, tap, catchError, switchMap } from 'rxjs/operators';
-import { PlayerState } from 'src/app/scopone/messages';
+import { PlayerState } from '../../../../../scopone-rx-service/src/messages';
 import { ErrorService } from 'src/app/errors/error-service';
 import { ScoponeErrors } from 'src/app/errors/scopone-errors';
 import { environment } from 'src/environments/environment';

@@ -1,5 +1,4 @@
-import { Injectable } from '@angular/core';
-import { ReplaySubject, Observable, from, pipe, merge } from 'rxjs';
+import { ReplaySubject, Observable, from, pipe, merge } from "rxjs";
 import {
   tap,
   share,
@@ -10,7 +9,7 @@ import {
   shareReplay,
   take,
   distinctUntilChanged,
-} from 'rxjs/operators';
+} from "rxjs/operators";
 
 import {
   MessageToServer,
@@ -28,18 +27,12 @@ import {
   CloseGame,
   PlayerState,
   AddObserverToGameMessage,
-} from './messages';
+} from "./messages";
 
-import {
-  openSocket,
-  messages,
-} from '../observable-websocket/observable-websocket';
-import { PlayerView } from './player-view';
-import { Card, Suits, TypeValues } from './card';
+import { openSocket, messages } from "./observable-websocket";
+import { PlayerView } from "./player-view";
+import { Card, Suits, TypeValues } from "./card";
 
-@Injectable({
-  providedIn: 'root',
-})
 export class ScoponeServerService {
   // ====================================================================================================
   // Internal properties - not to be used by any client
@@ -116,7 +109,7 @@ export class ScoponeServerService {
       ? messagesSource
       : this._connect$.pipe(
           switchMap((ws) => this.messages(ws)),
-          tap((d) => console.log('Message received from server', d)),
+          tap((d) => console.log("Message received from server", d)),
           // it is important to shareReplay all the messages received since it may be possible that
           // the messages arrive before the Angular Components are initialized and therefore without shareReplay they
           // may get lost. This is particularly tru if you have a local websocket server for testing purposes
@@ -276,7 +269,7 @@ export class ScoponeServerService {
       map((m) => {
         const games = m.games;
         const myOpenGames = games.filter(
-          (g) => g.state === 'open' && !!g.players[this.playerName]
+          (g) => g.state === "open" && !!g.players[this.playerName]
         );
         if (myOpenGames.length > 1) {
           throw new Error(
@@ -331,7 +324,7 @@ export class ScoponeServerService {
       // while the property "allHandPlayerViews" contains the playerViews for all players actively palying the game
       // so we need to filter out the case when the handView is empty to avoid that the Player observing a game
       // reacts to a non event
-      filter((hv) => hv && hv.gameName.trim() !== '')
+      filter((hv) => hv && hv.gameName.trim() !== "")
     );
 
     this.handView_ShareReplay$ = this.handView$.pipe(shareReplay(1));
@@ -388,7 +381,7 @@ export class ScoponeServerService {
   connect(url: string) {
     if (this.socket) {
       throw new Error(
-        'WebSocket server already connected - use connect$ Observable to listen to connect notification'
+        "WebSocket server already connected - use connect$ Observable to listen to connect notification"
       );
     }
     return openSocket(url).pipe(
@@ -409,14 +402,14 @@ export class ScoponeServerService {
         complete: () => {
           if (!this.closedByClient) {
             throw new Error(
-              'WebSocket connection closed - this is something unexpected'
+              "WebSocket connection closed - this is something unexpected"
             );
           }
         },
       }),
       mergeMap((msg) => {
         const _messages: MessageFromServer[] = msg.data
-          .split('\n')
+          .split("\n")
           .map((m: string) => JSON.parse(m));
         return from(_messages);
       })
@@ -471,7 +464,7 @@ export class ScoponeServerService {
 
   public newHand() {
     if (!this.gameName) {
-      throw new Error('Game name not set');
+      throw new Error("Game name not set");
     }
     const newHandMsg = new NewHand(this.gameName);
     this.send(newHandMsg);
@@ -555,7 +548,7 @@ export class ScoponeServerService {
       new Array<Card[]>(2 ** cards.length)
         .fill(null)
         /* tslint:disable:no-bitwise */
-        .map((cs, i) => cards.filter((c, j) => i & (2 ** j)))
+        .map((_cs, i) => cards.filter((_c, j) => i & (2 ** j)))
     );
     /* tslint:enable:no-bitwise */
   }

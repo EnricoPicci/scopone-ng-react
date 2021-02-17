@@ -1,6 +1,6 @@
 // This is a test where an entire hand is played.
-// I
-// Here I apply a different testing strategy
+//
+// Here I apply the following testing strategy
 //
 // First I create one connection with the server per player.
 // Then I create different streams to represent different phases of a game
@@ -18,8 +18,7 @@
 //
 // All these streams are eventually merged and subscriebd
 
-import { describe, it } from 'mocha';
-import { expect } from 'chai';
+import { expect } from "chai";
 
 import {
   concatMap,
@@ -33,24 +32,24 @@ import {
   takeUntil,
   ignoreElements,
   toArray,
-} from 'rxjs/operators';
+} from "rxjs/operators";
 
-import { ScoponeServerService } from './scopone-server.service';
-import { environment } from '../../environments/environment';
-import { MessageFromServer, GameState } from './messages';
-import { merge, interval, forkJoin } from 'rxjs';
+import { ScoponeServerService } from "./scopone-server.service";
+import { environment } from "./environments/environment";
+import { MessageFromServer, GameState } from "./messages";
+import { merge, interval, forkJoin } from "rxjs";
 
-(global as any).WebSocket = require('ws');
+(global as any).WebSocket = require("ws");
 
 describe(`When a hand is played until the last card`, () => {
-  it('all expected messages are received and the the last ones signal that the hand is completed', (done) => {
+  it("all expected messages are received and the the last ones signal that the hand is completed", (done) => {
     const delayBetweenCommands = 200;
 
     const players = new Array(4)
       .fill(null)
       .map((_, i) => `player - ${i} - ` + new Date().toISOString());
 
-    const gameName = 'Game ' + new Date().toISOString();
+    const gameName = "Game " + new Date().toISOString();
 
     const services = players.map(() => new ScoponeServerService());
     // connect all players - each connection is separated by a time interval to avoid jamming the WebSocket channel
@@ -188,7 +187,7 @@ describe(`When a hand is played until the last card`, () => {
 
     // Players receive the notifications of the state of games which they can join (i.e. not yet started)
     // any time either a game is created or a player joins a game
-    const gamesUpdates = services.map((s, i) => {
+    const gamesUpdates = services.map((s) => {
       return s.games_ShareReplay$.pipe(
         // Each player receives 5 notifications about games, the fist one when the game is created
         // and then 1 notification any time a player joins the game
@@ -258,7 +257,7 @@ describe(`When a hand is played until the last card`, () => {
           return handView.currentPlayerName === players[i];
         }),
         // Filter only the hand views where the status is not closed
-        filter((handView) => handView.status !== 'closed'),
+        filter((handView) => handView.status !== "closed"),
         delay(delayBetweenCommands),
         // the player plays the card using the mechanical rules which will lead
         // the first team to take no cards while the second team will take all cards
@@ -277,7 +276,7 @@ describe(`When a hand is played until the last card`, () => {
     let cardsPlayedCounters = new Array(4).fill(0);
     const cardsPlayed = services.map((s, i) => {
       return s.cardsPlayedAndTaken$.pipe(
-        tap((msg) => {
+        tap(() => {
           cardsPlayedCounters[i] = cardsPlayedCounters[i] + 1;
         })
       );
@@ -291,7 +290,7 @@ describe(`When a hand is played until the last card`, () => {
           handViewCounters[i] = handViewCounters[i] + 1;
         }),
         // Filter only the hand views where the status is closed, i.e. the last ones
-        filter((handView) => handView.status === 'closed'),
+        filter((handView) => handView.status === "closed"),
         tap((handView) => {
           // each player receives 41 notifications of handViews, the first one when the hand is started
           // and the one for each card played
@@ -321,7 +320,7 @@ describe(`When a hand is played until the last card`, () => {
 
     const allPlayersReceiveHandClosed = services.map((s) =>
       s.handView_ShareReplay$.pipe(
-        find((handView) => handView.status === 'closed')
+        find((handView) => handView.status === "closed")
       )
     );
     // endTest waits for all players to receive handViews with status 'closed'
@@ -341,7 +340,7 @@ describe(`When a hand is played until the last card`, () => {
       );
     });
 
-    let count = 0;
+    //let count = 0;
     merge(
       ...playersEnterOsteria,
       ...playersEntered,
@@ -357,8 +356,8 @@ describe(`When a hand is played until the last card`, () => {
     )
       .pipe(takeUntil(endTest))
       .subscribe({
-        next: (d) => {
-          count++;
+        next: () => {
+          //count++;
           // console.log(count, d);
         },
         complete: () => {

@@ -1,9 +1,9 @@
-import { TestBed } from '@angular/core/testing';
+import { TestBed } from "@angular/core/testing";
 
-import { ScoponeServerService } from './scopone-server.service';
-import { environment } from '../../environments/environment';
+import { ScoponeServerService } from "./scopone-server.service";
+import { environment } from "./environments/environment";
 
-describe('ScoponeServerService', () => {
+describe("ScoponeServerService", () => {
   let service: ScoponeServerService;
 
   beforeEach(() => {
@@ -11,11 +11,11 @@ describe('ScoponeServerService', () => {
     service = TestBed.inject(ScoponeServerService);
   });
 
-  it('should be created', () => {
+  it("should be created", () => {
     expect(service).toBeTruthy();
   });
 
-  it('when connecting to the server receives an Observable which emits when connection is completre', (done) => {
+  it("when connecting to the server receives an Observable which emits when connection is completre", (done) => {
     let dataEmitted: WebSocket;
     expect(true).toBeTruthy();
     service.connect(environment.serverAddress).subscribe({
@@ -23,7 +23,7 @@ describe('ScoponeServerService', () => {
         dataEmitted = data;
       },
       error: (err) => {
-        console.error('Should not error', err);
+        console.error("Should not error", err);
         done();
       },
       complete: () => {

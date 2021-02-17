@@ -1,7 +1,7 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Game } from 'src/app/scopone/messages';
-import { ScoponeServerService } from 'src/app/scopone/scopone-server.service';
+import { Game } from '../../../../../scopone-rx-service/src/messages';
+import { ScoponeServerService } from '../../../../../scopone-rx-service/src/scopone-server.service';
 
 @Component({
   selector: 'scopone-game-picker-dialogue',

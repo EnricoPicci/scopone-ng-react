@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ScoponeServerService } from 'src/app/scopone/scopone-server.service';
+import { ScoponeServerService } from '../../../../../scopone-rx-service/src/scopone-server.service';
 import { mapTo, share } from 'rxjs/operators';
 
 @Component({

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable, zip } from 'rxjs';
-import { Game } from 'src/app/scopone/messages';
-import { ScoponeServerService } from 'src/app/scopone/scopone-server.service';
+import { Game } from '../../../../../scopone-rx-service/src/messages';
+import { ScoponeServerService } from '../../../../../scopone-rx-service/src/scopone-server.service';
 import { MatDialog } from '@angular/material/dialog';
 import { MatListOption } from '@angular/material/list';
 import { GamePickerDialogueComponent } from './game-picker-dialogue.component';

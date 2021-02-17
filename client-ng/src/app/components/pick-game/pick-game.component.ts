@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import { ScoponeServerService } from 'src/app/scopone/scopone-server.service';
+import { ScoponeServerService } from '../../../../../scopone-rx-service/src/scopone-server.service';
 import { tap, takeUntil } from 'rxjs/operators';
 import { Subject, merge } from 'rxjs';
 import { ScoponeError } from 'src/app/errors/scopone-errors';

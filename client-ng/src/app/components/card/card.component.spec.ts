@@ -2,7 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { CardComponent } from './card.component';
 import { MaterialModule } from 'src/app/material.module';
-import { Suits, Types } from 'src/app/scopone/card';
+import { Suits, Types } from '../../../../../scopone-rx-service/src/card';
 
 describe('CardComponent', () => {
   let component: CardComponent;

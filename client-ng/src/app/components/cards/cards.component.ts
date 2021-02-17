@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { Card } from 'src/app/scopone/card';
+import { Card } from '../../../../../scopone-rx-service/src/card';
 import {
   trigger,
   transition,

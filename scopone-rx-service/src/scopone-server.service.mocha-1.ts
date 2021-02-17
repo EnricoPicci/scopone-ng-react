@@ -6,8 +6,8 @@
 //
 // If we add more tests in the same file, then this error is consistent. This is why I have broken the tests in different files
 
-import { describe, it, after } from 'mocha';
-import { expect } from 'chai';
+import { describe, it, after } from "mocha";
+import { expect } from "chai";
 
 import {
   concatMap,
@@ -19,17 +19,17 @@ import {
   filter,
   switchMap,
   map,
-} from 'rxjs/operators';
+} from "rxjs/operators";
 
-import { ScoponeServerService } from './scopone-server.service';
-import { environment } from '../../environments/environment';
-import { MessageFromServerIds, MessageFromServer, Game } from './messages';
+import { ScoponeServerService } from "./scopone-server.service";
+import { environment } from "./environments/environment";
+import { MessageFromServerIds, MessageFromServer, Game } from "./messages";
 
-(global as any).WebSocket = require('ws');
+(global as any).WebSocket = require("ws");
 
 describe(`When a player enters the Osteria`, () => {
   const service = new ScoponeServerService();
-  const playerName = 'A name of player' + Date.now();
+  const playerName = "A name of player" + Date.now();
   after((done) => {
     service.close();
     done();
@@ -50,7 +50,7 @@ describe(`When a player enters the Osteria`, () => {
           dataEmitted = data;
         },
         error: (err) => {
-          console.error('Should not error', err);
+          console.error("Should not error", err);
           done(err);
         },
         complete: () => {
@@ -80,7 +80,7 @@ describe(`When a player enters the Osteria`, () => {
           dataEmitted = data;
         },
         error: (err) => {
-          console.error('Should not error', err);
+          console.error("Should not error", err);
           done(err);
         },
         complete: () => {
@@ -97,7 +97,7 @@ describe(`When a player enters the Osteria and then exits`, () => {
   const service = new ScoponeServerService();
 
   it(`Should be able to enter again`, (done) => {
-    const playerName = 'A name of player who enters and exits' + Date.now();
+    const playerName = "A name of player who enters and exits" + Date.now();
     let dataEmitted: MessageFromServer;
 
     service
@@ -117,7 +117,7 @@ describe(`When a player enters the Osteria and then exits`, () => {
           dataEmitted = data;
         },
         error: (err) => {
-          console.error('Should not error', err);
+          console.error("Should not error", err);
           done(err);
         },
         complete: () => {
@@ -139,8 +139,8 @@ describe(`When a request to create a game is sent`, () => {
   });
 
   it(`a game should be created and a list of the games which a Player can join is returned`, (done) => {
-    const playerName = 'A player who wants to create a new game' + Date.now();
-    const gameName = 'A new game' + Date.now();
+    const playerName = "A player who wants to create a new game" + Date.now();
+    const gameName = "A new game" + Date.now();
     let dataEmitted: MessageFromServer;
 
     service
@@ -155,7 +155,7 @@ describe(`When a request to create a game is sent`, () => {
         find(
           (msg) =>
             msg.id == MessageFromServerIds.Games &&
-            (msg['responseTo'] as string).startsWith('newGame')
+            (msg["responseTo"] as string).startsWith("newGame")
         )
       )
       .subscribe({
@@ -163,7 +163,7 @@ describe(`When a request to create a game is sent`, () => {
           dataEmitted = data;
         },
         error: (err) => {
-          console.error('Should not error', err);
+          console.error("Should not error", err);
           done(err);
         },
         complete: () => {
@@ -186,8 +186,8 @@ describe(`When a player enters a game`, () => {
   });
 
   it(`a refresh of all games should be received`, (done) => {
-    const playerName = 'A player who wants to play' + Date.now();
-    const gameName = 'A new game to be played' + Date.now();
+    const playerName = "A player who wants to play" + Date.now();
+    const gameName = "A new game to be played" + Date.now();
     let dataEmitted: MessageFromServer;
 
     service
@@ -209,7 +209,7 @@ describe(`When a player enters a game`, () => {
           dataEmitted = data;
         },
         error: (err) => {
-          console.error('Should not error', err);
+          console.error("Should not error", err);
           done(err);
         },
         complete: () => {
@@ -227,7 +227,7 @@ describe(`When a player enters a game`, () => {
 describe(`When a game has four players`, () => {
   const service = new ScoponeServerService();
   service.connect(environment.serverAddress).subscribe({
-    error: (err) => console.error('Error while connecting', err),
+    error: (err) => console.error("Error while connecting", err),
   });
   after((done) => {
     service.close();
@@ -238,7 +238,7 @@ describe(`When a game has four players`, () => {
     const playerNames = new Array(4)
       .fill(null)
       .map((_, i) => `Player ${i} - ` + Date.now());
-    const gameName = 'A new game with 4 players' + Date.now();
+    const gameName = "A new game with 4 players" + Date.now();
     let gameEmitted: Game;
 
     service.connect$
@@ -268,7 +268,7 @@ describe(`When a game has four players`, () => {
           gameEmitted = data;
         },
         error: (err) => {
-          console.error('Should not error', err);
+          console.error("Should not error", err);
           done(err);
         },
         complete: () => {
@@ -285,9 +285,9 @@ describe(`When a game has four players`, () => {
     const playerNames = new Array(4)
       .fill(null)
       .map((_, i) => `Player for game with five players ${i} - ` + Date.now());
-    const fifthPlayerName = 'The player number 5';
+    const fifthPlayerName = "The player number 5";
     const gameName =
-      'A new game which would like to have five players' + Date.now();
+      "A new game which would like to have five players" + Date.now();
     let dataEmitted: MessageFromServer;
 
     service.connect$
@@ -324,7 +324,7 @@ describe(`When a game has four players`, () => {
           dataEmitted = data;
         },
         error: (err) => {
-          console.error('Should not error', err);
+          console.error("Should not error", err);
           done(err);
         },
         complete: () => {
@@ -341,7 +341,7 @@ describe(`When a game has four players`, () => {
         (_, i) =>
           `Player for game where we start one new hand ${i} - ` + Date.now()
       );
-    const gameName = 'A game where we start a new game' + Date.now();
+    const gameName = "A game where we start a new game" + Date.now();
 
     service.connect$
       .pipe(
@@ -375,7 +375,7 @@ describe(`When a game has four players`, () => {
           done();
         },
         error: (err) => {
-          console.error('Should not error', err);
+          console.error("Should not error", err);
           done(err);
         },
       });
@@ -391,7 +391,7 @@ describe(`When a game has four players, a new hand is started and then a player 
       .map(
         (_, i) => `Player for game where somebody leaves ${i} - ` + Date.now()
       );
-    const gameName = 'A game where somebody leaves' + Date.now();
+    const gameName = "A game where somebody leaves" + Date.now();
 
     service
       .connect(environment.serverAddress)
@@ -424,15 +424,15 @@ describe(`When a game has four players, a new hand is started and then a player 
       .subscribe({
         next: (handViewMessages) => {
           const hv = handViewMessages.handPlayerView;
-          expect(hv.status).to.equal('active');
+          expect(hv.status).to.equal("active");
           expect(hv.playerCards.length).to.equal(10);
         },
         error: (err) => {
-          console.error('Should not error', err);
+          console.error("Should not error", err);
           done(err);
         },
         complete: () => {
-          console.log('DONE');
+          console.log("DONE");
           service.close();
           done();
         },

@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Player } from 'src/app/scopone/messages';
+import { Player } from '../../../../../scopone-rx-service/src/messages';
 
 @Component({
   selector: 'scopone-player',
