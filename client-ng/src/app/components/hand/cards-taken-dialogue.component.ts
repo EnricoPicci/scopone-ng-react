@@ -2,7 +2,7 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Card } from '../../../../../scopone-rx-service/src/card';
 import { Player } from '../../../../../scopone-rx-service/src/messages';
-import { ScoponeServerService } from '../../../../../scopone-rx-service/src/scopone-server.service';
+import { ScoponeService } from '../../scopone/scopone.service';
 
 @Component({
   template: `
@@ -40,7 +40,7 @@ export class CardsTakenDialogueComponent implements OnInit {
         TeamTakingTable: [Player, Player];
       };
     },
-    private scoponeServerService: ScoponeServerService
+    private scoponeService: ScoponeService
   ) {}
 
   ngOnInit(): void {
@@ -69,7 +69,7 @@ export class CardsTakenDialogueComponent implements OnInit {
   }
   tableTakenBy() {
     const hasOurTeamTakenTheTable = this.data.finalTableTake.TeamTakingTable.find(
-      (p) => p.name === this.scoponeServerService.playerName
+      (p) => p.name === this.scoponeService.playerName
     );
     const usOrThem = hasOurTeamTakenTheTable ? 'Us' : 'Them';
     return `Table taken by ${usOrThem}`;

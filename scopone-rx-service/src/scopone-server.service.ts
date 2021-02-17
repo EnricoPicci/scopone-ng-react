@@ -185,11 +185,15 @@ export class ScoponeServerService {
     this.allMyGames$ = this.games_ShareReplay$.pipe(
       map((allGames) =>
         allGames
-          ? allGames.filter((g) =>
-              [...Object.keys(g.players), ...Object.keys(g.observers)].includes(
-                this.playerName
-              )
-            )
+          ? allGames.filter((g) => {
+              const pp = g.players;
+              const oo = g.observers;
+              console.log("ggg", g, pp, oo);
+              return [
+                ...Object.keys(g.players),
+                ...Object.keys(g.observers),
+              ].includes(this.playerName);
+            })
           : []
       ),
       shareReplay(1)

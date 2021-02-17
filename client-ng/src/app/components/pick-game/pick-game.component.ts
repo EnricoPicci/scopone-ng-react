@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import { ScoponeServerService } from '../../../../../scopone-rx-service/src/scopone-server.service';
+import { ScoponeService } from '../../scopone/scopone.service';
 import { tap, takeUntil } from 'rxjs/operators';
 import { Subject, merge } from 'rxjs';
 import { ScoponeError } from 'src/app/errors/scopone-errors';
@@ -13,7 +13,7 @@ import { ErrorService } from 'src/app/errors/error-service';
 })
 export class PickGameComponent implements OnInit, OnDestroy {
   constructor(
-    protected scoponeServer: ScoponeServerService,
+    protected scoponeServer: ScoponeService,
     private router: Router,
     private errorService: ErrorService
   ) {}

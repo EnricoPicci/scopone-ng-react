@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { ScoponeServerService } from '../../../../../scopone-rx-service/src/scopone-server.service';
+import { ScoponeService } from '../../scopone/scopone.service';
 import { MatDialog } from '@angular/material/dialog';
 import { CloseGameDialogueComponent } from './close-game-dialogue.component';
 import { Observable } from 'rxjs';
@@ -24,7 +24,7 @@ export class HandResultComponent implements OnInit {
   theirScope$: Observable<Card[]>;
 
   constructor(
-    public scoponeService: ScoponeServerService,
+    public scoponeService: ScoponeService,
     private router: Router,
     public dialog: MatDialog
   ) {}

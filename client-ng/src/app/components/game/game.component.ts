@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import { ScoponeServerService } from '../../../../../scopone-rx-service/src/scopone-server.service';
+import { ScoponeService } from '../../scopone/scopone.service';
 import { Observable, Subscription, merge } from 'rxjs';
 import { startWith, map, tap, catchError, switchMap } from 'rxjs/operators';
 import { PlayerState } from '../../../../../scopone-rx-service/src/messages';
@@ -22,7 +22,7 @@ export class GameComponent implements OnInit, OnDestroy {
 
   constructor(
     private router: Router,
-    public scoponeServer: ScoponeServerService,
+    public scoponeServer: ScoponeService,
     private errorService: ErrorService
   ) {}
 

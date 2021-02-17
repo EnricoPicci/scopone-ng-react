@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { ScoponeServerService } from '../../../../../scopone-rx-service/src/scopone-server.service';
+import { ScoponeService } from '../../scopone/scopone.service';
 
 @Component({
   selector: 'scopone-new-game',
@@ -8,7 +8,7 @@ import { ScoponeServerService } from '../../../../../scopone-rx-service/src/scop
   styleUrls: ['./new-game.component.css'],
 })
 export class NewGameComponent implements OnInit {
-  constructor(public scoponeServer: ScoponeServerService) {}
+  constructor(public scoponeServer: ScoponeService) {}
 
   ngOnInit(): void {}
 

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable, zip } from 'rxjs';
 import { Game } from '../../../../../scopone-rx-service/src/messages';
-import { ScoponeServerService } from '../../../../../scopone-rx-service/src/scopone-server.service';
+import { ScoponeService } from '../../scopone/scopone.service';
 import { MatDialog } from '@angular/material/dialog';
 import { MatListOption } from '@angular/material/list';
 import { GamePickerDialogueComponent } from './game-picker-dialogue.component';
@@ -17,10 +17,7 @@ export class GameListComponent implements OnInit {
   gamesNotStarted: string[];
   gamesObservable: string[];
 
-  constructor(
-    public scoponeServer: ScoponeServerService,
-    public dialog: MatDialog
-  ) {}
+  constructor(public scoponeServer: ScoponeService, public dialog: MatDialog) {}
 
   ngOnInit(): void {
     this.games$ = zip(

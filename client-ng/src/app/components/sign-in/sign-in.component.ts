@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ScoponeServerService } from '../../../../../scopone-rx-service/src/scopone-server.service';
+import { ScoponeService } from '../../scopone/scopone.service';
 import { mapTo, share } from 'rxjs/operators';
 
 @Component({
@@ -11,7 +11,7 @@ import { mapTo, share } from 'rxjs/operators';
 export class SignInComponent implements OnInit {
   hideAddPlayer$: Observable<boolean>;
 
-  constructor(public scoponeServer: ScoponeServerService) {}
+  constructor(public scoponeServer: ScoponeService) {}
 
   ngOnInit(): void {
     this.hideAddPlayer$ = this.scoponeServer.playerEnteredOsteria$.pipe(

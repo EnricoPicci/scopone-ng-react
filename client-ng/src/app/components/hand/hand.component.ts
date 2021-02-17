@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ScoponeServerService } from '../../../../../scopone-rx-service/src/scopone-server.service';
+import { ScoponeService } from '../../scopone/scopone.service';
 import { Card, TypeValues } from '../../../../../scopone-rx-service/src/card';
 import { tap, takeUntil, concatMap, switchMap, map } from 'rxjs/operators';
 import { Observable, Subject, merge, combineLatest } from 'rxjs';
@@ -37,7 +37,7 @@ export class HandComponent implements OnInit, OnDestroy {
   unsubscribe = new Subject<void>();
 
   constructor(
-    protected scoponeService: ScoponeServerService,
+    protected scoponeService: ScoponeService,
     public dialog: MatDialog,
     private router: Router,
     private errorService: ErrorService
