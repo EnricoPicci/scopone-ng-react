@@ -5,22 +5,12 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Current TS File",
-      "type": "node",
-      "request": "launch",
-      "args": ["${relativeFile}"],
-      "runtimeArgs": ["--nolazy", "-r", "ts-node/register"],
-      "sourceMaps": true,
-      "cwd": "${workspaceRoot}",
-      "protocol": "inspector"
-    },
-    {
-      "name": "Current TS Tests File",
+      "name": "Current TS Tests File in scopone-rx-service",
       "type": "node",
       "request": "launch",
       "program": "${workspaceRoot}/node_modules/mocha/bin/_mocha",
       "args": ["-r", "ts-node/register", "${relativeFile}"],
-      "env": { "TS_NODE_PROJECT": "./tsconfig-works-for-service-test.json" },
+      "env": { "TS_NODE_PROJECT": "./src/scopone-rx-service/tsconfig.json" },
       "cwd": "${workspaceRoot}",
       "protocol": "inspector"
     }
