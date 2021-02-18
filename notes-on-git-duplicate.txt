@@ -1,0 +1,9 @@
+The Repo has been replicated using the following instructions
+https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/duplicating-a-repository#mirroring-a-repository
+
+The original Repo is this one
+https://github.com/EnricoPicci/scopone
+
+Instructions on how to merge back the duplicated Repo into the original one can be found here
+https://stackoverflow.com/questions/44237491/how-to-merge-a-repository-copy
+https://stackoverflow.com/questions/2949738/git-merge-different-repositories

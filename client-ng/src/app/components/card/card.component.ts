@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { Card, Types, Suits } from '../../../../../scopone-rx-service/src/card';
+import { Card, Suits } from '../../../../../scopone-rx-service/src/card';
 
 const trevigianeSuitsMap = new Map<Suits, string>();
 trevigianeSuitsMap[Suits.BASTONI] = 'B';

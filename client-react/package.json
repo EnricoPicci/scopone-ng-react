@@ -13,14 +13,24 @@
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-scripts": "4.0.2",
+    "rxjs": "~6.5.4",
     "typescript": "^4.1.2",
     "web-vitals": "^1.0.1"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.2.11",
+    "@types/mocha": "^7.0.2",
+    "chai": "^4.2.0",
+    "mocha": "^7.1.2",
+    "ts-node": "^8.3.0",
+    "typescript": "~3.8.3"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "test-rx-service": "TS_NODE_PROJECT='./tsconfig-works-for-service-test.json' mocha -r ts-node/register src/scopone-rx-service/scopone-server.service.mocha-play-game.ts"
   },
   "eslintConfig": {
     "extends": [

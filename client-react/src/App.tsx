@@ -1,11 +1,17 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import logo from "./logo.svg";
+import "./App.css";
+import { CardComponent } from "./components/card";
+import { Card, Suits, Types } from "./scopone-rx-service/card";
 
 function App() {
+  const aCard: Card = {
+    suit: Suits.COPPE,
+    type: Types.FIVE,
+  };
   return (
     <div className="App">
-      <header className="App-header">
+      {/* <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
           Edit <code>src/App.tsx</code> and save to reload.
@@ -18,7 +24,8 @@ function App() {
         >
           Learn React
         </a>
-      </header>
+      </header> */}
+      <CardComponent card={aCard}></CardComponent>
     </div>
   );
 }
