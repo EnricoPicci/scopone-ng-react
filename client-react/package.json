@@ -31,7 +31,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "test-rx-service": "TS_NODE_PROJECT='./tsconfig-works-for-service-test.json' mocha -r ts-node/register src/scopone-rx-service/scopone-server.service.mocha-play-game.ts"
+    "test-rx-service": "TS_NODE_PROJECT='./src/scopone-rx-service/tsconfig.json' mocha -r ts-node/register src/scopone-rx-service/scopone-server.service.mocha-play-game.ts"
   },
   "eslintConfig": {
     "extends": [

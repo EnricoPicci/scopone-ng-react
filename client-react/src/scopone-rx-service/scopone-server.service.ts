@@ -12,6 +12,7 @@ import {
   shareReplay,
   take,
   distinctUntilChanged,
+  catchError,
 } from "rxjs/operators";
 
 import {
@@ -35,6 +36,7 @@ import {
 import { openSocket, messages } from "./observable-websocket";
 import { PlayerView } from "./player-view";
 import { Card, Suits, TypeValues } from "./card";
+import { ScoponeErrors } from "./scopone-errors";
 
 export class ScoponeServerService {
   // ====================================================================================================
@@ -397,6 +399,18 @@ export class ScoponeServerService {
     }
     return openSocket(url).pipe(
       tap((socket) => (this.socket = socket)),
+      // manage errors that can be raised during connection
+      catchError((err) => {
+        console.error("Connection error to the server failed", err);
+        switch (err.type) {
+          case "error":
+            throw ScoponeErrors.ConnectionError;
+          case "close":
+            throw ScoponeErrors.Closed;
+          default:
+            throw ScoponeErrors.GenericConnectionError;
+        }
+      }),
       tap((socket) => this._connect$.next(socket)),
       // the websocket is not returned since it is inteded to be private to this class
       map(() => null),

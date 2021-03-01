@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import {
   Button,
@@ -10,6 +10,7 @@ import {
 } from "@material-ui/core";
 
 import "./sign-in.css";
+import { TopLevelContext } from "../../context/top-level-context";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -25,16 +26,16 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const keyPress = (e) => {
-  console.log("valueKKKKKKKKK", e.key);
-  if (e.key === "Enter") {
-    console.log("valueEEEEEEEEEE", e.target.value);
-    // put the login here
-  }
-};
-
 export default function SignIn() {
+  const serverService = useContext(TopLevelContext);
+
   const classes = useStyles();
+
+  const keyPress = (e: { key: string; target: any }) => {
+    if (e.key === "Enter") {
+      serverService.playerEntersOsteria(e.target.value);
+    }
+  };
 
   return (
     <Card>

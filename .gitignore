@@ -34,3 +34,7 @@ server/Dockerfile-minimal-mongo-atlas
 server/command-lambda-mongo.txt
 server/command-gcloud.txt
 scopone-rx-service/src/environments/environment.test.ts
+client-react/comments.txt
+client-react/.env.all-options
+client-react/.env.development
+client-react/.env.production

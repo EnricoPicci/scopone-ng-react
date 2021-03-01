@@ -58,7 +58,7 @@ It is possible to install the Server following the Go standards (see https://sta
 The `main` packages are organized as subfolders of `server/src/cmd`.
 
 To install the server app of choice (i.e. the one with Mongo db or the one without), open either `server/src/cmd/scopone-in-memory-only/scopone-in-memory-only.go` or `server/src/cmd/scopone-mongo/scopone-mongo.go`, run the go command `install package` from within VSCode (view->command pallette...->`GO: install current package`)
-It is possible to install the package of choice launching the `go install` command from withing the folder of the main package (i.e. one of the packages under `src/cdm` folder).
+It is possible to install the package of choice launching the `go install` command from withing the folder of the main package (i.e. one of the packages under `src/cmd` folder).
 
 Once installed, the server can be launched with the command `MONGO_CONNECTION="mongoConnectionUrl" ~/go/bin/scopone-mongo` (wherthee `mongoConnectionUrl` points to the Mongo server - for instance, in case of Mongo Atlas, `mongodb+srv://user:password@my-cluster.mongodb.net/scopone?retryWrites=true&w=majority`).
 If the version without Mongo db, the command to launch the server is `~/go/bin/scopone-in-memory-only`.
@@ -108,22 +108,29 @@ If the deployment succeeds, it prints on the console the url for the endpoint of
 
 ## Test WebSocket server APIs
 
-### Test the server from VSCode playing an entire game
+### Test the server from VSCode playing an entire game with standalone service (e.g. with the service in "scopone-rx-service" folder just below the Workspace folder)
 
 Go to the server folder with `cd server`.
 Launch the server with `~/go/bin/server`.
 Set the WebSocket server url as value of the property `serverAddress` in the file `scopone-rx-service/src/environments/environment.ts`. If the WebSocket server has been launched locally, then the url is `ws://localhost:8080/osteria`. Otherwise specify the url to be used.
 
-From within VSCode, open the file `service.mocha-play-game.ts` which can be found in the client projects (Angular or React). Go to the VSCode Debug window, select "Current TS Tests File in scopone-rx-service (client-ng or client-react)" in the Run drop down list and launch.
+Go to the scopone-rx-service (cd scopone-rx-sewrvice from the workspace folder). Open VSCode and from within VSCode, open the file `service.mocha-play-game.ts`. Go to the VSCode Debug window, select "Current TS Tests File" in the Run drop down list and launch.
 
 This test creates a new game and plays an entire hand (i.e. plays all 40 cards) and checks that everything works from a WebSockets API point of view.
+
+### Test the server from VSCode playing an entire game with the React client service
+
+Do the same as above, but from the "client-react" folder.
+IN case of React implementation, from within the client-react folder it is also possible to launch the command
+`npm run test-rx-service`
+to test and entire hand of a new game from command line.
 
 ### Start the first hand of a game and play 36 cards
 
 Do the same steps described in the "Test the server from VSCode" section, but launch the file `scopone-server.service.play-39-cards.ts`. This test creates a new game and plays the first hand for 36 cards.
 This allows a tester to log in the server from the front end and test the end of an hand without having to play all cards.
 
-## Client
+## Angular Client (client.ng folder)
 
 The Client is an Angular application, currently using version 9 of the framework.
 
