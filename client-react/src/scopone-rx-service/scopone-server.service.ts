@@ -1,3 +1,6 @@
+// The way this class has been coded requires that the strict mode is turned off from typescript
+// https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-7.html#strict-class-initialization
+
 import { ReplaySubject, Observable, from, pipe, merge } from "rxjs";
 import {
   tap,
@@ -36,15 +39,11 @@ import { Card, Suits, TypeValues } from "./card";
 export class ScoponeServerService {
   // ====================================================================================================
   // Internal properties - not to be used by any client
-  // ====================================================================================================
-  // Internal properties - not to be used by any client
   private socket!: WebSocket;
   private _connect$ = new ReplaySubject<WebSocket>(1);
   readonly connect$ = this._connect$.asObservable(); // not private only because it is used by tests
   private closedByClient = false;
 
-  // ====================================================================================================
-  // Public Observable streams which clients of this service can subscribe to
   // ====================================================================================================
   // Public Observable streams which clients of this service can subscribe to
   messages$!: Observable<MessageFromServer>;

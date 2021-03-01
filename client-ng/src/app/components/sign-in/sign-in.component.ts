@@ -9,16 +9,9 @@ import { mapTo, share } from 'rxjs/operators';
   styleUrls: ['./sign-in.component.css'],
 })
 export class SignInComponent implements OnInit {
-  hideAddPlayer$: Observable<boolean>;
-
   constructor(public scoponeServer: ScoponeService) {}
 
-  ngOnInit(): void {
-    this.hideAddPlayer$ = this.scoponeServer.playerEnteredOsteria$.pipe(
-      mapTo(true),
-      share()
-    );
-  }
+  ngOnInit(): void {}
 
   playerEntersOsteria(name: string) {
     this.scoponeServer.playerEntersOsteria(name);

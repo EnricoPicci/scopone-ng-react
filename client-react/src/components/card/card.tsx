@@ -1,7 +1,7 @@
 import { FC } from "react";
 import "./card.css";
 
-import { Card, Suits, Types } from "../scopone-rx-service/card";
+import { Card, Suits, Types } from "../../scopone-rx-service/card";
 
 enum TyepsView {
   Ace = "1",
@@ -46,6 +46,6 @@ const cardSvg = (suit: Suits, type: Types) => {
   const t = TyepsView[type];
   const s = suitsMap.get(suit);
   const resourcePath = `/card-images/svg/${t}${s}.svg`;
-  console.log("respurce path", resourcePath);
+  // https://create-react-app.dev/docs/using-the-public-folder#when-to-use-the-public-folder
   return process.env.PUBLIC_URL + resourcePath;
 };
