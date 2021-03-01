@@ -398,7 +398,10 @@ export class ScoponeServerService {
       );
     }
     return openSocket(url).pipe(
-      tap((socket) => (this.socket = socket)),
+      tap((socket) => {
+        this.socket = socket;
+        console.log(socket);
+      }),
       // manage errors that can be raised during connection
       catchError((err) => {
         console.error("Connection error to the server failed", err);

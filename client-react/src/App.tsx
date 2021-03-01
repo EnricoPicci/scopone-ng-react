@@ -1,9 +1,8 @@
 import React from "react";
-import logo from "./logo.svg";
 import "./App.css";
 import { CardComponent } from "./components/card/card";
 import { Card, Suits, Types } from "./scopone-rx-service/card";
-import SignIn from "./components/sign-in/sign-in";
+import { Game } from "./components/game/game";
 
 function App() {
   const aCard: Card = {
@@ -12,7 +11,7 @@ function App() {
   };
   return (
     <div className="App">
-      <SignIn></SignIn>
+      <Game></Game>
       <CardComponent card={aCard}></CardComponent>
     </div>
   );
