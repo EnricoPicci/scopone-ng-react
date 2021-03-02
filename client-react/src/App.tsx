@@ -1,4 +1,7 @@
 import React from "react";
+
+import { BrowserRouter } from "react-router-dom";
+
 import "./App.css";
 import { CardComponent } from "./components/card/card";
 import { Card, Suits, Types } from "./scopone-rx-service/card";
@@ -10,10 +13,12 @@ function App() {
     type: Types.FIVE,
   };
   return (
-    <div className="App">
-      <Game></Game>
-      <CardComponent card={aCard}></CardComponent>
-    </div>
+    <BrowserRouter>
+      <div className="App">
+        <Game></Game>
+        <CardComponent card={aCard}></CardComponent>
+      </div>
+    </BrowserRouter>
   );
 }
 
