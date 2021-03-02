@@ -1,18 +1,23 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 import { ServerContext } from "../../context/top-level-context";
 import SignIn from "../sign-in/sign-in";
-import { switchMap, tap } from "rxjs/operators";
+import { map, switchMap, tap } from "rxjs/operators";
 import { merge } from "rxjs";
 import { PlayerState } from "../../scopone-rx-service/messages";
+import { Card, CardContent, CardHeader } from "@material-ui/core";
+
+import "./game.css";
 
 const serverAddress = process.env.REACT_APP_SERVER_ADDRESS;
 
 export function Game() {
   const server = useContext(ServerContext);
 
-  // this Observable notifies when a Player successfully enters the osteria
-  const playerEntersOsteria$ = server.playerEnteredOsteria$.pipe(
+  const [title, setTitle] = useState("Scopone Table - sign in please");
+
+  // navigate$ Observable manages navigation as a side effect when a Player successfully enters the osteria
+  const navigate$ = server.playerEnteredOsteria$.pipe(
     tap((player) => {
       switch (player.status) {
         case PlayerState.playerNotPlaying:
@@ -36,10 +41,16 @@ export function Game() {
     })
   );
 
+  // title$ sets the title as a side effect
+  const title$ = merge(
+    // when the Player enters the Osteria the title is simply its name
+    server.playerEnteredOsteria$.pipe(map((player) => `${player.name}`))
+  ).pipe(tap((newTitle) => setTitle(newTitle)));
+
   useEffect(() => {
     const subscription = server
       .connect(serverAddress)
-      .pipe(switchMap(() => merge(playerEntersOsteria$)))
+      .pipe(switchMap(() => merge(navigate$, title$)))
       .subscribe({
         error: (err) => {
           this.errorService.error = err;
@@ -53,5 +64,12 @@ export function Game() {
     };
   }, []);
 
-  return <SignIn />;
+  return (
+    <Card className="root" variant="outlined">
+      <CardHeader title={title} className="header"></CardHeader>
+      <CardContent>
+        <SignIn />
+      </CardContent>
+    </Card>
+  );
 }

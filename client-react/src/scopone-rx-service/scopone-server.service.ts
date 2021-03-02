@@ -103,6 +103,8 @@ export class ScoponeServerService {
     return this._playerName;
   }
   private gameName!: string;
+
+  // observing is true if the Game is entered as an Observer of the Game and not as a Player
   private _observing = false;
   get observing() {
     return this._observing;
