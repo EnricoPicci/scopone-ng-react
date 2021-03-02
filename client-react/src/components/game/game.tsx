@@ -1,6 +1,6 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 
-import { TopLevelContext } from "../../context/top-level-context";
+import { ServerContext } from "../../context/top-level-context";
 import SignIn from "../sign-in/sign-in";
 import { switchMap, tap } from "rxjs/operators";
 import { merge } from "rxjs";
@@ -9,7 +9,7 @@ import { PlayerState } from "../../scopone-rx-service/messages";
 const serverAddress = process.env.REACT_APP_SERVER_ADDRESS;
 
 export function Game() {
-  const server = useContext(TopLevelContext);
+  const server = useContext(ServerContext);
 
   // this Observable notifies when a Player successfully enters the osteria
   const playerEntersOsteria$ = server.playerEnteredOsteria$.pipe(
@@ -36,16 +36,22 @@ export function Game() {
     })
   );
 
-  server
-    .connect(serverAddress)
-    .pipe(switchMap(() => merge(playerEntersOsteria$)))
-    .subscribe({
-      error: (err) => {
-        this.errorService.error = err;
-        console.error("Error while communicating with the server", err);
-        this.router.navigate(["error"]);
-      },
-    });
+  useEffect(() => {
+    const subscription = server
+      .connect(serverAddress)
+      .pipe(switchMap(() => merge(playerEntersOsteria$)))
+      .subscribe({
+        error: (err) => {
+          this.errorService.error = err;
+          console.error("Error while communicating with the server", err);
+          this.router.navigate(["error"]);
+        },
+      });
+    return () => {
+      console.log("Unsubscribe Game subscription");
+      subscription.unsubscribe();
+    };
+  }, []);
 
   return <SignIn />;
 }

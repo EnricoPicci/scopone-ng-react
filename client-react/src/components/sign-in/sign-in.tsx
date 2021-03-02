@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { ChangeEvent, useContext, useState } from "react";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import {
   Button,
@@ -10,7 +10,7 @@ import {
 } from "@material-ui/core";
 
 import "./sign-in.css";
-import { TopLevelContext } from "../../context/top-level-context";
+import { ServerContext } from "../../context/top-level-context";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -27,14 +27,25 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 export default function SignIn() {
-  const serverService = useContext(TopLevelContext);
+  const [playerName, setPlayerName] = useState("");
+  const server = useContext(ServerContext);
 
   const classes = useStyles();
 
-  const keyPress = (e: { key: string; target: any }) => {
+  const handleChange = (
+    event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
+  ) => {
+    setPlayerName(event.target.value);
+  };
+
+  const keyPress = (e: { key: string }) => {
     if (e.key === "Enter") {
-      serverService.playerEntersOsteria(e.target.value);
+      enterOsteria();
     }
+  };
+
+  const enterOsteria = () => {
+    server.playerEntersOsteria(playerName);
   };
 
   return (
@@ -56,12 +67,15 @@ export default function SignIn() {
             InputLabelProps={{
               shrink: true,
             }}
+            onChange={handleChange}
             onKeyPress={keyPress}
           />
         </div>
       </CardContent>
       <CardActions>
-        <Button size="small">Enter</Button>
+        <Button size="small" onClick={enterOsteria}>
+          Enter
+        </Button>
       </CardActions>
     </Card>
   );

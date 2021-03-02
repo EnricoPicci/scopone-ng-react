@@ -5,4 +5,4 @@ const service = new ScoponeServerService();
 
 console.log("Server connected");
 
-export const TopLevelContext = React.createContext(service);
+export const ServerContext = React.createContext(service);
