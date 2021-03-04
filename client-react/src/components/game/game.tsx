@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 
 import { Switch, Route, useHistory } from "react-router-dom";
 
-import { ServerContext } from "../../context/top-level-context";
+import { ServerContext } from "../../context/server-context";
 import SignIn from "../sign-in/sign-in";
 import { map, switchMap, tap } from "rxjs/operators";
 import { merge } from "rxjs";
@@ -20,7 +20,6 @@ const serverAddress = process.env.REACT_APP_SERVER_ADDRESS;
 export function Game() {
   const server = useContext(ServerContext);
   const history = useHistory();
-  console.log("=======>>>>>>>>>>>>  History", history);
 
   const [title, setTitle] = useState("Scopone Table - sign in please");
 
@@ -34,13 +33,13 @@ export function Game() {
             history.push("/pick-game");
             break;
           case PlayerState.playerPlaying:
-            console.log("Navigate to hand");
+            history.push("/hand");
             break;
           case PlayerState.playerObservingGames:
-            console.log("Navigate to hand");
+            history.push("/hand");
             break;
           case PlayerState.playerLookingAtHandResult:
-            console.log("Navigate to hand-result");
+            history.push("/hand-result");
             break;
           default:
             const errMsg = `State "${player.status}" is not expected - look at the console for more details`;

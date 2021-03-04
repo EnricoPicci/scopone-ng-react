@@ -10,7 +10,7 @@ import {
 } from "@material-ui/core";
 
 import "./sign-in.css";
-import { ServerContext } from "../../context/top-level-context";
+import { ServerContext } from "../../context/server-context";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable, zip } from 'rxjs';
+import { combineLatest, Observable, zip } from 'rxjs';
 import { Game } from '../../../../../scopone-rx-service/src/messages';
 import { ScoponeService } from '../../scopone/scopone.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -20,10 +20,10 @@ export class GameListComponent implements OnInit {
   constructor(public scoponeServer: ScoponeService, public dialog: MatDialog) {}
 
   ngOnInit(): void {
-    this.games$ = zip(
+    this.games$ = combineLatest([
       this.scoponeServer.gamesNotYetStarted$,
-      this.scoponeServer.gamesWhichCanBeObserved$
-    ).pipe(
+      this.scoponeServer.gamesWhichCanBeObserved$,
+    ]).pipe(
       map(([gNotStarted, gObservable]) => {
         this.gamesNotStarted = gNotStarted.map((g) => g.name);
         this.gamesObservable = gObservable.map((g) => g.name);
