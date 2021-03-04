@@ -1,5 +1,4 @@
 import React, { ChangeEvent, useContext, useState } from "react";
-import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import {
   Button,
   TextField,
@@ -9,22 +8,9 @@ import {
   CardActions,
 } from "@material-ui/core";
 
-import "./sign-in.css";
+import "../style.css";
 import { ServerContext } from "../../context/server-context";
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      display: "flex",
-      flexWrap: "wrap",
-    },
-    textField: {
-      marginLeft: theme.spacing(1),
-      marginRight: theme.spacing(1),
-      //   width: "30ch",
-    },
-  })
-);
+import { useStyles } from "../style-material-ui";
 
 export default function SignIn() {
   const [playerName, setPlayerName] = useState("");

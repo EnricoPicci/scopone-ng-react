@@ -1,5 +1,6 @@
 // The way this class has been coded requires that the strict mode is turned off from typescript
 // https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-7.html#strict-class-initialization
+// This is why we have added a tsconfig.json file in the same folder as this file
 
 import { ReplaySubject, Observable, from, pipe, merge } from "rxjs";
 import {
@@ -41,42 +42,42 @@ import { ScoponeErrors } from "./scopone-errors";
 export class ScoponeServerService {
   // ====================================================================================================
   // Internal properties - not to be used by any client
-  private socket!: WebSocket;
+  private socket: WebSocket;
   private _connect$ = new ReplaySubject<WebSocket>(1);
   readonly connect$ = this._connect$.asObservable(); // not private only because it is used by tests
   private closedByClient = false;
 
   // ====================================================================================================
   // Public Observable streams which clients of this service can subscribe to
-  messages$!: Observable<MessageFromServer>;
+  messages$: Observable<MessageFromServer>;
 
-  players$!: Observable<Player[]>;
-  playerEnteredOsteria$!: Observable<Player>;
-  playerIsAlreadyInOsteria$!: Observable<string>;
+  players$: Observable<Player[]>;
+  playerEnteredOsteria$: Observable<Player>;
+  playerIsAlreadyInOsteria$: Observable<string>;
 
-  games_ShareReplay$!: Observable<Game[]>;
-  gamesOpen$!: Observable<Game[]>;
-  gamesNotYetStarted$!: Observable<Game[]>;
-  gamesWhichCanBeObserved$!: Observable<Game[]>;
-  gameWithSameNamePresent_ShareReplay$!: Observable<string>;
+  games_ShareReplay$: Observable<Game[]>;
+  gamesOpen$: Observable<Game[]>;
+  gamesNotYetStarted$: Observable<Game[]>;
+  gamesWhichCanBeObserved$: Observable<Game[]>;
+  gameWithSameNamePresent_ShareReplay$: Observable<string>;
 
-  allMyGames$!: Observable<Game[]>;
-  myCurrentOpenGame_ShareReplay$!: Observable<Game>;
-  myCurrentOpenGameWithAll4PlayersIn_ShareReplay$!: Observable<boolean>;
-  myCurrentGameClosed$!: Observable<Game>;
-  myCurrentGameClosed_ShareReplay$!: Observable<Game>;
-  myCurrentObservedGame_ShareReplay$!: Observable<Game>;
+  allMyGames$: Observable<Game[]>;
+  myCurrentOpenGame_ShareReplay$: Observable<Game>;
+  myCurrentOpenGameWithAll4PlayersIn_ShareReplay$: Observable<boolean>;
+  myCurrentGameClosed$: Observable<Game>;
+  myCurrentGameClosed_ShareReplay$: Observable<Game>;
+  myCurrentObservedGame_ShareReplay$: Observable<Game>;
 
-  canStartGame$!: Observable<Game>;
+  canStartGame$: Observable<Game>;
 
-  allHandViews$!: Observable<PlayerView[]>;
-  allHandViews_ShareReplay$!: Observable<PlayerView[]>;
-  handView$!: Observable<PlayerView>;
-  handView_ShareReplay$!: Observable<PlayerView>;
-  handClosed$!: Observable<PlayerView>;
-  handClosed_ShareReplay$!: Observable<PlayerView>;
+  allHandViews$: Observable<PlayerView[]>;
+  allHandViews_ShareReplay$: Observable<PlayerView[]>;
+  handView$: Observable<PlayerView>;
+  handView_ShareReplay$: Observable<PlayerView>;
+  handClosed$: Observable<PlayerView>;
+  handClosed_ShareReplay$: Observable<PlayerView>;
 
-  cardsPlayedAndTaken$!: Observable<{
+  cardsPlayedAndTaken$: Observable<{
     cardPlayed: Card;
     cardsTaken: Card[];
     cardPlayedByPlayer: string;
@@ -86,29 +87,27 @@ export class ScoponeServerService {
     };
   }>;
 
-  currentPlayer$!: Observable<string>;
-  isMyTurnToPlay$!: Observable<boolean>;
+  currentPlayer$: Observable<string>;
+  isMyTurnToPlay$: Observable<boolean>;
 
   // ====================================================================================================
   // Properties holding state. Clients can read them but setting their value is private
   // In this way we can have state which is updated internally in a reactive way. The idea is to get the benefit of reactive
   // programming and the convenience of variables holding state when required
-  // ====================================================================================================
-  // Properties holding state. Clients can read them but setting their value is private
-  // In this way we can have state which is updated internally in a reactive way. The idea is to get the benefit of reactive
-  // programming and the convenience of variables holding state when required
 
-  private _playerName!: string;
+  private _playerName: string;
   get playerName() {
     return this._playerName;
   }
-  private gameName!: string;
-
   // observing is true if the Game is entered as an Observer of the Game and not as a Player
   private _observing = false;
   get observing() {
     return this._observing;
   }
+
+  // ====================================================================================================
+  // Private properties
+  private gameName: string;
 
   constructor() {
     this.initialize();
@@ -122,12 +121,7 @@ export class ScoponeServerService {
       : this._connect$.pipe(
           switchMap((ws) => this.messages(ws)),
           tap((d) => console.log("Message received from server", d)),
-          // it is important to shareReplay all the messages received since it may be possible that
-          // the messages arrive before the Angular Components are initialized and therefore without shareReplay they
-          // may get lost. This is particularly tru if you have a local websocket server for testing purposes
-          // the server can be very fast in responding and therefore respond faster that the Angular components
-          // setup specifically if you start the angular app on a browser tab just opened fresh
-          // shareReplay()
+          // we share the source stream to make sure that all downstream transformations share the same source
           share()
         );
 
@@ -451,7 +445,7 @@ export class ScoponeServerService {
   }
 
   // ====================================================================================================
-  // From here we have the methods which represent the requests we can send to the server
+  // From here we have the methods which represent the requests we can sent to the server
   public close() {
     this.closedByClient = true;
     this.socket.close();
