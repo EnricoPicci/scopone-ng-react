@@ -1,9 +1,8 @@
 import { List, ListItem, ListItemText } from "@material-ui/core";
 import React, { useContext, useEffect, useState } from "react";
-import { combineLatest } from "rxjs";
-import { map } from "rxjs/operators";
 import { ServerContext } from "../../context/server-context";
 import { Game } from "../../scopone-rx-service/messages";
+import { gameList$ } from "../../streams-transformations/game-list";
 
 type GameForList = Game & { canBeObservedOnly: boolean };
 
@@ -16,24 +15,9 @@ export const GameList = () => {
     console.log(
       "=======<<<<<<<<<<<<<<<>>>>>>>>>>>>  Use Effect run in GameList"
     );
-    const subscription = combineLatest([
-      server.gamesNotYetStarted$,
-      server.gamesWhichCanBeObserved$,
-    ])
-      .pipe(
-        map(([gNotStarted, gObservable]) => {
-          const gamesNotStarted = gNotStarted.map(
-            (g) => ({ ...g, canBeObservedOnly: false } as GameForList)
-          );
-          const gamesObservable = gObservable.map(
-            (g) => ({ ...g, canBeObservedOnly: true } as GameForList)
-          );
-          return [...gamesNotStarted, ...gamesObservable];
-        })
-      )
-      .subscribe({
-        next: setGames,
-      });
+
+    const subscription = gameList$(server).subscribe(setGames);
+
     return () => subscription.unsubscribe();
   }, [server]);
 
@@ -53,7 +37,6 @@ export const GameList = () => {
       <List component="nav">
         {games.map((game, i) => (
           <ListItem
-            // className={game.canBeObservedOnly ? "observableOnly" : ""}
             key={game.name}
             button
             selected={selectedIndex === i}
@@ -61,7 +44,6 @@ export const GameList = () => {
           >
             <ListItemText
               primary={gameName(game)}
-              className="observableOnly"
               primaryTypographyProps={
                 game.canBeObservedOnly
                   ? {

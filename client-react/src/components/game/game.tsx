@@ -14,6 +14,7 @@ import { PickGame } from "../pick-game/pick-game";
 import { Hand } from "../hand/hand";
 import { HandResult } from "../hand-result/hand-result";
 import { Error } from "../error/error";
+import { title$ } from "../../streams-transformations/title";
 
 const serverAddress = process.env.REACT_APP_SERVER_ADDRESS;
 
@@ -51,14 +52,11 @@ export function Game() {
     );
 
     // title$ sets the title as a side effect
-    const title$ = merge(
-      // when the Player enters the Osteria the title is simply its name
-      server.playerEnteredOsteria$.pipe(map((player) => `${player.name}`))
-    ).pipe(tap((newTitle) => setTitle(newTitle)));
+    const _title$ = title$(server).pipe(tap((newTitle) => setTitle(newTitle)));
 
     const subscription = server
       .connect(serverAddress)
-      .pipe(switchMap(() => merge(navigate$, title$)))
+      .pipe(switchMap(() => merge(navigate$, _title$)))
       .subscribe({
         error: (err) => {
           // this.errorService.error = err;
