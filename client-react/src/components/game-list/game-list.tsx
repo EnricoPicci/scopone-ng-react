@@ -8,7 +8,6 @@ type GameForList = Game & { canBeObservedOnly: boolean };
 
 export const GameList = () => {
   const [games, setGames] = useState<Array<GameForList>>([]);
-  const [selectedIndex, setSelectedIndex] = useState<number>();
   const server = useContext(ServerContext);
 
   useEffect(() => {
@@ -25,11 +24,8 @@ export const GameList = () => {
     return game.canBeObservedOnly ? `${game.name} (as an Observer)` : game.name;
   };
 
-  const handleListItemClick = (
-    event: React.MouseEvent<HTMLDivElement, MouseEvent>,
-    index: number
-  ) => {
-    setSelectedIndex(index);
+  const gameSelected = (game: Game) => {
+    server.addPlayerToGame(server.playerName, game.name);
   };
 
   return (
@@ -39,8 +35,7 @@ export const GameList = () => {
           <ListItem
             key={game.name}
             button
-            selected={selectedIndex === i}
-            onClick={(event) => handleListItemClick(event, i)}
+            onClick={(event) => gameSelected(game)}
           >
             <ListItemText
               primary={gameName(game)}

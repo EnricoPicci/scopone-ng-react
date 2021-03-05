@@ -1,6 +1,9 @@
 import { Card, CardHeader, CardContent, TextField } from "@material-ui/core";
-import { ChangeEvent, useContext, useState } from "react";
+import { ChangeEvent, useContext, useEffect, useState } from "react";
+import { tap } from "rxjs/operators";
+import { ErrorContext } from "../../context/error-context";
 import { ServerContext } from "../../context/server-context";
+import { ScoponeError } from "../../scopone-rx-service/scopone-errors";
 import { useStyles } from "../style-material-ui";
 
 import "../style.css";
@@ -8,8 +11,29 @@ import "../style.css";
 export const NewGame = () => {
   const [gameName, setGameName] = useState("");
   const server = useContext(ServerContext);
+  const errorCtx = useContext(ErrorContext);
 
   const classes = useStyles();
+
+  useEffect(() => {
+    console.log("=======>>>>>>>>>>>>  Use Effect run in NewGame");
+
+    const duplicatedGameName$ = server.gameWithSameNamePresent_ShareReplay$.pipe(
+      tap((gameName) => {
+        const err: ScoponeError = {
+          message: `A game with the same name "${gameName}" has been already defined`,
+        };
+        errorCtx.setErrorContextValue(err);
+      })
+    );
+
+    const subscription = duplicatedGameName$.subscribe();
+
+    return () => {
+      console.log("Unsubscribe NewGame subscription");
+      subscription.unsubscribe();
+    };
+  }, [server]);
 
   const handleChange = (
     event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>

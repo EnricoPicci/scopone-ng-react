@@ -4,3 +4,7 @@
 .header {
   text-align: left;
 }
+.error {
+  text-align: left;
+  color: darkred;
+}
