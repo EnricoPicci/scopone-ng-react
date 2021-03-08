@@ -1,4 +1,13 @@
-import { List, ListItem, ListItemText } from "@material-ui/core";
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogTitle,
+  List,
+  ListItem,
+  ListItemText,
+} from "@material-ui/core";
+
 import React, { useContext, useEffect, useState } from "react";
 import { ServerContext } from "../../context/server-context";
 import { Game } from "../../scopone-rx-service/messages";
@@ -8,6 +17,12 @@ type GameForList = Game & { canBeObservedOnly: boolean };
 
 export const GameList = () => {
   const [games, setGames] = useState<Array<GameForList>>([]);
+  const [selectedGame, setSelectedGame] = useState<GameForList>();
+  const [
+    openConfirmationDialogue,
+    setOpenConfirmationDialogue,
+  ] = React.useState(false);
+
   const server = useContext(ServerContext);
 
   useEffect(() => {
@@ -24,34 +39,56 @@ export const GameList = () => {
     return game.canBeObservedOnly ? `${game.name} (as an Observer)` : game.name;
   };
 
-  const gameSelected = (game: Game) => {
-    server.addPlayerToGame(server.playerName, game.name);
+  const handleSelect = (game: GameForList) => {
+    setSelectedGame(game);
+    setOpenConfirmationDialogue(true);
+  };
+
+  const handleConfirm = () => {
+    server.addPlayerToGame(server.playerName, selectedGame.name);
+    handleDialogueClose();
+  };
+  const handleDialogueClose = () => {
+    setOpenConfirmationDialogue(false);
   };
 
   return (
-    <div className="root">
-      <List component="nav">
-        {games.map((game, i) => (
-          <ListItem
-            key={game.name}
-            button
-            onClick={(event) => gameSelected(game)}
-          >
-            <ListItemText
-              primary={gameName(game)}
-              primaryTypographyProps={
-                game.canBeObservedOnly
-                  ? {
-                      style: {
-                        color: "red",
-                      },
-                    }
-                  : {}
-              }
-            />
-          </ListItem>
-        ))}
-      </List>
-    </div>
+    <>
+      <div className="root">
+        <List component="nav">
+          {games.map((game, i) => (
+            <ListItem
+              key={game.name}
+              button
+              onClick={(event) => handleSelect(game)}
+            >
+              <ListItemText
+                primary={gameName(game)}
+                primaryTypographyProps={
+                  game.canBeObservedOnly
+                    ? {
+                        style: {
+                          color: "red",
+                        },
+                      }
+                    : {}
+                }
+              />
+            </ListItem>
+          ))}
+        </List>
+      </div>
+      <Dialog open={openConfirmationDialogue} onClose={handleDialogueClose}>
+        <DialogTitle>{`Confirm to join ${handleSelect.name}?`}</DialogTitle>
+        <DialogActions>
+          <Button onClick={handleConfirm} color="primary">
+            OK
+          </Button>
+          <Button onClick={handleDialogueClose} color="primary" autoFocus>
+            Cancel
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
   );
 };

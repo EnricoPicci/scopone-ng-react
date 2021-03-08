@@ -165,8 +165,10 @@ export class ScoponeServerService {
         allGames
           ? allGames.filter(
               (g) =>
-                g.state === GameState.GameOpen ||
-                g.state === GameState.GameSuspended
+                (g.state === GameState.GameOpen ||
+                  g.state === GameState.GameSuspended) &&
+                Object.keys(g.players).length === 4 &&
+                Object.keys(g.players).includes(this.playerName)
             )
           : []
       ),
