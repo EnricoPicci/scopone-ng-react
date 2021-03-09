@@ -1,8 +1,8 @@
 import React from "react";
-import { ScoponeServerService } from "../scopone-rx-service/scopone-server.service";
+import { ScoponeServerService } from "../rx-services/scopone-rx-service/scopone-server.service";
 
 const service = new ScoponeServerService();
 
-console.log("Server connected");
+console.log("Server service created");
 
 export const ServerContext = React.createContext(service);

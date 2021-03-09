@@ -3,7 +3,6 @@ import { ChangeEvent, useContext, useEffect, useState } from "react";
 import { tap } from "rxjs/operators";
 import { ErrorContext } from "../../context/error-context";
 import { ServerContext } from "../../context/server-context";
-import { ScoponeError } from "../../scopone-rx-service/scopone-errors";
 import { useStyles } from "../style-material-ui";
 
 import "../style.css";
@@ -11,7 +10,7 @@ import "../style.css";
 export const NewGame = () => {
   const [gameName, setGameName] = useState("");
   const server = useContext(ServerContext);
-  const errorCtx = useContext(ErrorContext);
+  const errorService = useContext(ErrorContext);
 
   const classes = useStyles();
 
@@ -20,10 +19,9 @@ export const NewGame = () => {
 
     const duplicatedGameName$ = server.gameWithSameNamePresent_ShareReplay$.pipe(
       tap((gameName) => {
-        const err: ScoponeError = {
-          message: `A game with the same name "${gameName}" has been already defined`,
-        };
-        errorCtx.setErrorContextValue(err);
+        errorService.setError(
+          `A game with the same name "${gameName}" has been already defined`
+        );
       })
     );
 
@@ -33,7 +31,7 @@ export const NewGame = () => {
       console.log("Unsubscribe NewGame subscription");
       subscription.unsubscribe();
     };
-  }, [server]);
+  }, [server, errorService]);
 
   const handleChange = (
     event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>

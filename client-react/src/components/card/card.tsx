@@ -1,7 +1,7 @@
 import { FC } from "react";
 import "./card.css";
 
-import { Card, Suits, Types } from "../../scopone-rx-service/card";
+import { Card, Suits, Types } from "../../rx-services/scopone-rx-service/card";
 
 enum TyepsView {
   Ace = "1",

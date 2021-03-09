@@ -10,8 +10,8 @@ import {
 
 import React, { useContext, useEffect, useState } from "react";
 import { ServerContext } from "../../context/server-context";
-import { Game } from "../../scopone-rx-service/messages";
-import { gameList$ } from "../../streams-transformations/game-list";
+import { Game } from "../../rx-services/scopone-rx-service/messages";
+import { gameList$ } from "../../rx-services/streams-transformations/game-list";
 
 type GameForList = Game & { canBeObservedOnly: boolean };
 

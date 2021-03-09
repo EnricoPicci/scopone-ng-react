@@ -1,9 +1,8 @@
 import React from "react";
-import { ScoponeError } from "../scopone-rx-service/scopone-errors";
+import { ErrorService } from "../rx-services/error-service/error.service";
 
-export type ErrorContextStruct = {
-  value: ScoponeError | undefined;
-  setErrorContextValue: (newValue: ScoponeError) => void;
-};
+const errorService = new ErrorService();
 
-export const ErrorContext = React.createContext<ErrorContextStruct>(null);
+console.log("Error service created");
+
+export const ErrorContext = React.createContext(errorService);

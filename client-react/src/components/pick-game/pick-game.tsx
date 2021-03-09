@@ -4,7 +4,7 @@ import { useHistory } from "react-router-dom";
 import { tap } from "rxjs/operators";
 
 import { ServerContext } from "../../context/server-context";
-import { myCurrentOpenGame$ } from "../../streams-transformations/my-current-open-game";
+import { myCurrentOpenGame$ } from "../../rx-services/streams-transformations/my-current-open-game";
 import { GameList } from "../game-list/game-list";
 import { NewGame } from "../new-game/new-game";
 

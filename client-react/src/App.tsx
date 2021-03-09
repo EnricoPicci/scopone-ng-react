@@ -4,7 +4,7 @@ import { BrowserRouter } from "react-router-dom";
 
 import "./App.css";
 import { CardComponent } from "./components/card/card";
-import { Card, Suits, Types } from "./scopone-rx-service/card";
+import { Card, Suits, Types } from "./rx-services/scopone-rx-service/card";
 import { Game } from "./components/game/game";
 
 function App() {

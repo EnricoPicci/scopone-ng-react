@@ -6,7 +6,7 @@ import { ServerContext } from "../../context/server-context";
 import SignIn from "../sign-in/sign-in";
 import { switchMap, tap } from "rxjs/operators";
 import { merge } from "rxjs";
-import { PlayerState } from "../../scopone-rx-service/messages";
+import { PlayerState } from "../../rx-services/scopone-rx-service/messages";
 import { Card, CardContent, CardHeader } from "@material-ui/core";
 
 import "./game.css";
@@ -14,18 +14,20 @@ import { PickGame } from "../pick-game/pick-game";
 import { Hand } from "../hand/hand";
 import { HandResult } from "../hand-result/hand-result";
 import { Error } from "../error/error";
-import { title$ } from "../../streams-transformations/title";
+import { title$ } from "../../rx-services/streams-transformations/title";
 import { ErrorContext } from "../../context/error-context";
-import { ScoponeError } from "../../scopone-rx-service/scopone-errors";
 
 const serverAddress = process.env.REACT_APP_SERVER_ADDRESS;
 
 export function Game() {
   const server = useContext(ServerContext);
+  const errorService = useContext(ErrorContext);
+
+  const [errorMsg, setErrorMsg] = useState(null);
+
   const history = useHistory();
 
   const [title, setTitle] = useState("Scopone Table - sign in please");
-  const [errorMsg, setErrorMsg] = useState<ScoponeError>();
 
   useEffect(() => {
     console.log("=======>>>>>>>>>>>>  Use Effect run in Game");
@@ -54,33 +56,31 @@ export function Game() {
       })
     );
 
+    // error$ sets the errorMsg state variable as a side effect
+    const error$ = errorService.error$.pipe(
+      tap((errMsg) => setErrorMsg(errMsg))
+    );
+
     // title$ sets the title as a side effect
     const _title$ = title$(server).pipe(tap((newTitle) => setTitle(newTitle)));
 
     const subscription = server
       .connect(serverAddress)
-      .pipe(switchMap(() => merge(navigate$, _title$)))
+      .pipe(switchMap(() => merge(navigate$, error$, _title$)))
       .subscribe({
         error: (err) => {
-          // this.errorService.error = err;
-          console.error("Error while communicating with the server", err);
-          //this.router.navigate(["error"]);
+          console.log("Error while communicating with the server", err);
+          setErrorMsg(err.message);
         },
       });
     return () => {
       console.log("Unsubscribe Game subscription");
       subscription.unsubscribe();
     };
-  }, [server, history]);
-
-  const setError = (error: ScoponeError) => {
-    setErrorMsg(error);
-  };
+  }, [server, errorService, history]);
 
   return (
-    <ErrorContext.Provider
-      value={{ value: errorMsg, setErrorContextValue: setError }}
-    >
+    <>
       <Card className="root" variant="outlined">
         <CardHeader title={title} className="header"></CardHeader>
         <CardContent>
@@ -95,9 +95,9 @@ export function Game() {
       </Card>
       {errorMsg && (
         <Card className="root" variant="outlined">
-          <CardHeader title={errorMsg.message} className="error"></CardHeader>
+          <CardHeader title={errorMsg} className="error"></CardHeader>
         </Card>
       )}
-    </ErrorContext.Provider>
+    </>
   );
 }

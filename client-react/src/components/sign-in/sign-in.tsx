@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useContext, useState } from "react";
+import React, { ChangeEvent, useContext, useEffect, useState } from "react";
 import {
   Button,
   TextField,
@@ -11,12 +11,33 @@ import {
 import "../style.css";
 import { ServerContext } from "../../context/server-context";
 import { useStyles } from "../style-material-ui";
+import { ErrorContext } from "../../context/error-context";
+import { tap } from "rxjs/operators";
 
 export default function SignIn() {
   const [playerName, setPlayerName] = useState("");
   const server = useContext(ServerContext);
+  const errorService = useContext(ErrorContext);
 
   const classes = useStyles();
+
+  useEffect(() => {
+    console.log("=======>>>>>>>>>>>>  Use Effect run in SignIn");
+
+    // playerAlreadyInOsteria$ notifies if the Player is already in the Osteria and navigate to Error page
+    const playerAlreadyInOsteria$ = server.playerIsAlreadyInOsteria$.pipe(
+      tap((pName) => {
+        errorService.setError(`Player "${pName}" is already in the Osteria`);
+      })
+    );
+
+    const subscription = playerAlreadyInOsteria$.subscribe();
+
+    return () => {
+      console.log("Unsubscribe SignIn subscription");
+      subscription.unsubscribe();
+    };
+  }, [server, errorService]);
 
   const handleChange = (
     event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
