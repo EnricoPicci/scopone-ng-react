@@ -168,7 +168,7 @@ export class ScoponeServerService {
                 (g.state === GameState.GameOpen ||
                   g.state === GameState.GameSuspended) &&
                 Object.keys(g.players).length === 4 &&
-                Object.keys(g.players).includes(this.playerName)
+                !Object.keys(g.players).includes(this.playerName)
             )
           : []
       ),

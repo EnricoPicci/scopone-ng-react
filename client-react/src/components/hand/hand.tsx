@@ -1,5 +1,10 @@
-import { FC } from "react";
+import React, { FC } from "react";
+import { Table } from "../table/table";
 
 export const Hand: FC = () => {
-  return <div>Hand</div>;
+  return (
+    <>
+      <Table></Table>
+    </>
+  );
 };

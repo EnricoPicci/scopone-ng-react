@@ -34,6 +34,7 @@ export const Game: FC = () => {
     // navigate$ Observable manages navigation as a side effect when a Player successfully enters the osteria
     const navigate$ = server.playerEnteredOsteria$.pipe(
       tap((player) => {
+        setErrorMsg(null);
         switch (player.status) {
           case PlayerState.playerNotPlaying:
             history.push("/pick-game");

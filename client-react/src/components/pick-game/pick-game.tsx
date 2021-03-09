@@ -2,6 +2,7 @@ import React, { FC, useContext, useEffect } from "react";
 
 import { useHistory } from "react-router-dom";
 import { tap } from "rxjs/operators";
+import { ErrorContext } from "../../context/error-context";
 
 import { ServerContext } from "../../context/server-context";
 import { myCurrentOpenGame$ } from "../../rx-services/streams-transformations/my-current-open-game";
@@ -10,6 +11,8 @@ import { NewGame } from "../new-game/new-game";
 
 export const PickGame: FC = () => {
   const server = useContext(ServerContext);
+  const errorService = useContext(ErrorContext);
+
   const history = useHistory();
 
   useEffect(() => {
@@ -18,6 +21,7 @@ export const PickGame: FC = () => {
     // navigate$ Observable manages navigation as a side effect when a Game is picked
     const navigate$ = myCurrentOpenGame$(server).pipe(
       tap(() => {
+        errorService.setError(null);
         history.push("/hand");
       })
     );
@@ -28,7 +32,7 @@ export const PickGame: FC = () => {
       console.log("Unsubscribe PickGame subscription");
       subscription.unsubscribe();
     };
-  }, [server, history]);
+  }, [server, errorService, history]);
 
   return (
     <>
