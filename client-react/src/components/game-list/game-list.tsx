@@ -45,7 +45,9 @@ export const GameList: FC = () => {
   };
 
   const handleConfirm = () => {
-    server.addPlayerToGame(server.playerName, selectedGame.name);
+    selectedGame.canBeObservedOnly
+      ? server.addObserverToGame(server.playerName, selectedGame.name)
+      : server.addPlayerToGame(server.playerName, selectedGame.name);
     handleDialogueClose();
   };
   const handleDialogueClose = () => {
