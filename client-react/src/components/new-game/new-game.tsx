@@ -1,5 +1,5 @@
 import { Card, CardHeader, CardContent, TextField } from "@material-ui/core";
-import { ChangeEvent, useContext, useEffect, useState } from "react";
+import { ChangeEvent, FC, useContext, useEffect, useState } from "react";
 import { tap } from "rxjs/operators";
 import { ErrorContext } from "../../context/error-context";
 import { ServerContext } from "../../context/server-context";
@@ -7,7 +7,7 @@ import { useStyles } from "../style-material-ui";
 
 import "../style.css";
 
-export const NewGame = () => {
+export const NewGame: FC = () => {
   const [gameName, setGameName] = useState("");
   const server = useContext(ServerContext);
   const errorService = useContext(ErrorContext);
@@ -57,8 +57,8 @@ export const NewGame = () => {
             id="standard-full-width"
             label="Name"
             style={{ margin: 8 }}
-            placeholder="Your name as player"
-            helperText="Use the same name if you loose session and want to riconnect"
+            placeholder="The name of the new game"
+            helperText="Give a name to the new game you want to create"
             fullWidth
             margin="normal"
             InputLabelProps={{

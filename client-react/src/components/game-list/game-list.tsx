@@ -8,14 +8,14 @@ import {
   ListItemText,
 } from "@material-ui/core";
 
-import React, { useContext, useEffect, useState } from "react";
+import React, { FC, useContext, useEffect, useState } from "react";
 import { ServerContext } from "../../context/server-context";
 import { Game } from "../../rx-services/scopone-rx-service/messages";
 import { gameList$ } from "../../rx-services/streams-transformations/game-list";
 
 type GameForList = Game & { canBeObservedOnly: boolean };
 
-export const GameList = () => {
+export const GameList: FC = () => {
   const [games, setGames] = useState<Array<GameForList>>([]);
   const [selectedGame, setSelectedGame] = useState<GameForList>();
   const [

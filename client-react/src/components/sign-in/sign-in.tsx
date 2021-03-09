@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useContext, useEffect, useState } from "react";
+import React, { ChangeEvent, FC, useContext, useEffect, useState } from "react";
 import {
   Button,
   TextField,
@@ -14,7 +14,7 @@ import { useStyles } from "../style-material-ui";
 import { ErrorContext } from "../../context/error-context";
 import { tap } from "rxjs/operators";
 
-export default function SignIn() {
+export const SignIn: FC = () => {
   const [playerName, setPlayerName] = useState("");
   const server = useContext(ServerContext);
   const errorService = useContext(ErrorContext);
@@ -86,4 +86,4 @@ export default function SignIn() {
       </CardActions>
     </Card>
   );
-}
+};

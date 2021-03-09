@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { FC, useContext, useEffect } from "react";
 
 import { useHistory } from "react-router-dom";
 import { tap } from "rxjs/operators";
@@ -8,7 +8,7 @@ import { myCurrentOpenGame$ } from "../../rx-services/streams-transformations/my
 import { GameList } from "../game-list/game-list";
 import { NewGame } from "../new-game/new-game";
 
-export const PickGame = () => {
+export const PickGame: FC = () => {
   const server = useContext(ServerContext);
   const history = useHistory();
 

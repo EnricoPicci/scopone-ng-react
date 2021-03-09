@@ -1,9 +1,9 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { FC, useContext, useEffect, useState } from "react";
 
 import { Switch, Route, useHistory } from "react-router-dom";
 
 import { ServerContext } from "../../context/server-context";
-import SignIn from "../sign-in/sign-in";
+import { SignIn } from "../sign-in/sign-in";
 import { switchMap, tap } from "rxjs/operators";
 import { merge } from "rxjs";
 import { PlayerState } from "../../rx-services/scopone-rx-service/messages";
@@ -19,7 +19,7 @@ import { ErrorContext } from "../../context/error-context";
 
 const serverAddress = process.env.REACT_APP_SERVER_ADDRESS;
 
-export function Game() {
+export const Game: FC = () => {
   const server = useContext(ServerContext);
   const errorService = useContext(ErrorContext);
 
@@ -49,9 +49,7 @@ export function Game() {
             break;
           default:
             const errMsg = `State "${player.status}" is not expected - look at the console for more details`;
-            this.errorService.error = { message: errMsg };
             console.error(errMsg);
-            this.router.navigate(["error"]);
         }
       })
     );
@@ -100,4 +98,4 @@ export function Game() {
       )}
     </>
   );
-}
+};
