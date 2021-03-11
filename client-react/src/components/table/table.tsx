@@ -39,23 +39,47 @@ export const Table: FC<ITableProps> = ({ teams, currentPlayerName }) => {
                 <tr className="table-row">
                   <td></td>
                   <td>
-                    <div className="player player-3">{playerName(1, 0)}</div>
+                    <div
+                      className={`player player-3 ${
+                        playerLeft(1, 0) ? "player-absent" : ""
+                      } ${isCurrentPlayer(1, 0) ? "current-player" : ""}`}
+                    >
+                      {playerName(1, 0)}
+                    </div>
                   </td>
                   <td></td>
                 </tr>
                 <tr className="table-row">
                   <td>
-                    <div className="player player-1">{playerName(0, 0)}</div>
+                    <div
+                      className={`player player-1 ${
+                        playerLeft(0, 0) ? "player-absent" : ""
+                      } ${isCurrentPlayer(0, 0) ? "current-player" : ""}`}
+                    >
+                      {playerName(0, 0)}
+                    </div>
                   </td>
                   <td></td>
                   <td>
-                    <div className="player player-2">{playerName(0, 1)}</div>
+                    <div
+                      className={`player player-2 ${
+                        playerLeft(0, 1) ? "player-absent" : ""
+                      } ${isCurrentPlayer(0, 1) ? "current-player" : ""}`}
+                    >
+                      {playerName(0, 1)}
+                    </div>
                   </td>
                 </tr>
                 <tr className="table-row">
                   <td></td>
                   <td>
-                    <div className="player player-4">{playerName(1, 1)}</div>
+                    <div
+                      className={`player player-4 ${
+                        playerLeft(1, 1) ? "player-absent" : ""
+                      } ${isCurrentPlayer(1, 1) ? "current-player" : ""}`}
+                    >
+                      {playerName(1, 1)}
+                    </div>
                   </td>
                   <td></td>
                 </tr>
