@@ -1,7 +1,9 @@
+import { Button } from "@material-ui/core";
 import React, { FC, useContext, useEffect, useState } from "react";
 import { merge } from "rxjs";
 import { tap } from "rxjs/operators";
 import { ServerContext } from "../../context/server-context";
+import { Card, TypeValues } from "../../rx-services/scopone-rx-service/card";
 import { HandState, Team } from "../../rx-services/scopone-rx-service/messages";
 import { Table } from "../table/table";
 
@@ -13,6 +15,11 @@ export const Hand: FC = () => {
 
   const [showStartButton, setShowStartButton] = useState(false);
   const [teams, setTeams] = useState<[Team, Team]>(null);
+  const [playerCards, setPlayerCards] = useState<Card[]>(null);
+  const [table, setTable] = useState<Card[]>(null);
+  const [ourScope, setOurScope] = useState<Card[]>(null);
+  const [theirScope, setTheirScope] = useState<Card[]>(null);
+  const [currentPlayerName, setCurrentPlayerName] = useState<string>(null);
 
   useEffect(() => {
     console.log("=======>>>>>>>>>>>>  Use Effect run in Hand");
@@ -34,17 +41,53 @@ export const Hand: FC = () => {
       })
     );
 
-    const subscription = merge(myCurrentGame$).subscribe();
+    // myCurrentGame$ Observable manages set teams and showSartButton state as a side effect
+    // when the updated info about my current OBSERVED game is notified on the server stream
+    const myObservedGame$ = server.myCurrentObservedGame_ShareReplay$.pipe(
+      tap((game) => {
+        setTeams(game.teams);
+        setShowStartButton(false);
+      })
+    );
+
+    const handView$ = server.handView_ShareReplay$.pipe(
+      tap((hv) => {
+        const pCards = hv.playerCards?.sort(
+          (a, b) => TypeValues[b.type] - TypeValues[a.type]
+        );
+        setPlayerCards(pCards);
+        setTable(hv.table);
+        setOurScope(hv.ourScope);
+        setTheirScope(hv.theirScope);
+        setCurrentPlayerName(hv.currentPlayerName);
+      })
+    );
+
+    const subscription = merge(
+      myCurrentGame$,
+      myObservedGame$,
+      handView$
+    ).subscribe();
 
     return () => {
       console.log("Unsubscribe Hand subscription");
       subscription.unsubscribe();
     };
   }, [server]);
+
+  const start = () => {
+    server.newHand();
+  };
+
   return (
     <>
       {teams && (
-        <Table teams={teams} currentPlayerName={server.playerName}></Table>
+        <Table teams={teams} currentPlayerName={currentPlayerName}></Table>
+      )}
+      {showStartButton && (
+        <Button size="small" onClick={start}>
+          Start
+        </Button>
       )}
     </>
   );
