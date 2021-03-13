@@ -11,6 +11,7 @@ interface ICardsProps {
   cards: CardObj[];
   enabled?: boolean;
   initialLayout?: Layout;
+  cardClickHandler?: (card: any) => void;
 }
 
 export type Layout = "spread" | "fan";
@@ -25,6 +26,7 @@ export const Cards: FC<ICardsProps> = ({
   cards,
   enabled = false,
   initialLayout = "spread",
+  cardClickHandler,
 }) => {
   const [layout, setLayout] = useState<Layout>(initialLayout);
 
@@ -103,6 +105,7 @@ export const Cards: FC<ICardsProps> = ({
               key={card.suit + card.type}
               height={_cardSize.toString()}
               style={_styleType(i)}
+              clickHandler={cardClickHandler}
             ></PlayingCard>
           ))}
         </div>

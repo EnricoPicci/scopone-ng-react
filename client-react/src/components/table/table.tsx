@@ -1,17 +1,20 @@
-import { FC } from "react";
+import React, { FC } from "react";
+import { Card as CardObj } from "../../rx-services/scopone-rx-service/card";
 import {
   PlayerState,
   Team,
 } from "../../rx-services/scopone-rx-service/messages";
+import { Card } from "../card/card";
 
 import "./table.css";
 
 interface ITableProps {
   teams: [Team, Team];
   currentPlayerName: string;
+  cards: CardObj[];
 }
 
-export const Table: FC<ITableProps> = ({ teams, currentPlayerName }) => {
+export const Table: FC<ITableProps> = ({ teams, currentPlayerName, cards }) => {
   const playerName = (tNum: number, pNum: number) => {
     let name = teams[tNum].Players[pNum] ? teams[tNum].Players[pNum].name : "-";
     name = playerLeft(tNum, pNum) ? `${name} (left the Osteria)` : name;
@@ -27,6 +30,9 @@ export const Table: FC<ITableProps> = ({ teams, currentPlayerName }) => {
     return teams && teams[tNum].Players[pNum]
       ? teams[tNum].Players[pNum].name === currentPlayerName
       : false;
+  };
+  const marginLeft = (i: number) => {
+    return `${i * 12}%`;
   };
 
   return (
@@ -85,6 +91,25 @@ export const Table: FC<ITableProps> = ({ teams, currentPlayerName }) => {
                 </tr>
               </tbody>
             </table>
+            {/* {cards?.length > 0 && (
+              <Cards cards={cards} name="Table" initialLayout="spread"></Cards>
+            )} */}
+            {cards?.map((card, i) => (
+              <Card
+                card={card}
+                style={{ marginLeft: marginLeft(i) }}
+                height="100"
+                key={`${card.suit}${card.type}`}
+              ></Card>
+            ))}
+            {/* <div *ngFor="let card of cards; index as i">
+        <scopone-card
+          [card]="card"
+          class="card"
+          [style.margin-left]="marginLeft(i)"
+        >
+        </scopone-card>
+      </div> */}
           </div>
         </div>
       </div>

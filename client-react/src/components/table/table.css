@@ -97,6 +97,13 @@ td {
   z-index: 9;
   width: 10%;
 }
+.board .playing-card {
+  position: absolute;
+  top: 25%;
+  left: 15%;
+  z-index: 9;
+  width: 10%;
+}
 
 .card-small {
   border: 0.2em solid black;

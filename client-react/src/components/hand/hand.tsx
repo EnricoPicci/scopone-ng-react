@@ -97,12 +97,36 @@ export const Hand: FC = () => {
     server.newHand();
   };
 
+  const play = (card: Card) => {
+    //this.canSendCardToServer = false;
+    const cardsTakeable = server.cardsTakeable(card, handReactState.table);
+    if (cardsTakeable.length > 1) {
+      // const dialogRef = this.dialog.open(CardsPickerDialogueComponent, {
+      //   width: '1250px',
+      //   height: '600px',
+      //   data: { cards: cardsTakeable },
+      // });
+      // dialogRef.afterClosed().subscribe((cardsToTake) => {
+      //   console.log('The player has chosen', cardsToTake);
+      //   this.scoponeService.playCardForPlayer(
+      //     this.scoponeService.playerName,
+      //     card,
+      //     cardsToTake
+      //   );
+      // });
+      throw new Error("multiple choice not yet implemented");
+    } else {
+      server.playCard(card, handReactState.table);
+    }
+  };
+
   return (
     <>
       {handReactState.teams && (
         <Table
           teams={handReactState.teams}
           currentPlayerName={handReactState.currentPlayerName}
+          cards={handReactState.table}
         ></Table>
       )}
       {handReactState.playerCards.length > 0 && (
@@ -110,6 +134,7 @@ export const Hand: FC = () => {
           cards={handReactState.playerCards}
           name="My cards"
           initialLayout="fan"
+          cardClickHandler={play}
         ></Cards>
       )}
       {handReactState.ourScope.length > 0 && (

@@ -7,7 +7,7 @@ import {
   Types,
 } from "../../rx-services/scopone-rx-service/card";
 
-enum TyepsView {
+enum TypesView {
   Ace = "1",
   King = "k",
   Queen = "q",
@@ -27,14 +27,14 @@ suitsMap.set(Suits.SPADE, "s");
 
 interface ICardProps {
   card: PlayingCard;
-  style: any;
+  style?: any;
   height: string;
-  clickHandler?: () => void;
+  clickHandler?: (card: any) => void;
 }
 
 export const Card: FC<ICardProps> = (props) => {
   const cardSvg = (suit: Suits, type: Types) => {
-    const t = TyepsView[type];
+    const t = TypesView[type];
     const s = suitsMap.get(suit);
     const resourcePath = `/card-images/svg/${t}${s}.svg`;
     // https://create-react-app.dev/docs/using-the-public-folder#when-to-use-the-public-folder
@@ -48,9 +48,8 @@ export const Card: FC<ICardProps> = (props) => {
         height={props.height}
         className="playing-card"
         src={cardSvg(props.card.suit, props.card.type)}
-        // alt={this.state.flipped === true ? 'Hidden Card' : PlayingCardsList[this.state.card]}
-        alt={""}
-        onClick={props.clickHandler}
+        alt={`${props.card.type} ${props.card.suit}`}
+        onClick={() => props.clickHandler(props.card)}
       />
     </div>
   );
