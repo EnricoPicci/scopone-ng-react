@@ -2,6 +2,8 @@ import { FC, useState } from "react";
 import { Card as PalyingCard } from "../../rx-services/scopone-rx-service/card";
 import { Card } from "../card/card";
 
+import "./cards.css";
+
 interface ICardsProps {
   name: string;
   cards: PalyingCard[];
@@ -58,7 +60,6 @@ export const Cards: FC<ICardsProps> = ({ name, cards, enabled = false }) => {
     // styleType = this.stackStyle;
   }
 
-  console.log("=========>>>>>>>>>>>>>  Cards Render");
   return (
     <div
       className="cards"
