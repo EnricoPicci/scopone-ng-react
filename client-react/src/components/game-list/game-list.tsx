@@ -15,13 +15,23 @@ import { gameList$ } from "../../rx-services/streams-transformations/game-list";
 
 type GameForList = Game & { canBeObservedOnly: boolean };
 
+// we define a type for the state so that we can issue a single call to the update state function and
+// avoid so multiple execution of the render function
+// https://stackoverflow.com/questions/53574614/multiple-calls-to-state-updater-from-usestate-in-component-causes-multiple-re-re
+type GameListReactState = {
+  games: Array<GameForList>;
+  selectedGame?: GameForList;
+  openConfirmationDialogue: boolean;
+};
+
 export const GameList: FC = () => {
-  const [games, setGames] = useState<Array<GameForList>>([]);
-  const [selectedGame, setSelectedGame] = useState<GameForList>();
   const [
-    openConfirmationDialogue,
-    setOpenConfirmationDialogue,
-  ] = React.useState(false);
+    gameListReactState,
+    setGameListReactState,
+  ] = useState<GameListReactState>({
+    games: [],
+    openConfirmationDialogue: false,
+  });
 
   const server = useContext(ServerContext);
 
@@ -30,7 +40,9 @@ export const GameList: FC = () => {
       "=======<<<<<<<<<<<<<<<>>>>>>>>>>>>  Use Effect run in GameList"
     );
 
-    const subscription = gameList$(server).subscribe(setGames);
+    const subscription = gameList$(server).subscribe((games) =>
+      setGameListReactState((prevState) => ({ ...prevState, games }))
+    );
 
     return () => subscription.unsubscribe();
   }, [server]);
@@ -39,26 +51,33 @@ export const GameList: FC = () => {
     return game.canBeObservedOnly ? `${game.name} (as an Observer)` : game.name;
   };
 
-  const handleSelect = (game: GameForList) => {
-    setSelectedGame(game);
-    setOpenConfirmationDialogue(true);
+  const handleSelect = (selectedGame: GameForList) => {
+    setGameListReactState((prevState) => ({
+      ...prevState,
+      selectedGame,
+      openConfirmationDialogue: true,
+    }));
   };
 
   const handleConfirm = () => {
+    const selectedGame = gameListReactState.selectedGame;
     selectedGame.canBeObservedOnly
       ? server.addObserverToGame(server.playerName, selectedGame.name)
       : server.addPlayerToGame(server.playerName, selectedGame.name);
     handleDialogueClose();
   };
   const handleDialogueClose = () => {
-    setOpenConfirmationDialogue(false);
+    setGameListReactState((prevState) => ({
+      ...prevState,
+      openConfirmationDialogue: false,
+    }));
   };
 
   return (
     <>
       <div className="root">
         <List component="nav">
-          {games.map((game, i) => (
+          {gameListReactState.games.map((game, i) => (
             <ListItem
               key={game.name}
               button
@@ -80,7 +99,10 @@ export const GameList: FC = () => {
           ))}
         </List>
       </div>
-      <Dialog open={openConfirmationDialogue} onClose={handleDialogueClose}>
+      <Dialog
+        open={gameListReactState.openConfirmationDialogue}
+        onClose={handleDialogueClose}
+      >
         <DialogTitle>{`Confirm to join ${handleSelect.name}?`}</DialogTitle>
         <DialogActions>
           <Button onClick={handleConfirm} color="primary">

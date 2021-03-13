@@ -8,19 +8,25 @@ import { HandState, Team } from "../../rx-services/scopone-rx-service/messages";
 import { Cards } from "../cards/cards";
 import { Table } from "../table/table";
 
+// we define a type for the state so that we can issue a single call to the update state function and
+// avoid so multiple execution of the render function
+// https://stackoverflow.com/questions/53574614/multiple-calls-to-state-updater-from-usestate-in-component-causes-multiple-re-re
+type HandReactState = {
+  showStartButton: boolean;
+  teams?: [Team, Team];
+  playerCards?: Card[];
+  table?: Card[];
+  ourScope?: Card[];
+  theirScope?: Card[];
+  currentPlayerName?: string;
+};
+
 export const Hand: FC = () => {
   const server = useContext(ServerContext);
-  // const errorService = useContext(ErrorContext);
 
-  // const history = useHistory();
-
-  const [showStartButton, setShowStartButton] = useState(false);
-  const [teams, setTeams] = useState<[Team, Team]>(null);
-  const [playerCards, setPlayerCards] = useState<Card[]>(null);
-  const [table, setTable] = useState<Card[]>(null);
-  const [ourScope, setOurScope] = useState<Card[]>(null);
-  const [theirScope, setTheirScope] = useState<Card[]>(null);
-  const [currentPlayerName, setCurrentPlayerName] = useState<string>(null);
+  const [handReactState, setHandReactState] = useState<HandReactState>({
+    showStartButton: false,
+  });
 
   useEffect(() => {
     console.log("=======>>>>>>>>>>>>  Use Effect run in Hand");
@@ -29,7 +35,7 @@ export const Hand: FC = () => {
     // when the updated info about my current game is notified on the server stream
     const myCurrentGame$ = server.myCurrentOpenGame_ShareReplay$.pipe(
       tap((game) => {
-        setTeams(game.teams);
+        const teams = game.teams;
         // decide whether to show or not the Start Game button
         const gameWith4PlayersAndNoHand =
           Object.keys(game.players).length === 4 && game.hands.length === 0;
@@ -38,7 +44,8 @@ export const Hand: FC = () => {
             ? game.hands[game.hands.length - 1].state === HandState.closed
             : false
           : false;
-        setShowStartButton(gameWith4PlayersAndNoHand || lastHandClosed);
+        const showStartButton = gameWith4PlayersAndNoHand || lastHandClosed;
+        setHandReactState({ teams, showStartButton });
       })
     );
 
@@ -46,8 +53,8 @@ export const Hand: FC = () => {
     // when the updated info about my current OBSERVED game is notified on the server stream
     const myObservedGame$ = server.myCurrentObservedGame_ShareReplay$.pipe(
       tap((game) => {
-        setTeams(game.teams);
-        setShowStartButton(false);
+        const teams = game.teams;
+        setHandReactState({ teams, showStartButton: false });
       })
     );
 
@@ -56,11 +63,14 @@ export const Hand: FC = () => {
         const pCards = hv.playerCards?.sort(
           (a, b) => TypeValues[b.type] - TypeValues[a.type]
         );
-        setPlayerCards(pCards);
-        setTable(hv.table);
-        setOurScope(hv.ourScope);
-        setTheirScope(hv.theirScope);
-        setCurrentPlayerName(hv.currentPlayerName);
+        const newState: Partial<HandReactState> = {
+          playerCards: pCards,
+          table: hv.table,
+          ourScope: hv.ourScope,
+          theirScope: hv.theirScope,
+          currentPlayerName: hv.currentPlayerName,
+        };
+        setHandReactState((prevState) => ({ ...prevState, ...newState }));
       })
     );
 
@@ -82,11 +92,16 @@ export const Hand: FC = () => {
 
   return (
     <>
-      {teams && (
-        <Table teams={teams} currentPlayerName={currentPlayerName}></Table>
+      {handReactState.teams && (
+        <Table
+          teams={handReactState.teams}
+          currentPlayerName={handReactState.currentPlayerName}
+        ></Table>
       )}
-      {playerCards && <Cards cards={playerCards} name="My cards"></Cards>}
-      {showStartButton && (
+      {handReactState.playerCards && (
+        <Cards cards={handReactState.playerCards} name="My cards"></Cards>
+      )}
+      {handReactState.showStartButton && (
         <Button size="small" onClick={start}>
           Start
         </Button>

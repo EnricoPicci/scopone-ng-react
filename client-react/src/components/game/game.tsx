@@ -19,22 +19,30 @@ import { ErrorContext } from "../../context/error-context";
 
 const serverAddress = process.env.REACT_APP_SERVER_ADDRESS;
 
+// we define a type for the state so that we can issue a single call to the update state function and
+// avoid so multiple execution of the render function
+// https://stackoverflow.com/questions/53574614/multiple-calls-to-state-updater-from-usestate-in-component-causes-multiple-re-re
+type GameReactState = {
+  title: string;
+  errorMsg?: string;
+};
+
 export const Game: FC = () => {
   const server = useContext(ServerContext);
   const errorService = useContext(ErrorContext);
 
-  const [errorMsg, setErrorMsg] = useState(null);
+  const [gameReactState, setGameReactState] = useState<GameReactState>({
+    title: "Scopone Table - sign in please",
+  });
 
   const history = useHistory();
-
-  const [title, setTitle] = useState("Scopone Table - sign in please");
 
   useEffect(() => {
     console.log("=======>>>>>>>>>>>>  Use Effect run in Game");
     // navigate$ Observable manages navigation as a side effect when a Player successfully enters the osteria
     const navigate$ = server.playerEnteredOsteria$.pipe(
       tap((player) => {
-        setErrorMsg(null);
+        setGameReactState((prevState) => ({ ...prevState, errorMsg: null }));
         switch (player.status) {
           case PlayerState.playerNotPlaying:
             history.push("/pick-game");
@@ -57,11 +65,17 @@ export const Game: FC = () => {
 
     // error$ sets the errorMsg state variable as a side effect
     const error$ = errorService.error$.pipe(
-      tap((errMsg) => setErrorMsg(errMsg))
+      tap((errorMsg) =>
+        setGameReactState((prevState) => ({ ...prevState, errorMsg }))
+      )
     );
 
     // title$ sets the title as a side effect
-    const _title$ = title$(server).pipe(tap((newTitle) => setTitle(newTitle)));
+    const _title$ = title$(server).pipe(
+      tap((newTitle) =>
+        setGameReactState((prevState) => ({ ...prevState, title: newTitle }))
+      )
+    );
 
     const subscription = server
       .connect(serverAddress)
@@ -69,7 +83,10 @@ export const Game: FC = () => {
       .subscribe({
         error: (err) => {
           console.log("Error while communicating with the server", err);
-          setErrorMsg(err.message);
+          setGameReactState((prevState) => ({
+            ...prevState,
+            errorMsg: err.message,
+          }));
         },
       });
     return () => {
@@ -81,7 +98,10 @@ export const Game: FC = () => {
   return (
     <>
       <Card className="root" variant="outlined">
-        <CardHeader title={title} className="header"></CardHeader>
+        <CardHeader
+          title={gameReactState.title}
+          className="header"
+        ></CardHeader>
         <CardContent>
           <Switch>
             <Route path="/" component={SignIn} exact />
@@ -92,9 +112,12 @@ export const Game: FC = () => {
           </Switch>
         </CardContent>
       </Card>
-      {errorMsg && (
+      {gameReactState.errorMsg && (
         <Card className="root" variant="outlined">
-          <CardHeader title={errorMsg} className="error"></CardHeader>
+          <CardHeader
+            title={gameReactState.errorMsg}
+            className="error"
+          ></CardHeader>
         </Card>
       )}
     </>
