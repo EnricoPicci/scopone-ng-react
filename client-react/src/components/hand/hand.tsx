@@ -14,10 +14,10 @@ import { Table } from "../table/table";
 type HandReactState = {
   showStartButton: boolean;
   teams?: [Team, Team];
-  playerCards?: Card[];
+  playerCards: Card[];
   table?: Card[];
-  ourScope?: Card[];
-  theirScope?: Card[];
+  ourScope: Card[];
+  theirScope: Card[];
   currentPlayerName?: string;
 };
 
@@ -25,6 +25,9 @@ export const Hand: FC = () => {
   const server = useContext(ServerContext);
 
   const [handReactState, setHandReactState] = useState<HandReactState>({
+    playerCards: [],
+    ourScope: [],
+    theirScope: [],
     showStartButton: false,
   });
 
@@ -45,7 +48,11 @@ export const Hand: FC = () => {
             : false
           : false;
         const showStartButton = gameWith4PlayersAndNoHand || lastHandClosed;
-        setHandReactState({ teams, showStartButton });
+        setHandReactState((prevState) => ({
+          ...prevState,
+          teams,
+          showStartButton,
+        }));
       })
     );
 
@@ -54,7 +61,7 @@ export const Hand: FC = () => {
     const myObservedGame$ = server.myCurrentObservedGame_ShareReplay$.pipe(
       tap((game) => {
         const teams = game.teams;
-        setHandReactState({ teams, showStartButton: false });
+        setHandReactState((prevState) => ({ ...prevState, teams }));
       })
     );
 
@@ -98,8 +105,18 @@ export const Hand: FC = () => {
           currentPlayerName={handReactState.currentPlayerName}
         ></Table>
       )}
-      {handReactState.playerCards && (
-        <Cards cards={handReactState.playerCards} name="My cards"></Cards>
+      {handReactState.playerCards.length > 0 && (
+        <Cards
+          cards={handReactState.playerCards}
+          name="My cards"
+          initialLayout="fan"
+        ></Cards>
+      )}
+      {handReactState.ourScope.length > 0 && (
+        <Cards cards={handReactState.ourScope} name="Our Scope"></Cards>
+      )}
+      {handReactState.theirScope.length > 0 && (
+        <Cards cards={handReactState.theirScope} name="Their Scope"></Cards>
       )}
       {handReactState.showStartButton && (
         <Button size="small" onClick={start}>
