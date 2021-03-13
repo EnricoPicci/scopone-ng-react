@@ -5,6 +5,7 @@ import { tap } from "rxjs/operators";
 import { ServerContext } from "../../context/server-context";
 import { Card, TypeValues } from "../../rx-services/scopone-rx-service/card";
 import { HandState, Team } from "../../rx-services/scopone-rx-service/messages";
+import { Cards } from "../cards/cards";
 import { Table } from "../table/table";
 
 export const Hand: FC = () => {
@@ -84,6 +85,7 @@ export const Hand: FC = () => {
       {teams && (
         <Table teams={teams} currentPlayerName={currentPlayerName}></Table>
       )}
+      {playerCards && <Cards cards={playerCards} name="My cards"></Cards>}
       {showStartButton && (
         <Button size="small" onClick={start}>
           Start

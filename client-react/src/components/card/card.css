@@ -3,4 +3,5 @@
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   border-radius: 4px;
   /*-webkit-backface-visibility: hidden; /*fix for jumping*/
+  position: absolute;
 }
