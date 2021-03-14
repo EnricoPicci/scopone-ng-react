@@ -45,6 +45,7 @@ export const Cards: FC<ICardsProps> = ({
   let _degs: number;
   let _initialDown: number;
   let _down: number;
+  let _canPlayCard = true;
 
   const resetSpread = () => {
     _initialOver = 110 * (cards.length - 1);
@@ -93,7 +94,13 @@ export const Cards: FC<ICardsProps> = ({
   }
 
   const clickHandler = (card: CardObj) => {
-    if (enabled) {
+    if (enabled && _canPlayCard) {
+      _canPlayCard = false;
+      console.log(
+        "==============>>>>>>>>>>>>>!!!!!!!!!!!!!!!!!!!!!!!!!!!! Card Played",
+        enabled,
+        _canPlayCard
+      );
       cardClickHandler(card);
     }
   };
