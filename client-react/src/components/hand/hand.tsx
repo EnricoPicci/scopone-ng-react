@@ -72,7 +72,7 @@ export const Hand: FC = () => {
     const handView$ = server.handView_ShareReplay$.pipe(
       tap((hv) => {
         const pCards = hv.playerCards?.sort(
-          (a, b) => TypeValues[b.type] - TypeValues[a.type]
+          (a, b) => TypeValues.get(b.type) - TypeValues.get(a.type)
         );
         const newState: Partial<HandReactState> = {
           playerCards: pCards,
@@ -148,7 +148,7 @@ export const Hand: FC = () => {
         <Cards
           cards={handReactState.playerCards}
           name="My cards"
-          initialLayout="fan"
+          initialLayout="spread"
           cardClickHandler={play}
           enabled={handReactState.enablePlay}
         ></Cards>

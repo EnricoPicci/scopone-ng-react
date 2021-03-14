@@ -96,11 +96,6 @@ export const Cards: FC<ICardsProps> = ({
   const clickHandler = (card: CardObj) => {
     if (enabled && _canPlayCard) {
       _canPlayCard = false;
-      console.log(
-        "==============>>>>>>>>>>>>>!!!!!!!!!!!!!!!!!!!!!!!!!!!! Card Played",
-        enabled,
-        _canPlayCard
-      );
       cardClickHandler(card);
     }
   };

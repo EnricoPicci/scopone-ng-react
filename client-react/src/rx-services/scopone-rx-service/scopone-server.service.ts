@@ -563,11 +563,11 @@ export class ScoponeServerService {
     // https://stackoverflow.com/a/55298156/5699993
     return this.combinationsOfCards(table).filter(
       (subsetOfCards) =>
-        subsetOfCards.reduce(this.add, 0) === TypeValues[cardPlayed.type]
+        subsetOfCards.reduce(this.add, 0) === TypeValues.get(cardPlayed.type)
     );
   }
   private add(sum: number, card: Card) {
-    return sum + TypeValues[card.type];
+    return sum + TypeValues.get(card.type);
   }
   combinationsOfCards(cards: Card[]) {
     return (
@@ -580,7 +580,9 @@ export class ScoponeServerService {
   }
 
   sortCardsByType(cards: Card[]) {
-    return cards.sort((a, b) => TypeValues[b.type] - TypeValues[a.type]);
+    return cards.sort(
+      (a, b) => TypeValues.get(b.type) - TypeValues.get(a.type)
+    );
   }
   groupCardsBySuit(cards: Card[]) {
     return cards.reduce((acc, card) => {
