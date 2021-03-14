@@ -1,6 +1,6 @@
 import { Button } from "@material-ui/core";
 import React, { FC, useContext, useEffect, useState } from "react";
-import { merge } from "rxjs";
+import { combineLatest, merge } from "rxjs";
 import { tap } from "rxjs/operators";
 import { ServerContext } from "../../context/server-context";
 import { Card, TypeValues } from "../../rx-services/scopone-rx-service/card";
@@ -19,6 +19,7 @@ type HandReactState = {
   ourScope: Card[];
   theirScope: Card[];
   currentPlayerName?: string;
+  enablePlay: boolean;
 };
 
 export const Hand: FC = () => {
@@ -29,12 +30,13 @@ export const Hand: FC = () => {
     ourScope: [],
     theirScope: [],
     showStartButton: false,
+    enablePlay: false,
   });
 
   useEffect(() => {
     console.log("=======>>>>>>>>>>>>  Use Effect run in Hand");
 
-    // myCurrentGame$ Observable manages set teams and showSartButton state as a side effect
+    // myCurrentGame$ Observable sets teams and showSartButton state as a side effect
     // when the updated info about my current game is notified on the server stream
     const myCurrentGame$ = server.myCurrentOpenGame_ShareReplay$.pipe(
       tap((game) => {
@@ -56,7 +58,7 @@ export const Hand: FC = () => {
       })
     );
 
-    // myCurrentGame$ Observable manages set teams and showSartButton state as a side effect
+    // handView$ Observable sets teams and showSartButton state as a side effect
     // when the updated info about my current OBSERVED game is notified on the server stream
     const myObservedGame$ = server.myCurrentObservedGame_ShareReplay$.pipe(
       tap((game) => {
@@ -65,6 +67,8 @@ export const Hand: FC = () => {
       })
     );
 
+    // myCurrentGame$ Observable sets cards, scope and currentPlayerName as a side effect
+    // when new hand views are notified on the server stream
     const handView$ = server.handView_ShareReplay$.pipe(
       tap((hv) => {
         const pCards = hv.playerCards?.sort(
@@ -81,10 +85,21 @@ export const Hand: FC = () => {
       })
     );
 
+    const enablePlay$ = combineLatest([
+      server.isMyTurnToPlay$,
+      server.myCurrentOpenGameWithAll4PlayersIn_ShareReplay$,
+    ]).pipe(
+      tap(([isMyTurn, all4PlayersIn]) => {
+        const enablePlay = isMyTurn && all4PlayersIn;
+        setHandReactState((prevState) => ({ ...prevState, enablePlay }));
+      })
+    );
+
     const subscription = merge(
       myCurrentGame$,
       myObservedGame$,
-      handView$
+      handView$,
+      enablePlay$
     ).subscribe();
 
     return () => {
@@ -135,6 +150,7 @@ export const Hand: FC = () => {
           name="My cards"
           initialLayout="fan"
           cardClickHandler={play}
+          enabled={handReactState.enablePlay}
         ></Cards>
       )}
       {handReactState.ourScope.length > 0 && (

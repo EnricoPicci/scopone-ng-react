@@ -11,7 +11,7 @@ interface ICardsProps {
   cards: CardObj[];
   enabled?: boolean;
   initialLayout?: Layout;
-  cardClickHandler?: (card: any) => void;
+  cardClickHandler?: (card: CardObj) => void;
 }
 
 export type Layout = "spread" | "fan";
@@ -92,6 +92,12 @@ export const Cards: FC<ICardsProps> = ({
     _styleType = spreadStyle;
   }
 
+  const clickHandler = (card: CardObj) => {
+    if (enabled) {
+      cardClickHandler(card);
+    }
+  };
+
   return (
     <Card>
       {/* https://material-ui.com/customization/components/#overriding-styles-with-global-class-names */}
@@ -105,7 +111,7 @@ export const Cards: FC<ICardsProps> = ({
               key={card.suit + card.type}
               height={_cardSize.toString()}
               style={_styleType(i)}
-              clickHandler={cardClickHandler}
+              clickHandler={clickHandler}
             ></PlayingCard>
           ))}
         </div>
