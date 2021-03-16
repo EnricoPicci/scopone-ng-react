@@ -10,12 +10,11 @@ interface ICardsProps {
   name: string;
   cards: CardObj[];
   enabled?: boolean;
-  initialLayout?: Layout;
+  layout?: Layout;
   cardClickHandler?: (card: CardObj) => void;
-  additionalStyle?: any; // used to specify additional styles on top of what function _styleType(i) calculates
 }
 
-export type Layout = "spread" | "fan";
+export type Layout = "spread" | "fan" | "spread-left";
 
 const calculateCardSize = (length: number, layout: Layout) => {
   let cardSize = window.innerWidth / length;
@@ -26,11 +25,10 @@ export const Cards: FC<ICardsProps> = ({
   name,
   cards,
   enabled = false,
-  initialLayout = "spread",
+  layout = "spread",
   cardClickHandler,
-  additionalStyle = {},
 }) => {
-  const [layout, setLayout] = useState<Layout>(initialLayout);
+  const [_layout, _setLayout] = useState<Layout>(layout);
 
   // Variables which are not considered as state since their values depend only on the layout state variable value
   const _cardSize = calculateCardSize(cards.length, layout);
@@ -40,7 +38,7 @@ export const Cards: FC<ICardsProps> = ({
     i: number
   ) => {
     zIndex: number;
-    transform: string;
+    transform?: string;
   };
   let _curl: number;
   let _deg: number;
@@ -60,6 +58,13 @@ export const Cards: FC<ICardsProps> = ({
     return {
       zIndex: i,
       transform: `translateX(${-50 + _over * -1}%)`,
+    };
+  };
+  const spreadStyleLeft = (i: number) => {
+    return {
+      zIndex: i,
+      marginLeft: "30px",
+      position: "static",
     };
   };
 
@@ -93,6 +98,8 @@ export const Cards: FC<ICardsProps> = ({
   } else if (layout === "spread") {
     resetSpread();
     _styleType = spreadStyle;
+  } else if (layout === "spread-left") {
+    _styleType = spreadStyleLeft;
   }
 
   const clickHandler = (card: CardObj) => {
@@ -102,22 +109,30 @@ export const Cards: FC<ICardsProps> = ({
     }
   };
 
+  const _divStyle = () => {
+    let _style: React.CSSProperties =
+      layout === "fan"
+        ? {
+            height: _cardSize * 2,
+          }
+        : {};
+    _style =
+      layout === "spread-left" ? { ..._style, textAlign: "left" } : _style;
+    return _style;
+  };
   return (
     <Card>
       {/* https://material-ui.com/customization/components/#overriding-styles-with-global-class-names */}
       {/* https://material-ui.com/customization/components/#overriding-styles-with-class-names */}
       <CardHeader title={name} className="header"></CardHeader>
       <CardContent>
-        <div
-          className="cards"
-          style={{ height: layout === "fan" ? _cardSize * 2 : _cardSize }}
-        >
+        <div className="cards" style={_divStyle()}>
           {cards.map((card, i) => (
             <PlayingCard
               card={card}
               key={card.suit + card.type}
               height={_cardSize.toString()}
-              style={{ ...additionalStyle, ..._styleType(i) }}
+              style={_styleType(i)}
               clickHandler={clickHandler}
             ></PlayingCard>
           ))}

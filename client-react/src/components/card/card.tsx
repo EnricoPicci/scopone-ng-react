@@ -42,15 +42,13 @@ export const Card: FC<ICardProps> = (props) => {
   };
 
   return (
-    <div>
-      <img
-        style={props.style}
-        height={props.height}
-        className="playing-card"
-        src={cardSvg(props.card.suit, props.card.type)}
-        alt={`${props.card.type} ${props.card.suit}`}
-        onClick={() => props.clickHandler(props.card)}
-      />
-    </div>
+    <img
+      style={props.style}
+      height={props.height}
+      className="playing-card"
+      src={cardSvg(props.card.suit, props.card.type)}
+      alt={`${props.card.type} ${props.card.suit}`}
+      onClick={() => props.clickHandler(props.card)}
+    />
   );
 };

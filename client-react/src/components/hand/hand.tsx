@@ -182,10 +182,6 @@ export const Hand: FC = () => {
     return `Table taken by ${usOrThem}`;
   };
 
-  const cardPlayedTakenAffitionalStyle = {
-    marginLeft: "30px",
-    position: "static",
-  };
   return (
     <>
       {handReactState.teams && (
@@ -195,20 +191,28 @@ export const Hand: FC = () => {
           cards={handReactState.table}
         ></Table>
       )}
-      {handReactState.playerCards.length > 0 && (
+      {handReactState.playerCards?.length > 0 && (
         <Cards
           cards={handReactState.playerCards}
           name="My cards"
-          initialLayout="spread"
           cardClickHandler={play}
           enabled={handReactState.enablePlay}
+          layout="spread-left"
         ></Cards>
       )}
       {handReactState.ourScope.length > 0 && (
-        <Cards cards={handReactState.ourScope} name="Our Scope"></Cards>
+        <Cards
+          cards={handReactState.ourScope}
+          name="Our Scope"
+          layout="spread-left"
+        ></Cards>
       )}
       {handReactState.theirScope.length > 0 && (
-        <Cards cards={handReactState.theirScope} name="Their Scope"></Cards>
+        <Cards
+          cards={handReactState.theirScope}
+          name="Their Scope"
+          layout="spread-left"
+        ></Cards>
       )}
       {handReactState.showStartButton && (
         <Button size="small" onClick={start}>
@@ -220,20 +224,20 @@ export const Hand: FC = () => {
           <Cards
             cards={[cardsPlayedTakenReactState.cardPlayed]}
             name={`Card played by ${cardsPlayedTakenReactState.cardPlayedByPlayer}`}
-            additionalStyle={cardPlayedTakenAffitionalStyle}
+            layout="spread-left"
           ></Cards>
           {cardsPlayedTakenReactState.cardsTaken?.length > 0 && (
             <Cards
               cards={cardsPlayedTakenReactState.cardsTaken}
               name={`Cards taken`}
-              additionalStyle={cardPlayedTakenAffitionalStyle}
+              layout="spread-left"
             ></Cards>
           )}
           {cardsPlayedTakenReactState.finalTableTake?.Cards?.length > 0 && (
             <Cards
               cards={cardsPlayedTakenReactState.finalTableTake.Cards}
               name={tableTakenBy()}
-              additionalStyle={cardPlayedTakenAffitionalStyle}
+              layout="spread-left"
             ></Cards>
           )}
         </DialogContent>
