@@ -1,10 +1,14 @@
-import { Button } from "@material-ui/core";
+import { Button, Dialog, DialogContent } from "@material-ui/core";
 import React, { FC, useContext, useEffect, useState } from "react";
 import { combineLatest, merge } from "rxjs";
 import { tap } from "rxjs/operators";
 import { ServerContext } from "../../context/server-context";
 import { Card, TypeValues } from "../../rx-services/scopone-rx-service/card";
-import { HandState, Team } from "../../rx-services/scopone-rx-service/messages";
+import {
+  HandState,
+  Player,
+  Team,
+} from "../../rx-services/scopone-rx-service/messages";
 import { Cards } from "../cards/cards";
 import { Table } from "../table/table";
 
@@ -21,6 +25,16 @@ type HandReactState = {
   currentPlayerName?: string;
   enablePlay: boolean;
 };
+type CardsPlayedTakenReactState = {
+  openCardsPlayedDialogue: boolean;
+  cardPlayed?: Card;
+  cardPlayedByPlayer?: string;
+  cardsTaken?: Card[];
+  finalTableTake?: {
+    Cards: Card[];
+    TeamTakingTable: [Player, Player];
+  };
+};
 
 export const Hand: FC = () => {
   const server = useContext(ServerContext);
@@ -32,6 +46,10 @@ export const Hand: FC = () => {
     showStartButton: false,
     enablePlay: false,
   });
+  const [
+    cardsPlayedTakenReactState,
+    setCardsPlayedTakenReactState,
+  ] = useState<CardsPlayedTakenReactState>({ openCardsPlayedDialogue: false });
 
   useEffect(() => {
     console.log("=======>>>>>>>>>>>>  Use Effect run in Hand");
@@ -85,6 +103,64 @@ export const Hand: FC = () => {
       })
     );
 
+    // cardPlayedAndCardsTakenFromTable$ Observable listen to server.cardsPlayedAndTaken$ notification and
+    // open/close the dialogue as side effect
+    const cardPlayedAndCardsTakenFromTable$ = server.cardsPlayedAndTaken$.pipe(
+      tap(({ cardPlayed, cardsTaken, cardPlayedByPlayer, finalTableTake }) => {
+        const cardPlayedDialogueTimeout = cardsTaken?.length > 0 ? 4000 : 2000;
+        setCardsPlayedTakenReactState({
+          openCardsPlayedDialogue: true,
+          cardPlayed,
+          cardsTaken,
+          cardPlayedByPlayer,
+          finalTableTake,
+        });
+        setTimeout(() => {
+          setCardsPlayedTakenReactState((prevState) => ({
+            ...prevState,
+            openCardsPlayedDialogue: false,
+          }));
+          console.log("================>>>>>>>>>>>>>> delay");
+        }, cardPlayedDialogueTimeout);
+      })
+      // concatMap(
+      //   ({ cardPlayed, cardsTaken, cardPlayedByPlayer, finalTableTake }) => {
+      //     cardsTakenDialogueRef = this.dialog.open(
+      //       CardsTakenDialogueComponent,
+      //       {
+      //         width: '650px',
+      //         height: heightOfCardsTakenDialogue(cardsTaken, finalTableTake),
+      //         data: {
+      //           cardPlayed,
+      //           cardsTaken,
+      //           cardPlayedByPlayer,
+      //           finalTableTake,
+      //         },
+      //       }
+      //     );
+      //     cardsTakenDialogueRef.disableClose = true;
+      //     return cardsTakenDialogueRef.afterClosed();
+      //   }
+      // )
+    );
+    // const heightOfCardsTakenDialogue = (
+    //   cardsTaken: Card[],
+    //   finalTableTake: {
+    //     Cards: Card[];
+    //   }
+    // ) => {
+    //   const areCardsTaken = !!cardsTaken && cardsTaken.length > 0;
+    //   const areFinalCardsTaken =
+    //     !!finalTableTake &&
+    //     !!finalTableTake.Cards &&
+    //     finalTableTake.Cards.length > 0;
+    //   return areCardsTaken && areFinalCardsTaken
+    //     ? '900px'
+    //     : !areCardsTaken && !areFinalCardsTaken
+    //     ? '300px'
+    //     : '600px';
+    // };
+
     const enablePlay$ = combineLatest([
       server.isMyTurnToPlay$,
       server.myCurrentOpenGameWithAll4PlayersIn_ShareReplay$,
@@ -99,7 +175,8 @@ export const Hand: FC = () => {
       myCurrentGame$,
       myObservedGame$,
       handView$,
-      enablePlay$
+      enablePlay$,
+      cardPlayedAndCardsTakenFromTable$
     ).subscribe();
 
     return () => {
@@ -113,7 +190,6 @@ export const Hand: FC = () => {
   };
 
   const play = (card: Card) => {
-    //this.canSendCardToServer = false;
     const cardsTakeable = server.cardsTakeable(card, handReactState.table);
     if (cardsTakeable.length > 1) {
       // const dialogRef = this.dialog.open(CardsPickerDialogueComponent, {
@@ -135,6 +211,19 @@ export const Hand: FC = () => {
     }
   };
 
+  const tableTakenBy = () => {
+    const hasOurTeamTakenTheTable = cardsPlayedTakenReactState.finalTableTake.TeamTakingTable.find(
+      (p) => p.name === server.playerName
+    );
+    const usOrThem = hasOurTeamTakenTheTable ? "Us" : "Them";
+    return `Table taken by ${usOrThem}`;
+  };
+
+  console.log(
+    "==============================>>>>>>>>>>>>>>>>&&&&&&&&&&&&&&&&&&&&&&&",
+    cardsPlayedTakenReactState.openCardsPlayedDialogue,
+    cardsPlayedTakenReactState.cardPlayed
+  );
   return (
     <>
       {handReactState.teams && (
@@ -164,6 +253,26 @@ export const Hand: FC = () => {
           Start
         </Button>
       )}
+      <Dialog open={cardsPlayedTakenReactState.openCardsPlayedDialogue}>
+        <DialogContent>
+          <Cards
+            cards={[cardsPlayedTakenReactState.cardPlayed]}
+            name={`Card played by ${cardsPlayedTakenReactState.cardPlayedByPlayer}`}
+          ></Cards>
+          {cardsPlayedTakenReactState.cardsTaken?.length > 0 && (
+            <Cards
+              cards={cardsPlayedTakenReactState.cardsTaken}
+              name={`Cards taken`}
+            ></Cards>
+          )}
+          {cardsPlayedTakenReactState.finalTableTake?.Cards?.length > 0 && (
+            <Cards
+              cards={cardsPlayedTakenReactState.finalTableTake.Cards}
+              name={tableTakenBy()}
+            ></Cards>
+          )}
+        </DialogContent>
+      </Dialog>
     </>
   );
 };
