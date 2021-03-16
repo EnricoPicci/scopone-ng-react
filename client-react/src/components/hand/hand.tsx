@@ -120,46 +120,9 @@ export const Hand: FC = () => {
             ...prevState,
             openCardsPlayedDialogue: false,
           }));
-          console.log("================>>>>>>>>>>>>>> delay");
         }, cardPlayedDialogueTimeout);
       })
-      // concatMap(
-      //   ({ cardPlayed, cardsTaken, cardPlayedByPlayer, finalTableTake }) => {
-      //     cardsTakenDialogueRef = this.dialog.open(
-      //       CardsTakenDialogueComponent,
-      //       {
-      //         width: '650px',
-      //         height: heightOfCardsTakenDialogue(cardsTaken, finalTableTake),
-      //         data: {
-      //           cardPlayed,
-      //           cardsTaken,
-      //           cardPlayedByPlayer,
-      //           finalTableTake,
-      //         },
-      //       }
-      //     );
-      //     cardsTakenDialogueRef.disableClose = true;
-      //     return cardsTakenDialogueRef.afterClosed();
-      //   }
-      // )
     );
-    // const heightOfCardsTakenDialogue = (
-    //   cardsTaken: Card[],
-    //   finalTableTake: {
-    //     Cards: Card[];
-    //   }
-    // ) => {
-    //   const areCardsTaken = !!cardsTaken && cardsTaken.length > 0;
-    //   const areFinalCardsTaken =
-    //     !!finalTableTake &&
-    //     !!finalTableTake.Cards &&
-    //     finalTableTake.Cards.length > 0;
-    //   return areCardsTaken && areFinalCardsTaken
-    //     ? '900px'
-    //     : !areCardsTaken && !areFinalCardsTaken
-    //     ? '300px'
-    //     : '600px';
-    // };
 
     const enablePlay$ = combineLatest([
       server.isMyTurnToPlay$,
@@ -219,11 +182,10 @@ export const Hand: FC = () => {
     return `Table taken by ${usOrThem}`;
   };
 
-  console.log(
-    "==============================>>>>>>>>>>>>>>>>&&&&&&&&&&&&&&&&&&&&&&&",
-    cardsPlayedTakenReactState.openCardsPlayedDialogue,
-    cardsPlayedTakenReactState.cardPlayed
-  );
+  const cardPlayedTakenAffitionalStyle = {
+    marginLeft: "30px",
+    position: "static",
+  };
   return (
     <>
       {handReactState.teams && (
@@ -258,17 +220,20 @@ export const Hand: FC = () => {
           <Cards
             cards={[cardsPlayedTakenReactState.cardPlayed]}
             name={`Card played by ${cardsPlayedTakenReactState.cardPlayedByPlayer}`}
+            additionalStyle={cardPlayedTakenAffitionalStyle}
           ></Cards>
           {cardsPlayedTakenReactState.cardsTaken?.length > 0 && (
             <Cards
               cards={cardsPlayedTakenReactState.cardsTaken}
               name={`Cards taken`}
+              additionalStyle={cardPlayedTakenAffitionalStyle}
             ></Cards>
           )}
           {cardsPlayedTakenReactState.finalTableTake?.Cards?.length > 0 && (
             <Cards
               cards={cardsPlayedTakenReactState.finalTableTake.Cards}
               name={tableTakenBy()}
+              additionalStyle={cardPlayedTakenAffitionalStyle}
             ></Cards>
           )}
         </DialogContent>

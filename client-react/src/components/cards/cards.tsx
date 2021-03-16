@@ -12,6 +12,7 @@ interface ICardsProps {
   enabled?: boolean;
   initialLayout?: Layout;
   cardClickHandler?: (card: CardObj) => void;
+  additionalStyle?: any; // used to specify additional styles on top of what function _styleType(i) calculates
 }
 
 export type Layout = "spread" | "fan";
@@ -27,6 +28,7 @@ export const Cards: FC<ICardsProps> = ({
   enabled = false,
   initialLayout = "spread",
   cardClickHandler,
+  additionalStyle = {},
 }) => {
   const [layout, setLayout] = useState<Layout>(initialLayout);
 
@@ -106,13 +108,16 @@ export const Cards: FC<ICardsProps> = ({
       {/* https://material-ui.com/customization/components/#overriding-styles-with-class-names */}
       <CardHeader title={name} className="header"></CardHeader>
       <CardContent>
-        <div className="cards" style={{ height: _cardSize * 2 }}>
+        <div
+          className="cards"
+          style={{ height: layout === "fan" ? _cardSize * 2 : _cardSize }}
+        >
           {cards.map((card, i) => (
             <PlayingCard
               card={card}
               key={card.suit + card.type}
               height={_cardSize.toString()}
-              style={_styleType(i)}
+              style={{ ...additionalStyle, ..._styleType(i) }}
               clickHandler={clickHandler}
             ></PlayingCard>
           ))}
