@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "lib": ["dom"],
+    "strict": false,
+    "downlevelIteration": true,
+    "module": "commonjs"
+  }
+}

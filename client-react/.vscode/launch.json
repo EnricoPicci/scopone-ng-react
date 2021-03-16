@@ -10,7 +10,7 @@
       "request": "launch",
       "program": "${workspaceRoot}/node_modules/mocha/bin/_mocha",
       "args": ["-r", "ts-node/register", "${relativeFile}"],
-      "env": { "TS_NODE_PROJECT": "./src/scopone-rx-service/tsconfig.json" },
+      "env": { "TS_NODE_PROJECT": "./tsconfig-works-for-service-test.json" },
       "cwd": "${workspaceRoot}",
       "protocol": "inspector"
     }

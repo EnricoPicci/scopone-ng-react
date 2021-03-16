@@ -108,13 +108,13 @@ If the deployment succeeds, it prints on the console the url for the endpoint of
 
 ## Test WebSocket server APIs
 
-### Test the server from VSCode playing an entire game with standalone service (e.g. with the service in "scopone-rx-service" folder just below the Workspace folder)
+### Test the server from VSCode playing an entire game with standalone service (e.g. with the service in "scopone-rx-service" folder)
 
 Go to the server folder with `cd server`.
 Launch the server with `~/go/bin/server`.
-Set the WebSocket server url as value of the property `serverAddress` in the file `scopone-rx-service/src/environments/environment.ts`. If the WebSocket server has been launched locally, then the url is `ws://localhost:8080/osteria`. Otherwise specify the url to be used.
+Set the WebSocket server url as value of the property `serverAddress` in the file `scopone-rx-service/src/environments/environment.ts` (for the ng-client) or in `.env` file for client-react. If the WebSocket server has been launched locally, then the url is `ws://localhost:8080/osteria`. Otherwise specify the url to be used.
 
-Go to the scopone-rx-service (cd scopone-rx-service from the workspace folder). Open VSCode and from within VSCode, open the file `service.mocha-play-game.ts`. Go to the VSCode Debug window, select "Current TS Tests File" in the Run drop down list and launch.
+Go to the scopone-rx-service (`cd scopone-rx-service` from the workspace folder for Angular or `cd client-react` for React). Open VSCode and from within VSCode, open the file `service.mocha-play-game.ts`. Go to the VSCode Debug window, select "Current TS Tests File" in the Run drop down list and launch.
 
 This test creates a new game and plays an entire hand (i.e. plays all 40 cards) and checks that everything works from a WebSockets API point of view.
 
