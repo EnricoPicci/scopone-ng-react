@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader } from "@material-ui/core";
-import React, { FC, useState } from "react";
+import React, { FC } from "react";
 import { Card as CardObj } from "../../rx-services/scopone-rx-service/card";
 import { Card as PlayingCard } from "../card/card";
 
@@ -7,11 +7,12 @@ import "./cards.css";
 import "../style.css";
 
 interface ICardsProps {
-  name: string;
+  name?: string;
   cards: CardObj[];
   enabled?: boolean;
   layout?: Layout;
   cardClickHandler?: (card: CardObj) => void;
+  style?: React.CSSProperties;
 }
 
 export type Layout = "spread" | "fan" | "spread-left";
@@ -27,9 +28,8 @@ export const Cards: FC<ICardsProps> = ({
   enabled = false,
   layout = "spread",
   cardClickHandler,
+  style,
 }) => {
-  const [_layout, _setLayout] = useState<Layout>(layout);
-
   // Variables which are not considered as state since their values depend only on the layout state variable value
   const _cardSize = calculateCardSize(cards.length, layout);
   let _initialOver: number;
@@ -121,10 +121,14 @@ export const Cards: FC<ICardsProps> = ({
     return _style;
   };
   return (
-    <Card>
+    <Card style={style}>
       {/* https://material-ui.com/customization/components/#overriding-styles-with-global-class-names */}
       {/* https://material-ui.com/customization/components/#overriding-styles-with-class-names */}
-      <CardHeader title={name} className="header"></CardHeader>
+      {/*  */}
+      {/* Do not render the header if there is no title to reduce the heigth of the component */}
+      {name?.length > 0 && (
+        <CardHeader title={name} className="header"></CardHeader>
+      )}
       <CardContent>
         <div className="cards" style={_divStyle()}>
           {cards.map((card, i) => (

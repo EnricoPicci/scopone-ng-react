@@ -29,7 +29,7 @@ interface ICardProps {
   card: PlayingCard;
   style?: any;
   height: string;
-  clickHandler?: (card: any) => void;
+  clickHandler?: (card: PlayingCard) => void;
 }
 
 export const Card: FC<ICardProps> = (props) => {

@@ -11,6 +11,7 @@ import {
 } from "../../rx-services/scopone-rx-service/messages";
 import { Cards } from "../cards/cards";
 import { Table } from "../table/table";
+import { CardsPicker } from "./cards-picker-dialogue";
 
 // we define a type for the state so that we can issue a single call to the update state function and
 // avoid so multiple execution of the render function
@@ -35,6 +36,10 @@ type CardsPlayedTakenReactState = {
     TeamTakingTable: [Player, Player];
   };
 };
+type CardsTakeableReactState = {
+  cardsTakeable: Card[][];
+  cardsTakeableClickHandler: (cards: Card[]) => void;
+};
 
 export const Hand: FC = () => {
   const server = useContext(ServerContext);
@@ -50,6 +55,10 @@ export const Hand: FC = () => {
     cardsPlayedTakenReactState,
     setCardsPlayedTakenReactState,
   ] = useState<CardsPlayedTakenReactState>({ openCardsPlayedDialogue: false });
+  const [
+    cardsTakeableReactState,
+    setCardsTakeableReactState,
+  ] = useState<CardsTakeableReactState>();
 
   useEffect(() => {
     console.log("=======>>>>>>>>>>>>  Use Effect run in Hand");
@@ -155,20 +164,15 @@ export const Hand: FC = () => {
   const play = (card: Card) => {
     const cardsTakeable = server.cardsTakeable(card, handReactState.table);
     if (cardsTakeable.length > 1) {
-      // const dialogRef = this.dialog.open(CardsPickerDialogueComponent, {
-      //   width: '1250px',
-      //   height: '600px',
-      //   data: { cards: cardsTakeable },
-      // });
-      // dialogRef.afterClosed().subscribe((cardsToTake) => {
-      //   console.log('The player has chosen', cardsToTake);
-      //   this.scoponeService.playCardForPlayer(
-      //     this.scoponeService.playerName,
-      //     card,
-      //     cardsToTake
-      //   );
-      // });
-      throw new Error("multiple choice not yet implemented");
+      // cardsTakeableClickHandler is using currying since card and server.playerName are known values
+      // which will be passed to server.playCardForPlayer - the last parameter, cardsToTake, will be actually passed
+      // when this handler is invoked
+      const cardsTakeableClickHandler = (cardsToTake: Card[]) => {
+        server.playCardForPlayer(server.playerName, card, cardsToTake);
+        // reset the state after the cards to take are chosen
+        setCardsTakeableReactState(null);
+      };
+      setCardsTakeableReactState({ cardsTakeable, cardsTakeableClickHandler });
     } else {
       server.playCard(card, handReactState.table);
     }
@@ -242,6 +246,13 @@ export const Hand: FC = () => {
           )}
         </DialogContent>
       </Dialog>
+      {cardsTakeableReactState && (
+        <CardsPicker
+          open={cardsTakeableReactState.cardsTakeable?.length > 0}
+          takeableCards={cardsTakeableReactState.cardsTakeable}
+          clickHandler={cardsTakeableReactState.cardsTakeableClickHandler}
+        ></CardsPicker>
+      )}
     </>
   );
 };
