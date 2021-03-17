@@ -1,4 +1,4 @@
-import { Button, Dialog, DialogContent } from "@material-ui/core";
+import { Button } from "@material-ui/core";
 import React, { FC, useContext, useEffect, useState } from "react";
 import { combineLatest, merge } from "rxjs";
 import { tap } from "rxjs/operators";
@@ -12,6 +12,7 @@ import {
 import { Cards } from "../cards/cards";
 import { Table } from "../table/table";
 import { CardsPicker } from "./cards-picker-dialogue";
+import { CardsPlayedTaken } from "./cards-played-taken-dialogue";
 
 // we define a type for the state so that we can issue a single call to the update state function and
 // avoid so multiple execution of the render function
@@ -26,8 +27,8 @@ type HandReactState = {
   currentPlayerName?: string;
   enablePlay: boolean;
 };
-type CardsPlayedTakenReactState = {
-  openCardsPlayedDialogue: boolean;
+// expoerted because used in CardsPlayedTaken
+export type CardsPlayedTakenReactState = {
   cardPlayed?: Card;
   cardPlayedByPlayer?: string;
   cardsTaken?: Card[];
@@ -35,6 +36,7 @@ type CardsPlayedTakenReactState = {
     Cards: Card[];
     TeamTakingTable: [Player, Player];
   };
+  tableTakenBy?: string;
 };
 type CardsTakeableReactState = {
   cardsTakeable: Card[][];
@@ -54,7 +56,7 @@ export const Hand: FC = () => {
   const [
     cardsPlayedTakenReactState,
     setCardsPlayedTakenReactState,
-  ] = useState<CardsPlayedTakenReactState>({ openCardsPlayedDialogue: false });
+  ] = useState<CardsPlayedTakenReactState>();
   const [
     cardsTakeableReactState,
     setCardsTakeableReactState,
@@ -117,18 +119,26 @@ export const Hand: FC = () => {
     const cardPlayedAndCardsTakenFromTable$ = server.cardsPlayedAndTaken$.pipe(
       tap(({ cardPlayed, cardsTaken, cardPlayedByPlayer, finalTableTake }) => {
         const cardPlayedDialogueTimeout = cardsTaken?.length > 0 ? 4000 : 2000;
+
+        const tableTakenBy = () => {
+          if (finalTableTake.TeamTakingTable) {
+            const hasOurTeamTakenTheTable = finalTableTake.TeamTakingTable.find(
+              (p) => p.name === server.playerName
+            );
+            const usOrThem = hasOurTeamTakenTheTable ? "Us" : "Them";
+            return `Table taken by ${usOrThem}`;
+          }
+        };
+
         setCardsPlayedTakenReactState({
-          openCardsPlayedDialogue: true,
           cardPlayed,
           cardsTaken,
           cardPlayedByPlayer,
           finalTableTake,
+          tableTakenBy: finalTableTake && tableTakenBy(),
         });
         setTimeout(() => {
-          setCardsPlayedTakenReactState((prevState) => ({
-            ...prevState,
-            openCardsPlayedDialogue: false,
-          }));
+          setCardsPlayedTakenReactState((prevState) => null);
         }, cardPlayedDialogueTimeout);
       })
     );
@@ -178,14 +188,6 @@ export const Hand: FC = () => {
     }
   };
 
-  const tableTakenBy = () => {
-    const hasOurTeamTakenTheTable = cardsPlayedTakenReactState.finalTableTake.TeamTakingTable.find(
-      (p) => p.name === server.playerName
-    );
-    const usOrThem = hasOurTeamTakenTheTable ? "Us" : "Them";
-    return `Table taken by ${usOrThem}`;
-  };
-
   return (
     <>
       {handReactState.teams && (
@@ -223,29 +225,9 @@ export const Hand: FC = () => {
           Start
         </Button>
       )}
-      <Dialog open={cardsPlayedTakenReactState.openCardsPlayedDialogue}>
-        <DialogContent>
-          <Cards
-            cards={[cardsPlayedTakenReactState.cardPlayed]}
-            name={`Card played by ${cardsPlayedTakenReactState.cardPlayedByPlayer}`}
-            layout="spread-left"
-          ></Cards>
-          {cardsPlayedTakenReactState.cardsTaken?.length > 0 && (
-            <Cards
-              cards={cardsPlayedTakenReactState.cardsTaken}
-              name={`Cards taken`}
-              layout="spread-left"
-            ></Cards>
-          )}
-          {cardsPlayedTakenReactState.finalTableTake?.Cards?.length > 0 && (
-            <Cards
-              cards={cardsPlayedTakenReactState.finalTableTake.Cards}
-              name={tableTakenBy()}
-              layout="spread-left"
-            ></Cards>
-          )}
-        </DialogContent>
-      </Dialog>
+      {cardsPlayedTakenReactState?.cardPlayed && (
+        <CardsPlayedTaken {...cardsPlayedTakenReactState}></CardsPlayedTaken>
+      )}
       {cardsTakeableReactState && (
         <CardsPicker
           open={cardsTakeableReactState.cardsTakeable?.length > 0}
