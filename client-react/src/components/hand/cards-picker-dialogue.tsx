@@ -1,27 +1,17 @@
 import React, { FC } from "react";
 import { Button, Dialog, DialogContent } from "@material-ui/core";
-import { Card } from "../../rx-services/scopone-rx-service/card";
 import { Cards } from "../cards/cards";
+import { CardsTakeableReactState } from "./hand";
 
-interface ICardsPickerProps {
-  open: boolean;
-  takeableCards: Card[][];
-  clickHandler: (cards: Card[]) => void;
-}
-
-export const CardsPicker: FC<ICardsPickerProps> = ({
-  open,
-  takeableCards,
-  clickHandler,
-}) => {
+export const CardsPicker: FC<CardsTakeableReactState> = (props) => {
   const handleClick = (i: number) => {
-    clickHandler(takeableCards[i]);
+    props.cardsTakeableClickHandler(props.cardsTakeable[i]);
   };
 
   return (
-    <Dialog open={open}>
+    <Dialog open={true}>
       <DialogContent>
-        {takeableCards.map((cards, i) => (
+        {props.cardsTakeable.map((cards, i) => (
           <React.Fragment key={i}>
             <Cards
               cards={cards}

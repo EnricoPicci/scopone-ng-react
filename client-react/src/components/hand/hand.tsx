@@ -27,6 +27,7 @@ type HandReactState = {
   currentPlayerName?: string;
   enablePlay: boolean;
 };
+
 // expoerted because used in CardsPlayedTaken
 export type CardsPlayedTakenReactState = {
   cardPlayed?: Card;
@@ -38,7 +39,9 @@ export type CardsPlayedTakenReactState = {
   };
   tableTakenBy?: string;
 };
-type CardsTakeableReactState = {
+
+// expoerted because used in CardsPicker
+export type CardsTakeableReactState = {
   cardsTakeable: Card[][];
   cardsTakeableClickHandler: (cards: Card[]) => void;
 };
@@ -229,11 +232,7 @@ export const Hand: FC = () => {
         <CardsPlayedTaken {...cardsPlayedTakenReactState}></CardsPlayedTaken>
       )}
       {cardsTakeableReactState && (
-        <CardsPicker
-          open={cardsTakeableReactState.cardsTakeable?.length > 0}
-          takeableCards={cardsTakeableReactState.cardsTakeable}
-          clickHandler={cardsTakeableReactState.cardsTakeableClickHandler}
-        ></CardsPicker>
+        <CardsPicker {...cardsTakeableReactState}></CardsPicker>
       )}
     </>
   );
