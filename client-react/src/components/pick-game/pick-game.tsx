@@ -5,6 +5,7 @@ import { tap } from "rxjs/operators";
 import { ErrorContext } from "../../context/error-context";
 
 import { ServerContext } from "../../context/server-context";
+import { GameState } from "../../rx-services/scopone-rx-service/messages";
 import { myCurrentOpenGame$ } from "../../rx-services/streams-transformations/my-current-open-game";
 import { GameList } from "../game-list/game-list";
 import { NewGame } from "../new-game/new-game";
@@ -20,9 +21,11 @@ export const PickGame: FC = () => {
 
     // navigate$ Observable manages navigation as a side effect when a Game is picked
     const navigate$ = myCurrentOpenGame$(server).pipe(
-      tap(() => {
+      tap((game) => {
         errorService.setError(null);
-        history.push("/hand");
+        game.state === GameState.GameClosed
+          ? history.push("/hand")
+          : history.push("/hand-result");
       })
     );
 
