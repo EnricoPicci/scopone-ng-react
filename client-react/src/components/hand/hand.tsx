@@ -1,7 +1,8 @@
 import { Button } from "@material-ui/core";
 import React, { FC, useContext, useEffect, useState } from "react";
-import { combineLatest, merge } from "rxjs";
-import { tap } from "rxjs/operators";
+import { useHistory } from "react-router-dom";
+import { combineLatest, interval, merge } from "rxjs";
+import { delayWhen, share, switchMap, tap } from "rxjs/operators";
 import { ServerContext } from "../../context/server-context";
 import { Card, TypeValues } from "../../rx-services/scopone-rx-service/card";
 import {
@@ -48,6 +49,7 @@ export type CardsTakeableReactState = {
 
 export const Hand: FC = () => {
   const server = useContext(ServerContext);
+  const history = useHistory();
 
   const [handReactState, setHandReactState] = useState<HandReactState>({
     playerCards: [],
@@ -121,8 +123,6 @@ export const Hand: FC = () => {
     // open/close the dialogue as side effect
     const cardPlayedAndCardsTakenFromTable$ = server.cardsPlayedAndTaken$.pipe(
       tap(({ cardPlayed, cardsTaken, cardPlayedByPlayer, finalTableTake }) => {
-        const cardPlayedDialogueTimeout = cardsTaken?.length > 0 ? 4000 : 2000;
-
         const tableTakenBy = () => {
           if (finalTableTake.TeamTakingTable) {
             const hasOurTeamTakenTheTable = finalTableTake.TeamTakingTable.find(
@@ -140,10 +140,30 @@ export const Hand: FC = () => {
           finalTableTake,
           tableTakenBy: finalTableTake && tableTakenBy(),
         });
-        setTimeout(() => {
-          setCardsPlayedTakenReactState((prevState) => null);
-        }, cardPlayedDialogueTimeout);
-      })
+      }),
+      // use delayWhen to enable a variable delay time
+      // if delay operator is used, then the delay time is fixed to the number set when the pipe chain is executed
+      // to create the Observable, in this case cardPlayedAndCardsTakenFromTable$
+      delayWhen((event) =>
+        interval(event?.cardsTaken?.length > 0 ? 4000 : 2000)
+      ),
+      tap(() => setCardsPlayedTakenReactState(() => null)),
+      share()
+    );
+
+    const handClosed$ = server.handClosed$.pipe(
+      switchMap(() => cardPlayedAndCardsTakenFromTable$),
+      tap(() => history.push("/hand-result"))
+      // return cardsTakenDialogueRef
+      //   ? // after CardsTakenDialogueComponent has been closed we navigate to the hand-result page
+      //     cardsTakenDialogueRef.afterClosed().pipe(
+      //       tap(() => {
+      //         this.router.navigate(['hand-result']);
+      //       })
+      //     )
+      //   : // cardsTakenDialogueRef can be null in case we enter this page as a person who wants to observe
+      //     // this game hand and the hand has been closed while a new one has not been yet opened
+      //     this.router.navigate(['hand-result']);
     );
 
     const enablePlay$ = combineLatest([
@@ -161,14 +181,15 @@ export const Hand: FC = () => {
       myObservedGame$,
       handView$,
       enablePlay$,
-      cardPlayedAndCardsTakenFromTable$
+      cardPlayedAndCardsTakenFromTable$,
+      handClosed$
     ).subscribe();
 
     return () => {
       console.log("Unsubscribe Hand subscription");
       subscription.unsubscribe();
     };
-  }, [server]);
+  }, [server, history]);
 
   const start = () => {
     server.newHand();
