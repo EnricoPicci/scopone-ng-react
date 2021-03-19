@@ -64,6 +64,11 @@ export const Game: FC = () => {
       })
     );
 
+    //
+    const gameClosed$ = server.myCurrentGameClosed$.pipe(
+      tap(() => history.push("/bye"))
+    );
+
     // error$ sets the errorMsg state variable as a side effect
     const error$ = errorService.error$.pipe(
       tap((errorMsg) =>
@@ -80,7 +85,7 @@ export const Game: FC = () => {
 
     const subscription = server
       .connect(serverAddress)
-      .pipe(switchMap(() => merge(navigate$, error$, _title$)))
+      .pipe(switchMap(() => merge(navigate$, gameClosed$, error$, _title$)))
       .subscribe({
         error: (err) => {
           console.log("Error while communicating with the server", err);
