@@ -16,6 +16,7 @@ import { HandResult } from "../hand-result/hand-result";
 import { Error } from "../error/error";
 import { title$ } from "../../rx-services/streams-transformations/title";
 import { ErrorContext } from "../../context/error-context";
+import { Bye } from "../bye/bye";
 
 const serverAddress = process.env.REACT_APP_SERVER_ADDRESS;
 
@@ -108,6 +109,7 @@ export const Game: FC = () => {
             <Route path="/pick-game" component={PickGame} />
             <Route path="/hand" component={Hand} />
             <Route path="/hand-result" component={HandResult} />
+            <Route path="/bye" component={Bye} />
             <Route component={Error} />
           </Switch>
         </CardContent>

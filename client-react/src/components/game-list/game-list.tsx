@@ -44,7 +44,10 @@ export const GameList: FC = () => {
       setGameListReactState((prevState) => ({ ...prevState, games }))
     );
 
-    return () => subscription.unsubscribe();
+    return () => {
+      console.log("Unsubscribe GameList subscription");
+      subscription.unsubscribe();
+    };
   }, [server]);
 
   const gameName = (game: GameForList) => {

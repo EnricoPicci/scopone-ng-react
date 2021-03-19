@@ -154,16 +154,6 @@ export const Hand: FC = () => {
     const handClosed$ = server.handClosed$.pipe(
       switchMap(() => cardPlayedAndCardsTakenFromTable$),
       tap(() => history.push("/hand-result"))
-      // return cardsTakenDialogueRef
-      //   ? // after CardsTakenDialogueComponent has been closed we navigate to the hand-result page
-      //     cardsTakenDialogueRef.afterClosed().pipe(
-      //       tap(() => {
-      //         this.router.navigate(['hand-result']);
-      //       })
-      //     )
-      //   : // cardsTakenDialogueRef can be null in case we enter this page as a person who wants to observe
-      //     // this game hand and the hand has been closed while a new one has not been yet opened
-      //     this.router.navigate(['hand-result']);
     );
 
     const enablePlay$ = combineLatest([
