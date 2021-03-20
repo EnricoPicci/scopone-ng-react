@@ -325,14 +325,30 @@ func (s *Scopone) Play(pName string, cardPlayed deck.Card, cardsTaken []deck.Car
 		panic(panicMessage)
 	}
 
+	hand := currentHand(g)
+
+	// register the data relative to the card played, the state of the game at that moment and the cards taken
+	var playerDecks = make(map[string][]deck.Card)
+	for _, p := range g.Players {
+		playerDecks[p.Name] = p.Cards
+	}
+	var cardPlay = HandCardPlay{
+		Player:       pName,
+		Table:        hand.Table,
+		CardPlayed:   cardPlayed,
+		CardsTaken:   cardsTaken,
+		PlayersDecks: playerDecks,
+	}
+	hand.History.CardPlaySequence = append(hand.History.CardPlaySequence, cardPlay)
+
 	// take the cardPlayed card out of the cards of the Player
 	p.Cards = deck.RemoveCard(p.Cards, cardPlayed)
 
-	hand := currentHand(g)
 	playerTeam, e := teamOfPlayer(pName, g)
 	if e != nil {
 		panic(fmt.Sprintf("Panicking! No team for player with name %v\n", pName))
 	}
+
 	// if there are no cards taken, add the card played to the table
 	if len(cardsTaken) == 0 {
 		hand.Table = append(hand.Table, cardPlayed)
@@ -348,13 +364,6 @@ func (s *Scopone) Play(pName string, cardPlayed deck.Card, cardsTaken []deck.Car
 			playerTeam.ScopeDiScopone = append(playerTeam.ScopeDiScopone, cardPlayed)
 		}
 	}
-
-	var cardPlay = HandCardPlay{
-		Player:     pName,
-		CardPlayed: cardPlayed,
-		CardsTaken: cardsTaken,
-	}
-	hand.History.CardPlaySequence = append(hand.History.CardPlaySequence, cardPlay)
 
 	// if this is the last card of the last player, give all cards on the table to the last team which took some cards
 	if len(p.Cards) == 0 && isLastPlayer(pName, g) {

@@ -68,7 +68,9 @@ If the version without Mongo db, the command to launch the server is `~/go/bin/s
 To build the server app, move to the folder `server` and launch the command `go build -o scopone-app ./src/cmd/scopone-mongo` (or `go build -o scopone-app ./src/cmd/scopone-in-memory-only` for the version which does not use Mongo db).
 This command creates the executable `scopone-app` in the `server` folder.
 
-Once built, the server can be launched with the command `MONGO_CONNECTION="mongoConnectionUrl" ./mongo-app` (`MONGO_CONNECTION` is not required in case the package built is the one that does not use Mongo db).
+Once built, the server can be launched with the command `MONGO_CONNECTION="mongoConnectionUrl" ./scopone-app`
+
+(`MONGO_CONNECTION` is not required in case the package built is the one that does not use Mongo db).
 
 ### Create a Docker image for the Gorilla WebSocket server and launch it with Docker
 

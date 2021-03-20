@@ -110,7 +110,7 @@ func serveOsteria(hub *Hub, scopone *scopone.Scopone, w http.ResponseWriter, r *
 
 // Start the server
 func Start(playerStore scopone.PlayerWriter, gameStore scopone.GameReadWriter) {
-	fmt.Println("Server started - BETA 4.3")
+	fmt.Println("Server started - BETA 5.3")
 	flag.Parse()
 
 	http.HandleFunc("/", homePage)

@@ -90,14 +90,16 @@ type Hand struct {
 
 // HandCardPlay represents a single card played by a player with the cards it took
 type HandCardPlay struct {
-	Player     string      `json:"player"`
-	CardPlayed deck.Card   `json:"cardPlayed"`
-	CardsTaken []deck.Card `json:"cardsTaken"`
+	Player       string                 `json:"player"`
+	Table        []deck.Card            `json:"table"`
+	CardPlayed   deck.Card              `json:"cardPlayed"`
+	CardsTaken   []deck.Card            `json:"cardsTaken"`
+	PlayersDecks map[string][]deck.Card `json:"playersDecks"`
 }
 
 // HandHistory contains the hystory of the hand
 type HandHistory struct {
-	PlayerDecks      map[string][]deck.Card `json:"playerDeckss"`
+	PlayerDecks      map[string][]deck.Card `json:"playerDecks"`
 	CardPlaySequence []HandCardPlay         `json:"cardPlaySequence"`
 }
 
