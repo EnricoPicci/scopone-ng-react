@@ -41,7 +41,12 @@ export const HandHistory: FC = () => {
   return (
     <>
       {handHistory && (
-        <TableContainer component={Paper}>
+        <TableContainer
+          component={Paper}
+          style={{
+            maxHeight: 440,
+          }}
+        >
           <Table stickyHeader aria-label="hand history">
             <TableHead>
               <TableRow>
