@@ -17,6 +17,7 @@ export type PlayerView = {
   theirScorecard?: ScoreCard;
   ourCurrentGameScore?: number;
   theirCurrentGameScore?: number;
+  history?: HandHistory;
 };
 
 export type ScoreCard = {
@@ -26,4 +27,17 @@ export type ScoreCard = {
   carte: Card[];
   scope: Card[];
   napoli: Card[];
+};
+
+export type HandHistory = {
+  cardPlaySequence: CardPlay[];
+  playerDecks: { [playersName: string]: Card[] };
+};
+
+export type CardPlay = {
+  player: string;
+  table: Card[];
+  cardPlayed: Card;
+  cardsTaken: Card[];
+  playersDecks: { [playersName: string]: Card[] };
 };

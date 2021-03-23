@@ -86,7 +86,9 @@ export const HandResult: FC = () => {
       handleCancel,
     });
   };
-  const handleViewHistory = () => {};
+  const handleViewHistory = () => {
+    history.push("/hand-history");
+  };
 
   return (
     <>

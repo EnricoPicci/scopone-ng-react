@@ -11,5 +11,14 @@ export const useStyles = makeStyles((theme: Theme) =>
       marginRight: theme.spacing(1),
       //   width: "30ch",
     },
+    gridRoot: {
+      flexGrow: 1,
+    },
+    gridPaper: {
+      padding: theme.spacing(2),
+      textAlign: "center",
+      color: theme.palette.text.secondary,
+      height: "50px",
+    },
   })
 );
