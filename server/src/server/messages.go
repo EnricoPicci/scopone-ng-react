@@ -6,6 +6,8 @@ import (
 	"go-scopone/src/deck"
 	"go-scopone/src/player"
 	"go-scopone/src/scopone"
+
+	"github.com/spf13/viper"
 )
 
 // MessageFromPlayer contains all possible properties that a JSON message coming from a Player can have
@@ -42,6 +44,7 @@ type MessageToAllClients struct {
 	Players    []*player.Player `json:"players,omitempty"`
 	Games      []*scopone.Game  `json:"games"`
 	Teams      [][]string       `json:"teams,omitempty"`
+	MsgVersion string           `json:"msgVersion"`
 }
 
 // NewMessageToAllClients creates a message for all clients
@@ -49,6 +52,7 @@ func NewMessageToAllClients(id string) MessageToAllClients {
 	var msg MessageToAllClients
 	msg.ID = id
 	msg.TsSent = time.Now().String()
+	msg.MsgVersion = msgVersion()
 	return msg
 }
 
@@ -66,6 +70,7 @@ type MessageToOnePlayer struct {
 	CardsTaken         []deck.Card                       `json:"cardsTaken,omitempty"`
 	CardPlayedByPlayer string                            `json:"cardPlayedByPlayer"`
 	FinalTableTake     scopone.FinalTableTake            `json:"finalTableTake"`
+	MsgVersion         string                            `json:"msgVersion"`
 }
 
 // NewMessageToOnePlayer creates a message for one player
@@ -74,5 +79,14 @@ func NewMessageToOnePlayer(id string, playerName string) MessageToOnePlayer {
 	msg.ID = id
 	msg.PlayerName = playerName
 	msg.TsSent = time.Now().String()
+	msg.MsgVersion = msgVersion()
 	return msg
+}
+
+func msgVersion() string {
+	msgVersion, ok := viper.Get("MSG_VERSION").(string)
+	if !ok {
+		panic("Invalid type assertion")
+	}
+	return msgVersion
 }

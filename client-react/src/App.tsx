@@ -21,6 +21,7 @@ function App() {
           <Game></Game>
         </div>
       </ThemeProvider>
+      <span>Version {process.env.REACT_APP_VERSION}</span>
     </BrowserRouter>
   );
 }
