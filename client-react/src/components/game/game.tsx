@@ -41,6 +41,13 @@ export const Game: FC = () => {
 
   useEffect(() => {
     console.log("=======>>>>>>>>>>>>  Use Effect run in Game");
+
+    // force to go to home page when this component is first loaded
+    // this allows to go to home page even if a url with a route is typed into the address bar or the user refresh
+    // a page which represents a route
+    // see https://stackoverflow.com/questions/66791019/redirect-to-home-when-react-app-served-by-s3-is-called-with-url-containing-a-rou
+    history.push("/");
+
     // navigate$ Observable manages navigation as a side effect when a Player successfully enters the osteria
     const navigate$ = server.playerEnteredOsteria$.pipe(
       tap((player) => {
