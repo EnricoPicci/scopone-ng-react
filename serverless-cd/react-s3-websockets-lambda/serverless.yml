@@ -121,3 +121,21 @@ custom:
   client:
     bucketName: osteria-react
     distributionFolder: ../../client-react/build
+    indexDocument: index.html
+    # set index.html as error page so that any url pointing directly to a specific route is served by the home page
+    errorDocument: index.html
+    # routing rule to eliminate 404 error when a url with any route is sent to the WebServer on S3
+    # [
+    #     {
+    #         "Condition": {
+    #             "HttpErrorCodeReturnedEquals": "404"
+    #         },
+    #         "Redirect": {
+    #             "ReplaceKeyWith": ""
+    #         }
+    #     }
+    # ]
+    routingRules:
+      - redirect: { replaceKeyWith: "" }
+        condition:
+          httpErrorCodeReturnedEquals: 404
