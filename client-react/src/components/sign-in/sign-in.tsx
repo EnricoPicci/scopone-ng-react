@@ -52,6 +52,10 @@ export const SignIn: FC = () => {
   };
 
   const enterOsteria = () => {
+    if (!playerName.trim()) {
+      errorService.setError("Please provide a name");
+      return;
+    }
     server.playerEntersOsteria(playerName);
   };
 

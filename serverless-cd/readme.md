@@ -1,6 +1,12 @@
 # Deployments
 
-## Deploy React app to AWS S3 bucket as static web server
+## Build and Deploy React app to AWS S3 bucket as static web server
+
+### Build
+
+From within `client-react` folder run the command `npm run build`.
+
+### Deploy to S3
 
 From within `react-s3-websockets-lambda` folder run the command `serverless client deploy`.
 

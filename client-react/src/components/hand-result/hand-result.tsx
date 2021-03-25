@@ -113,6 +113,16 @@ export const HandResult: FC = () => {
               name="Our scope"
               layout="spread-left"
             ></Cards>
+            <Cards
+              cards={handResultState.theirCards}
+              name="Their cards"
+              layout="spread-left"
+            ></Cards>
+            <Cards
+              cards={handResultState.theirScope}
+              name="Their scope"
+              layout="spread-left"
+            ></Cards>
           </CardContent>
           <DialogActions>
             <Button onClick={handleContinue} color="primary">
