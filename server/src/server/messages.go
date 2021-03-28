@@ -86,7 +86,8 @@ func NewMessageToOnePlayer(id string, playerName string) MessageToOnePlayer {
 func msgVersion() string {
 	msgVersion, ok := viper.Get("MSG_VERSION").(string)
 	if !ok {
-		panic("Invalid type assertion")
+		//panic("Invalid type assertion")
+		return "not supported yet"
 	}
 	return msgVersion
 }
