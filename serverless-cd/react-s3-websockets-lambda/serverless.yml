@@ -115,7 +115,7 @@ provider:
 #       Value: "Some output value"
 
 plugins:
-  - serverless-finch
+  - serverless-finch-patched-for-redirect
 
 custom:
   client:

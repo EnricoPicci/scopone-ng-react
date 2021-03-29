@@ -1,6 +1,6 @@
 {
-  "dependencies": {
+  "devDependencies": {
     "serverless": "^2.31.0",
-    "serverless-finch": "^2.6.0"
+    "serverless-finch-patched-for-redirect": "^2.6.1"
   }
 }

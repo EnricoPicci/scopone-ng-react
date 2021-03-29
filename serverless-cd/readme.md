@@ -8,7 +8,7 @@ From within `client-react` folder run the command `npm run build`.
 
 ### Deploy to S3
 
-From within `react-s3-websockets-lambda` folder run the command `serverless client deploy`.
+From within `react-s3-websockets-lambda` folder run the command `npx serverless client deploy`.
 
 The serverless.yml configuration [serverless.yml](/react-s3-websockets-lambda/serverless.yml) contains the details of the confguration.
 
