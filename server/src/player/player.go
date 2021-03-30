@@ -1,3 +1,4 @@
+// Package player implements the player
 package player
 
 import "go-scopone/src/deck"

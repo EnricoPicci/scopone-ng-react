@@ -565,8 +565,7 @@ func TestSortForPrimiera(t *testing.T) {
 	s.NewHand(g)
 	hand := currentHand(g)
 	// take all denari from the shuffled deck
-	var denari byPrimiera
-	denari = cardsWithSuit(deck.Denari, hand.Deck)
+	var denari byPrimiera = cardsWithSuit(deck.Denari, hand.Deck)
 	// order denari for primiera
 	sort.Sort(denari)
 
@@ -635,8 +634,7 @@ func TestSortForNapoli(t *testing.T) {
 	s.NewHand(g)
 	hand := currentHand(g)
 	// take all denari from the shuffled deck
-	var denari byNapoli
-	denari = cardsWithSuit(deck.Denari, hand.Deck)
+	var denari byNapoli = cardsWithSuit(deck.Denari, hand.Deck)
 	// order denari for napoli
 	sort.Sort(denari)
 

@@ -14,8 +14,6 @@ import (
 	"go-scopone/src/scopone"
 
 	"github.com/gorilla/websocket"
-
-	"github.com/spf13/viper"
 )
 
 // https://stackoverflow.com/a/56312831/5699993
@@ -112,14 +110,8 @@ func serveOsteria(hub *Hub, scopone *scopone.Scopone, w http.ResponseWriter, r *
 
 // Start the server
 func Start(playerStore scopone.PlayerWriter, gameStore scopone.GameReadWriter) {
-	fmt.Println("Server started - BETA 5.4")
+	fmt.Println("Server started")
 	flag.Parse()
-
-	viper.SetConfigFile(".env")
-	err := viper.ReadInConfig()
-	if err != nil {
-		log.Fatalf("Error while reading config file %s", err)
-	}
 
 	http.HandleFunc("/", homePage)
 
@@ -132,7 +124,7 @@ func Start(playerStore scopone.PlayerWriter, gameStore scopone.GameReadWriter) {
 		serveOsteria(hub, scopone, w, r)
 	})
 
-	err = http.ListenAndServe(*addr, nil)
+	err := http.ListenAndServe(*addr, nil)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}

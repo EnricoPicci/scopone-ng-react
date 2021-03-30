@@ -1,5 +1,5 @@
-// https://gist.github.com/montanaflynn/4cc2779d2e353d7524a7bdce57869a75
-
+// Package deck implements the deck used in  the game
+// inspired by https://gist.github.com/montanaflynn/4cc2779d2e353d7524a7bdce57869a75
 package deck
 
 import (

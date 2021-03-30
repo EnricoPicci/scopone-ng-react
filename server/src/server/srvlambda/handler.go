@@ -44,7 +44,6 @@ func handleRequest(ctx context.Context, event events.APIGatewayWebsocketProxyReq
 				StatusCode: http.StatusInternalServerError,
 			}, err
 		}
-		break
 	case "$disconnect":
 		log.Println("Disconnect", rc.ConnectionID)
 		err := connectionStore.MarkConnectionIDDisconnected(ctx, rc.ConnectionID)
@@ -53,7 +52,6 @@ func handleRequest(ctx context.Context, event events.APIGatewayWebsocketProxyReq
 				StatusCode: http.StatusInternalServerError,
 			}, err
 		}
-		break
 	case "$default":
 		log.Println("Default - Handle Commands", rc.ConnectionID, event.Body)
 		err := handleCommand(ctx, event, connectionStore, playerStore, gameStore)
@@ -62,7 +60,6 @@ func handleRequest(ctx context.Context, event events.APIGatewayWebsocketProxyReq
 				StatusCode: http.StatusInternalServerError,
 			}, err
 		}
-		break
 	default:
 		log.Fatalf("Unknown RouteKey %v", rk)
 	}

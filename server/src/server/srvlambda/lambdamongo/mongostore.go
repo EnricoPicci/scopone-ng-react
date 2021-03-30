@@ -1,3 +1,4 @@
+// Package lambdamongo implements the server using Lambda connected to Mongo
 package lambdamongo
 
 import (
@@ -50,12 +51,12 @@ func (store *Store) activeConnections(ctx context.Context) (*mongo.Cursor, error
 
 // ActiveConnectionIDs returns the connectionIDs - waits for the read from DB to be concluded
 func (store *Store) ActiveConnectionIDs(ctx context.Context) ([]string, error) {
-	cur, err := store.activeConnections(ctx)
+	cur, _ := store.activeConnections(ctx)
 
 	connections := []string{}
 	for cur.Next(ctx) {
 		var elem connectionIDEntry
-		err = cur.Decode(&elem)
+		err := cur.Decode(&elem)
 		if err != nil {
 			log.Println("Error while reading the cursor", err)
 			return nil, err
@@ -68,12 +69,12 @@ func (store *Store) ActiveConnectionIDs(ctx context.Context) ([]string, error) {
 
 // ConnectedPlayers returns the names of the players who are connected
 func (store *Store) ConnectedPlayers(ctx context.Context) ([]string, error) {
-	cur, err := store.activeConnections(ctx)
+	cur, _ := store.activeConnections(ctx)
 
 	players := []string{}
 	for cur.Next(ctx) {
 		var elem connectionIDEntry
-		err = cur.Decode(&elem)
+		err := cur.Decode(&elem)
 		if err != nil {
 			log.Println("Error while reading the cursor", err)
 			return nil, err

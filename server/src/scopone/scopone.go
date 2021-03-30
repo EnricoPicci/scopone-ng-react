@@ -1,3 +1,4 @@
+// Package scopone implements the rules of the game
 package scopone
 
 import (
@@ -9,6 +10,8 @@ import (
 	"go-scopone/src/deck"
 	"go-scopone/src/player"
 	"go-scopone/src/team"
+
+	"github.com/spf13/viper"
 )
 
 // Scopone is a traditional italian card game usually played in the Osteria which is a traditional bar
@@ -21,8 +24,19 @@ type Scopone struct {
 
 // New Scopone
 func New(playerStore PlayerWriter, gameStore GameReadWriter) *Scopone {
+	viper.SetConfigFile(".env")
+	err := viper.ReadInConfig()
+	if err != nil {
+		log.Fatalf("Error while reading config file %s", err)
+	}
+	msgVersion, ok := viper.Get("VERSION").(string)
+	if !ok {
+		panic("Invalid type assertion")
+	}
+
 	s := Scopone{}
-	fmt.Println("Start Scopone")
+	fmt.Printf("Start Scopone - version %v \n", msgVersion)
+
 	s.PlayerStore = playerStore
 	s.GameStore = gameStore
 	games, players, err := gameStore.ReadOpenGames()
@@ -40,8 +54,7 @@ func (s *Scopone) PlayerEnters(pName string) (handViews map[string]HandPlayerVie
 	alreadyIn = false
 
 	if pName == "" {
-		panicMessage := fmt.Sprintf("The name of the player you want to add is empty\n")
-		panic(panicMessage)
+		panic("The name of the player you want to add is empty\n")
 	}
 
 	plr, found := s.Players[pName]
@@ -449,10 +462,7 @@ func currentHand(g *Game) *Hand {
 // isLastPlayer returns true if this is the last player of the current hand
 func isLastPlayer(pName string, g *Game) bool {
 	next := playersSequence(g)[pName]
-	if next.Name == currentHand(g).FirstPlayer.Name {
-		return true
-	}
-	return false
+	return next.Name == currentHand(g).FirstPlayer.Name
 }
 
 // playersSequence returns a map of Players where the key is a Player and the value is the next player
@@ -594,8 +604,7 @@ func fillScoreCard(t *team.Team) (sc ScoreCard) {
 	sc.Scope = t.ScopeDiScopone
 
 	// napoli
-	var orderedByNapoli byNapoli
-	orderedByNapoli = cardsWithSuit(deck.Denari, d)
+	var orderedByNapoli byNapoli = cardsWithSuit(deck.Denari, d)
 	sort.Sort(orderedByNapoli)
 	var napoli []deck.Card
 	for i, c := range orderedByNapoli {
@@ -615,8 +624,7 @@ func primieraSuits(d []deck.Card) (pSuits map[string][]deck.Card) {
 	pSuits = make(map[string][]deck.Card)
 	// group cards by suit
 	for _, suit := range deck.Suits {
-		var cardsSameSuits byPrimiera
-		cardsSameSuits = cardsWithSuit(suit, d)
+		var cardsSameSuits byPrimiera = cardsWithSuit(suit, d)
 		sort.Sort(cardsSameSuits)
 		pSuits[suit] = cardsSameSuits
 	}

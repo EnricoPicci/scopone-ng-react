@@ -71,7 +71,7 @@ func handleCommand(ctx context.Context, event events.APIGatewayWebsocketProxyReq
 			if handViewForPlayers == nil {
 				// if there are no handViews to be sent to Players it means that the Player is entering for the fist time in the Osteria
 				// or he is re-entering but was not playing any game previously
-				respTo := fmt.Sprintf("playerEntersOsteria - no handViews")
+				respTo := "playerEntersOsteria - no handViews"
 				sendPlayers(ctx, scopone, respTo, connectionStore)
 				sendGames(ctx, scopone, respTo, connectionStore)
 			} else {

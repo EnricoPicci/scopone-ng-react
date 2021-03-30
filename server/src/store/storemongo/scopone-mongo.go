@@ -1,3 +1,4 @@
+// Package storemongo implements the store usign Mongo
 package storemongo
 
 import (

@@ -1,3 +1,4 @@
+// Package srvgorilla implements the server using Gorilla WebSocket server
 package srvgorilla
 
 import (
@@ -95,7 +96,7 @@ func (c *client) readPump() {
 					if hv == nil {
 						// if there are no handViews to be sent to Players it means that the Player is entering for the fist time in the Osteria
 						// or he is re-entering but was not playing any game previously
-						respTo := fmt.Sprintf("playerEntersOsteria - no handViews")
+						respTo := "playerEntersOsteria - no handViews"
 						sendPlayers(c, respTo)
 						sendGames(c, respTo)
 					} else {

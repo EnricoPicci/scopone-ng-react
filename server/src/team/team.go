@@ -1,3 +1,4 @@
+// Package team implements the team
 package team
 
 import (

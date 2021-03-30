@@ -1,3 +1,4 @@
+// Package server implements the server
 package server
 
 import (
@@ -84,7 +85,7 @@ func NewMessageToOnePlayer(id string, playerName string) MessageToOnePlayer {
 }
 
 func msgVersion() string {
-	msgVersion, ok := viper.Get("MSG_VERSION").(string)
+	msgVersion, ok := viper.Get("VERSION").(string)
 	if !ok {
 		//panic("Invalid type assertion")
 		return "not supported yet"
