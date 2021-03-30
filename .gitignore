@@ -39,3 +39,4 @@ client-react/.env.all-options
 client-react/.env.development
 client-react/.env.production
 client-react/todo.txt
+.DS_Store

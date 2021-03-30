@@ -23,10 +23,9 @@ export const PickGame: FC = () => {
     const navigate$ = myCurrentOpenGame$(server).pipe(
       tap((game) => {
         errorService.setError(null);
-        history.push("/hand");
-        // game.state === GameState.GameClosed
-        //   ? history.push("/hand")
-        //   : history.push("/hand-result");
+        game.state !== GameState.GameClosed
+          ? history.push("/hand")
+          : history.push("/hand-result");
       })
     );
 
