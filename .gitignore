@@ -40,3 +40,6 @@ client-react/.env.development
 client-react/.env.production
 client-react/todo.txt
 .DS_Store
+serverless-cd/server-lambda/commands.txt
+server/.env
+serverless-cd/.DS_Store

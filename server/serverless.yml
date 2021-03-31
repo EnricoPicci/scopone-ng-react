@@ -12,6 +12,8 @@
 # Happy Coding!
 
 service: sls-scopone-lambda-server
+useDotenv: true 
+
 # app and org for use with dashboard.serverless.com
 #app: your-app-name
 #org: your-org-name
@@ -19,11 +21,12 @@ service: sls-scopone-lambda-server
 # You can pin your service to only deploy with a specific Serverless version
 # Check out our docs for more details
 # frameworkVersion: "=X.X.X"
-frameworkVersion: ">=1.28.0 <2.0.0"
+frameworkVersion: '2'
 
 provider:
   name: aws
   runtime: go1.x
+  lambdaHashingVersion: 20201221
   websocketsApiName: scopone-lambda-server
 
 # you can overwrite defaults here
@@ -51,17 +54,17 @@ provider:
 #    variable1: value1
 
 package:
-  exclude:
-    - ./**
-  include:
-    - ./bin/**
+  patterns:
+    - '!./**'
+    - './bin/**'
+    - './.version'
 
 functions:
   connectionHandler:
     handler: bin/handleRequest
     environment:
-      MONGO_CONNECTION: ${opt:mongo_connection}
-      MONGO_DATABASE: ${opt:mongo_database}
+      MONGO_CONNECTION: ${env:MONGO_CONNECTION}
+      MONGO_DATABASE: ${env:MONGO_DATABASE}
     events:
       - websocket:
           route: $connect

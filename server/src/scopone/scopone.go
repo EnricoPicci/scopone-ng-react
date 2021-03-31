@@ -24,7 +24,10 @@ type Scopone struct {
 
 // New Scopone
 func New(playerStore PlayerWriter, gameStore GameReadWriter) *Scopone {
-	viper.SetConfigFile(".env")
+	fmt.Println("Start Scopone")
+
+	viper.SetConfigFile(".version")
+	viper.SetConfigType("dotenv")
 	err := viper.ReadInConfig()
 	if err != nil {
 		log.Fatalf("Error while reading config file %s", err)
@@ -35,7 +38,7 @@ func New(playerStore PlayerWriter, gameStore GameReadWriter) *Scopone {
 	}
 
 	s := Scopone{}
-	fmt.Printf("Start Scopone - version %v \n", msgVersion)
+	fmt.Printf("Version %v \n", msgVersion)
 
 	s.PlayerStore = playerStore
 	s.GameStore = gameStore
