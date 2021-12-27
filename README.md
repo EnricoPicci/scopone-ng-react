@@ -21,30 +21,45 @@ A player needs to open the web application to start playing. The specific steps 
 
 ## Project structure
 
-This project is composed by a client and a server.
-Server code is in the `server` folder, while client code is contained in the `client` folder.
-The client is an Angular application, currently on version 9.
-The Server is a Go application.
+This project is composed by a server and a client.
+
+The Server is a Go application with the server code contained in the `server` folder. The server can be connected to a mongodb to store the state of the games.
+
+The client code is in 2 versions
+
+- Angular (currently at version 9) contained in the `client-ng` folder
+- React (currently at version 17) contained in the `client-react` folder
+
 Client and Server use WebSocket protocol to communicate.
+
+There are also other folders at the top of the workspace.
+
+- `scopone-rx-service`: contains the code which implements a service which is shared by both clients, the Angular and the React one
+- `serverless-cd`: contains the scripts that implement the CD logic, i.e. the script that allow to build and deploy the entire app, both client and server
 
 ## Server
 
 The server is implemented in Go.
-Server code is in the `src` folder.
+
+Server code is in the `server/src` folder.
+
 The server implements the WebSocket server which clients connect to.
+
 The server can be deployed as either a standard WebSocket server implemented using the [Gorilla](https://www.gorillatoolkit.org) library or as an AWS Lambda function. [This article](https://medium.com/better-programming/websockets-on-demand-with-aws-lambda-serverless-framework-and-go-616bd7ff11c9) describes how WebSockets can work with Lambda.
 
 ### Standard Gorilla WebSocket server
 
 When using the server as a standard Gorilla WebSockets server (opposed to a WebSocket server delpoyed as Lambda), it can be launched with and without the support of a Mongo database where details of the games are registered.
-If Mongo db is used, the server can be stopped and, when it restarts, all games information will be retrieved and the game can continue from where it was left when the server stopped.
+
+If Mongo db is used, the server can be stopped and, when it restarts, all games information will be retrieved and the game can continue from where it was left when the server was stopped.
+
 If Mongo db is not used, then if the server stops, all information will be lost and when it restarts all games and players will have been lost.
 
-The entry points of the standard Gorilla WebSocket server are the main packages found as subfolders in `server/src/cmd`.
+The commands to launch the standard Gorilla WebSocket server are the main packages found as subfolders in `server/src/cmd`.
 
 ### WebSocket server deployed as AWS Lambda function
 
-In case we deploy the WebSocket server as AWS Lambda function, the entry point of the application is the `main` function in the `main.go` file in `src/server/srvlambda` folder.
+In case we deploy the WebSocket server as AWS Lambda function, the entry point of the server application is the `main` function in the `main.go` file in `src/server/srvlambda` folder.
 
 ### Unit test the server
 
@@ -55,13 +70,16 @@ To unit test the server move to the `server` folder and run the command `go test
 ### Install and launch the Gorilla WebSocket server
 
 It is possible to install the Server following the Go standards (see https://stackoverflow.com/questions/30612611/what-does-go-build-build-go-build-vs-go-install for more details on installing Go apps).
+
 The `main` packages are organized as subfolders of `server/src/cmd`.
 
 To install the server app of choice (i.e. the one with Mongo db or the one without), open either `server/src/cmd/scopone-in-memory-only/scopone-in-memory-only.go` or `server/src/cmd/scopone-mongo/scopone-mongo.go`, run the go command `install package` from within VSCode (view->command pallette...->`GO: install current package`)
+
 It is possible to install the package of choice launching the `go install` command from withing the folder of the main package (i.e. one of the packages under `src/cmd` folder).
 
-Once installed, the server can be launched with the command `MONGO_CONNECTION="mongoConnectionUrl" ~/go/bin/scopone-mongo` (wherthee `mongoConnectionUrl` points to the Mongo server - for instance, in case of Mongo Atlas, `mongodb+srv://user:password@my-cluster.mongodb.net/scopone?retryWrites=true&w=majority`).
-If the version without Mongo db, the command to launch the server is `~/go/bin/scopone-in-memory-only`.
+Once installed, the server can be launched with the command `MONGO_CONNECTION="mongoConnectionUrl" ~/go/bin/scopone-mongo` (where the `mongoConnectionUrl` points to the Mongo server - for instance, in case of Mongo Atlas, `mongodb+srv://user:password@my-cluster.mongodb.net/scopone?retryWrites=true&w=majority`).
+
+If we choose the version without Mongo db, the command to launch the server is `~/go/bin/scopone-in-memory-only`.
 
 ### BUILD and launch the Gorilla WebSocket server
 
@@ -74,7 +92,7 @@ Once built, the server can be launched with the command `MONGO_CONNECTION="mongo
 
 ### Create a Docker image for the Gorilla WebSocket server and launch it with Docker
 
-To build a pretty optimized Docker image for the Scopone server
+To build a Docker image for the Scopone server
 
 1. Edit the file `server/Dockerfile-minimal-mongo` to set the environmnet variable `MONGO_CONNECTION` with the value of the mongo connection url
 2. run the following command `docker build -t scopone-server -f Dockerfile-minimal-mongo .`
@@ -102,8 +120,12 @@ This command builds an executable named `./bin/handleRequest`.
 ### DEPLOYMENT
 
 To deploy the package as AWS Lambda function, the [Serveless Framework](https://www.serverless.com/) is used.
-Install the Serverless Framework if not already installed (see https://www.serverless.com/framework/docs/getting-started/ for instruction on how to install it).
-To deploy the package as AWS Lambda run the command `sls deploy --mongo_connection "mongoConnectionUrl" --mongo_database scopone_lambda`.
+
+Install the Serverless Framework locally using the command `npm install`. Note that the file `package.json` is present in the `server` forder just to allow install the [Serveless Framework](https://www.serverless.com/).
+
+The url of the mongo database to be used has to be set in the `server/.env`. Copy the file `server/.env-sample` to `server/.env` file and change the value of the `MONGO_CONNECTION` variable to the connection string pointing to the mongo db instance to be used (the form of the connection string should be in this format `mongodb+srv://user:password@my-cluster.mongodb.net/scopone?retryWrites=true&w=majority`).
+
+To deploy the package as AWS Lambda run the command `npx sls deploy`.
 The `serverless.yml` can be found in the `server` folder.
 
 If the deployment succeeds, it prints on the console the url for the endpoint of the WebSocket server (in a format similar to `wss://an-id-of-endpoint.execute-api.an-aws-region.amazonaws.com/dev`). Take note of it since it will be used to configure the client.
@@ -112,27 +134,26 @@ If the deployment succeeds, it prints on the console the url for the endpoint of
 
 ### Test the server from VSCode playing an entire game with standalone service (e.g. with the service in "scopone-rx-service" folder)
 
-Go to the server folder with `cd server`.
-Launch the server with `~/go/bin/server`.
-Set the WebSocket server url as value of the property `serverAddress` in the file `scopone-rx-service/src/environments/environment.ts` (for the ng-client) or in `.env` file for client-react. If the WebSocket server has been launched locally, then the url is `ws://localhost:8080/osteria`. Otherwise specify the url to be used.
+Start the server in one of the possible ways:
 
-Go to the scopone-rx-service (`cd scopone-rx-service` from the workspace folder for Angular or `cd client-react` for React). Open VSCode and from within VSCode, open the file `service.mocha-play-game.ts`. Go to the VSCode Debug window, select "Current TS Tests File" in the Run drop down list and launch.
+- go to the server folder with `cd server`and launch the server with `~/go/bin/server`
+- launch with Docker with the command `docker run -p 8080:8080 scopone-server`
+- deploying the server as a Lambda web socket server
+
+If mongodb is used, then make sure the database is clean. i.e. there are no collection related to Scopone app. All tests can be repeated without having to cleanup the DB, but it may happen that for uncontrolled reasons the DB is left in a state which does not allow to complete the tests, so it is convenient to clean up the db to run the first set of tests.
+
+Set the WebSocket server url as value of the property `serverAddress` in the file `scopone-rx-service/src/environments/environment.ts`. If the WebSocket server has been launched locally, then the url is probably something like this `ws://localhost:8080/osteria`. Otherwise specify the url to be used (e.g. in case of Lambda server, the url would look something like this `wss://my-end-point.execute-api.us-east-1.amazonaws.com/dev`).
+
+Go to the scopone-rx-service (`cd scopone-rx-service` from the workspace folder. Open VSCode from there with the command `code .` and from within VSCode, open the file `service.mocha-play-game.ts`. Go to the VSCode Debug window, select "Current TS Tests File" in the Run drop down list and launch.
 
 This test creates a new game and plays an entire hand (i.e. plays all 40 cards) and checks that everything works from a WebSockets API point of view.
-
-### Test the server from VSCode playing an entire game with the React client service
-
-Do the same as above, but from the "client-react" folder.
-IN case of React implementation, from within the client-react folder it is also possible to launch the command
-`npm run test-rx-service`
-to test and entire hand of a new game from command line.
 
 ### Start the first hand of a game and play 36 cards
 
 Do the same steps described in the "Test the server from VSCode" section, but launch the file `scopone-server.service.play-39-cards.ts`. This test creates a new game and plays the first hand for 36 cards.
 This allows a tester to log in the server from the front end and test the end of an hand without having to play all cards.
 
-## Angular Client (client.ng folder)
+## Angular Client (client-ng folder)
 
 The Client is an Angular application, currently using version 9 of the framework.
 

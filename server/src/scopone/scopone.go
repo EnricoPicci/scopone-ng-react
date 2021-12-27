@@ -24,18 +24,26 @@ type Scopone struct {
 
 // New Scopone
 func New(playerStore PlayerWriter, gameStore GameReadWriter) *Scopone {
-	viper.SetConfigFile(".env")
+	fmt.Println("Start Scopone")
+
+	viper.SetDefault("VERSION", "no version set")
+
+	viper.SetConfigType("env")
+	viper.AddConfigPath(".")     // config path for runtime
+	viper.AddConfigPath("../..") // config path for test
+	viper.SetConfigName("app")
+
 	err := viper.ReadInConfig()
 	if err != nil {
-		log.Fatalf("Error while reading config file %s", err)
+		log.Fatalf("Error while reading config file. Error message: \"%s\"", err)
 	}
 	msgVersion, ok := viper.Get("VERSION").(string)
 	if !ok {
-		panic("Invalid type assertion")
+		panic("Invalid type assertion - version is not a string")
 	}
 
 	s := Scopone{}
-	fmt.Printf("Start Scopone - version %v \n", msgVersion)
+	fmt.Printf("Version %v \n", msgVersion)
 
 	s.PlayerStore = playerStore
 	s.GameStore = gameStore
@@ -63,7 +71,10 @@ func (s *Scopone) PlayerEnters(pName string) (handViews map[string]HandPlayerVie
 		p := player.New(pName)
 		s.Players[pName] = p
 		p.Status = player.PlayerNotPlaying
-		s.PlayerStore.AddPlayerEntry(p)
+		err := s.PlayerStore.AddPlayerEntry(p)
+		if err != nil {
+			panic(err)
+		}
 		return
 	}
 
@@ -73,7 +84,10 @@ func (s *Scopone) PlayerEnters(pName string) (handViews map[string]HandPlayerVie
 	switch pStatus {
 	case player.PlayerLeftOsteria:
 		fmt.Printf("Player %v returned to the Osteria\n", pName)
-		s.PlayerStore.AddPlayerEntry(plr)
+		err := s.PlayerStore.AddPlayerEntry(plr)
+		if err != nil {
+			panic(err)
+		}
 		// find if the player was playeing or observing any game
 		gameOfPlayer, pFound := findGameForPlayer(plr, s.Games)
 		_, oFound := findGameForObserver(plr.Name, s.Games)
@@ -200,7 +214,10 @@ func (s *Scopone) NewGame(gName string) (g *Game, e error) {
 	game.Name = gName
 	g = game
 	s.Games[gName] = g
-	s.GameStore.WriteGame(g)
+	err := s.GameStore.WriteGame(g)
+	if err != nil {
+		panic(err)
+	}
 	return
 }
 
@@ -218,7 +235,10 @@ func (s *Scopone) AddPlayerToGame(playerName string, gameName string) (e error) 
 	}
 	err := g.AddPlayer(p)
 	if err == nil {
-		s.GameStore.WriteGame(g)
+		err_ := s.GameStore.WriteGame(g)
+		if err_ != nil {
+			panic(err_)
+		}
 	}
 	return err
 }
@@ -238,7 +258,10 @@ func (s *Scopone) AddObserverToGame(playerName string, gameName string) (handVie
 	handViews = buildCurrentHandView(g)
 	e = g.AddObserver(p)
 	if e == nil {
-		s.GameStore.WriteGame(g)
+		err_ := s.GameStore.WriteGame(g)
+		if err_ != nil {
+			panic(err_)
+		}
 	}
 	return handViews, e
 }
@@ -294,7 +317,10 @@ func (s *Scopone) NewHand(g *Game) (hand Hand, handView map[string]HandPlayerVie
 	}
 	hand.History.PlayerDecks = playerDecks
 	if handCreated {
-		s.GameStore.WriteGame(g)
+		err_ := s.GameStore.WriteGame(g)
+		if err_ != nil {
+			panic(err_)
+		}
 	}
 	return hand, buildHandView(&hand, g), handCreated
 }
@@ -421,7 +447,10 @@ func (s *Scopone) Play(pName string, cardPlayed deck.Card, cardsTaken []deck.Car
 	}
 
 	handViews = buildHandView(hand, g)
-	s.GameStore.WriteGame(g)
+	err_ := s.GameStore.WriteGame(g)
+	if err_ != nil {
+		panic(err_)
+	}
 	return handViews, finalTableTake, g
 }
 
@@ -430,7 +459,10 @@ func (s *Scopone) Play(pName string, cardPlayed deck.Card, cardsTaken []deck.Car
 func (s *Scopone) Close(gName string, playerClosing string) {
 	g := s.Games[gName]
 	g.Close(playerClosing)
-	s.GameStore.WriteGame(g)
+	err_ := s.GameStore.WriteGame(g)
+	if err_ != nil {
+		panic(err_)
+	}
 }
 
 // teamOfPlayer returns the teamOfPlayer of the Player

@@ -25,13 +25,11 @@ type GameListReactState = {
 };
 
 export const GameList: FC = () => {
-  const [
-    gameListReactState,
-    setGameListReactState,
-  ] = useState<GameListReactState>({
-    games: [],
-    openConfirmationDialogue: false,
-  });
+  const [gameListReactState, setGameListReactState] =
+    useState<GameListReactState>({
+      games: [],
+      openConfirmationDialogue: false,
+    });
 
   const server = useContext(ServerContext);
 
@@ -106,7 +104,11 @@ export const GameList: FC = () => {
         open={gameListReactState.openConfirmationDialogue}
         onClose={handleDialogueClose}
       >
-        <DialogTitle>{`Confirm to join ${handleSelect.name}?`}</DialogTitle>
+        <DialogTitle>{`Confirm to join ${
+          gameListReactState.selectedGame
+            ? gameListReactState.selectedGame.name
+            : ""
+        }?`}</DialogTitle>
         <DialogActions>
           <Button onClick={handleConfirm} color="primary">
             OK

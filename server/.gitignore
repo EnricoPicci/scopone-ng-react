@@ -16,3 +16,5 @@
 bin/
 pkg/
 .serverless/
+
+/node_modules

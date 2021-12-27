@@ -24,6 +24,7 @@ RUN go build -o scopone-app ./src/cmd/scopone-mongo
 # Stage 1 - create minimal image with just the executable
 FROM alpine
 COPY --from=0 /build/scopone-app .
+COPY --from=0 /build/app.env .
 
 ENV MONGO_CONNECTION="mongoConnectionUrl"
 

@@ -19,10 +19,22 @@ func newGame(p1 string, p2 string, p3 string, p4 string, scopone *Scopone, gName
 	scopone.PlayerEnters(p2)
 	scopone.PlayerEnters(p3)
 	scopone.PlayerEnters(p4)
-	scopone.AddPlayerToGame(p1, gName)
-	scopone.AddPlayerToGame(p2, gName)
-	scopone.AddPlayerToGame(p3, gName)
-	scopone.AddPlayerToGame(p4, gName)
+	err_ := scopone.AddPlayerToGame(p1, gName)
+	if err_ != nil {
+		panic(err_)
+	}
+	err_ = scopone.AddPlayerToGame(p2, gName)
+	if err_ != nil {
+		panic(err_)
+	}
+	err_ = scopone.AddPlayerToGame(p3, gName)
+	if err_ != nil {
+		panic(err_)
+	}
+	err_ = scopone.AddPlayerToGame(p4, gName)
+	if err_ != nil {
+		panic(err_)
+	}
 	return g
 }
 
@@ -970,7 +982,10 @@ func TestAddPlayersToGame(t *testing.T) {
 	}
 	gameName := "A new game where to add players"
 	scopone := New(&DoNothingStore{}, &DoNothingStore{})
-	scopone.NewGame(gameName)
+	_, err_ := scopone.NewGame(gameName)
+	if err_ != nil {
+		panic(err_)
+	}
 	g := scopone.Games[gameName]
 	for _, name := range playerNames {
 		scopone.PlayerEnters(name)
@@ -1044,8 +1059,14 @@ func TestAddPlayerToGameAndThenRomove(t *testing.T) {
 
 	scopone := New(&DoNothingStore{}, &DoNothingStore{})
 	scopone.PlayerEnters(playerName)
-	scopone.NewGame(gameName)
-	scopone.AddPlayerToGame(playerName, gameName)
+	_, err_ := scopone.NewGame(gameName)
+	if err_ != nil {
+		panic(err_)
+	}
+	err_ = scopone.AddPlayerToGame(playerName, gameName)
+	if err_ != nil {
+		panic(err_)
+	}
 
 	scopone.RemovePlayer(playerName)
 
@@ -1084,10 +1105,16 @@ func TestStartGameAndThenRemovePlayers(t *testing.T) {
 	gameName := "A new game where players come and go"
 
 	scopone := New(&DoNothingStore{}, &DoNothingStore{})
-	scopone.NewGame(gameName)
+	_, err_ := scopone.NewGame(gameName)
+	if err_ != nil {
+		panic(err_)
+	}
 	for _, name := range playerNames {
 		scopone.PlayerEnters(name)
-		scopone.AddPlayerToGame(name, gameName)
+		err_ := scopone.AddPlayerToGame(name, gameName)
+		if err_ != nil {
+			panic(err_)
+		}
 	}
 
 	g := scopone.Games[gameName]

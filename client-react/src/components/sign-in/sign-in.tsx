@@ -39,9 +39,7 @@ export const SignIn: FC = () => {
     };
   }, [server, errorService]);
 
-  const handleChange = (
-    event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
-  ) => {
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setPlayerName(event.target.value);
   };
 

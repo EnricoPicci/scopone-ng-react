@@ -19,8 +19,14 @@ func TestAddPlayerToNewGameAndGameState(t *testing.T) {
 	}
 
 	// add the first 2 players
-	game.AddPlayer(player1)
-	game.AddPlayer(player2)
+	err_ := game.AddPlayer(player1)
+	if err_ != nil {
+		panic(err_)
+	}
+	err_ = game.AddPlayer(player2)
+	if err_ != nil {
+		panic(err_)
+	}
 
 	// test the game status is "TeamsForming" since at least one player has entered the game but not all players have joined
 	if game.State != TeamsForming {
@@ -33,8 +39,14 @@ func TestAddPlayerToNewGameAndGameState(t *testing.T) {
 		t.Errorf("We should not be able to add twice the same player")
 	}
 
-	game.AddPlayer(player3)
-	game.AddPlayer(player4)
+	err_ = game.AddPlayer(player3)
+	if err_ != nil {
+		panic(err_)
+	}
+	err_ = game.AddPlayer(player4)
+	if err_ != nil {
+		panic(err_)
+	}
 	// test that a new Game has no Hands
 	if len(game.Hands) != 0 {
 		t.Errorf("The current game has %v hands and not 0", len(game.Hands))

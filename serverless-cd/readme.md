@@ -26,4 +26,4 @@ The redirect configuration should look like this
 ]
 ```
 
-Please check since this is not currently supported by the `serverless-finch` plugin used to deploy. A PR has been raised but not yet accepted.
+Please check since this is not currently supported by the `serverless-finch` plugin used to deploy. A PR has been raised but not yet accepted. In the meantime we rely on the package `serverless-finch-patched-for-redirect`.
