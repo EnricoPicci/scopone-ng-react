@@ -45,3 +45,4 @@ server/.env
 serverless-cd/.DS_Store
 todo.txt
 server/Dockerfile-minimal-mongo__
+server/command-install-go-server.md

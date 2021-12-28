@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 
-echo "************* Deploy Server to AWS Lambda *************"
+echo "************* Build and Deploy Server to AWS Lambda *************"
 
 cd ../../server 
 # build the server

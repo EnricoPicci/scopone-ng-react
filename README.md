@@ -4,6 +4,17 @@ This application implements Scopone, a traditional italian card game.
 It allows 4 players to play the game. It supports running more games at the same time, in other words
 "tables" of four players can be active at the same time.
 
+- [Steps for a player to play the game](#steps-for-a-player-to-play-the-game)
+- [Project structure](#project-structure)
+- [Server](#server)
+- [Gorilla WebSocket server](#gorilla-websocket-server)
+- [WebSocket server with AWS Lambda function](#websocket-server-with-aws-lambda-function)
+- [Test WebSocket server APIs](#test-websocket-server-apis)
+- [Client architecture and logical structure](#client-architecture-and-logical-structure)
+- [Angular Client](#angular-client)
+- [React Client](#react-client)
+- [CI/CD scripts](#cicd-scripts)
+
 ## Steps for a player to play the game
 
 A player needs to open the web application to start playing. The specific steps are
@@ -11,7 +22,7 @@ A player needs to open the web application to start playing. The specific steps 
 1. Launch the application from a browser
 2. Enter the name of the player
 3. Choose the game that the player wants to play or create a new game
-4. Once 4 players join the game, the game actually starts
+4. Once 4 players join the game, the game a button to start the game appears on the screen of each player and the first player who clicks on that button will actually start the game and will be the first player to play a card
 5. The server shuffles a deck of cards and distribute 10 cards to each player to start a new hand
 6. Players play in sequence untill all cards are played
 7. When all cards of an hand are played, the hand is closed and the result is shown to each player
@@ -67,21 +78,7 @@ To unit test the server move to the `server` folder and run the command `go test
 
 ## Gorilla WebSocket server
 
-### Install and launch the Gorilla WebSocket server
-
-It is possible to install the Server following the Go standards (see https://stackoverflow.com/questions/30612611/what-does-go-build-build-go-build-vs-go-install for more details on installing Go apps).
-
-The `main` packages are organized as subfolders of `server/src/cmd`.
-
-To install the server app of choice (i.e. the one with Mongo db or the one without), open either `server/src/cmd/scopone-in-memory-only/scopone-in-memory-only.go` or `server/src/cmd/scopone-mongo/scopone-mongo.go`, run the go command `install package` from within VSCode (view->command pallette...->`GO: install current package`)
-
-It is possible to install the package of choice launching the `go install` command from withing the folder of the main package (i.e. one of the packages under `src/cmd` folder).
-
-Once installed, the server can be launched with the command `MONGO_CONNECTION="mongoConnectionUrl" ~/go/bin/scopone-mongo` (where the `mongoConnectionUrl` points to the Mongo server - for instance, in case of Mongo Atlas, `mongodb+srv://user:password@my-cluster.mongodb.net/scopone?retryWrites=true&w=majority`).
-
-If we choose the version without Mongo db, the command to launch the server is `~/go/bin/scopone-in-memory-only`.
-
-### BUILD and launch the Gorilla WebSocket server
+### Build and launch the Gorilla WebSocket server
 
 To build the server app, move to the folder `server` and launch the command `go build -o scopone-app ./src/cmd/scopone-mongo` (or `go build -o scopone-app ./src/cmd/scopone-in-memory-only` for the version which does not use Mongo db).
 This command creates the executable `scopone-app` in the `server` folder.
@@ -112,12 +109,12 @@ If the server is up and running, it responds with a simple "Home page" that shou
 
 ## WebSocket server with AWS Lambda function
 
-### BUILD
+### Build
 
 To build the package ready to be deployed as AWS Lambda function, from within the folder `server` run the command `env GOOS=linux go build -ldflags="-s -w" -o ./bin/handleRequest ./src/server/srvlambda`.
 This command builds an executable named `./bin/handleRequest`.
 
-### DEPLOYMENT
+### Deployment
 
 To deploy the package as AWS Lambda function, the [Serveless Framework](https://www.serverless.com/) is used.
 
@@ -153,11 +150,38 @@ This test creates a new game and plays an entire hand (i.e. plays all 40 cards) 
 Do the same steps described in the "Test the server from VSCode" section, but launch the file `scopone-server.service.play-39-cards.ts`. This test creates a new game and plays the first hand for 36 cards.
 This allows a tester to log in the server from the front end and test the end of an hand without having to play all cards.
 
-## Angular Client (client-ng folder)
+## Client architecture and logical structure
+
+There are 2 different implementations of the client, one built with Angular and one built with React. They are implmemented in the `client-ng` and `client-react` folders respectively.
+
+While Angular and React are different in many ways, they share one important idea: both are **component based** and the views built with them are, or shuold be, built using the composition pattern. In other words the final UI is the result of composing different simpler smaller components and components can be reused throughout different pages of the UI as long as they provide the right level of customization.
+
+The clients are based on the following basic principles:
+
+- The logic is divided into
+  - View layer, implemented via Components (Angular or React components)
+  - Service layer, implemented by the **ScoponeServerService** whose code can be found in the `scopone-rx-sevice` folder
+- Components are light, in other words they are responsible only for
+  - Intercept UI generated events and tranform them into commands to be sent to an external service
+  - Subscribe to the streams of events, relevant for the specific Component, which are published by the external service
+- The service **ScoponeServerService** is the core of the UI logic. It is implemented as pure TypeScript logic, with no dependencies on either Angular or React. The service layer exposes 2 types of APIs
+  - Standard APIs, implemented as methods of the service, which can be called by components when the components what to send a command. Usually (\* see below for further explanation of "ususally") the service takes the command invocation parameters and turn it into a command to be sent to the back end server using the web socket channel.
+  - Stream APIs, implemented as RxJs Observables. These are streams of events that the service makes available to components for subscription. Components which are interested in specific events can subscribe to the relevant Observable and implement, as side effect of notifications, **_*updates in the UI*_** as results of the notifications received.
+- The net division between UI components layers and service layer and the clear responsibility set on the service layer allow to have light components and have the vast majority of the logic implemented in the service layer, which being standard TypeScript code with no dependenciy on either Angular or React becomes much easier to test.
+
+(\*) We say "usually sends the command to the remote service" since this is not mandatory. The key concern of the **ScoponeServerService** is to turn a command received into notifications on the various streams of events that it publishes, and this can be performed also without sending a command to the back end server.
+
+Both clients, the Angular and the React one, share the same service, **ScoponeServerService** implemented in the `scopone-rx-sevice` folder
+
+**ScoponeServerService** is implemented in the folder `scopone-rx-sevice` folder and is imported in both the Angular and the React clients.
+
+## Angular Client
 
 The Client is an Angular application, currently using version 9 of the framework.
 
-### Configuration of the connection with the server
+The code is stored in the `client-ng` folder,
+
+### Configuration of the connection with the server for the Angular client
 
 The connection with the server is configured using the files contained in the folder `client/src/environments`.
 
@@ -166,12 +190,73 @@ The file `client/src/environments/environment.prod.ts` is used when building the
 
 The connection url for the WebSocket server has to be set in the property `serverAddress` of either `client/src/environments/environment.ts` or `client/src/environments/environment.prod.ts`. For instance, in case of a WebSocket server running locally, the configuration would be `serverAddress: 'ws://localhost:8080/osteria'`.
 
-### Launch development web server
+### Launch a development web server
 
-To launch a development web server, with hot reload, launch the following command
+To launch a development web server, with hot reload, run the following command
 `ng serve`
 
 ### Build the front end app for deployment to production
 
 To build the application for deployment to production, run the command
 `ng build --prod`
+
+## React Client
+
+The Client is a React application, currently using version 17 of the library.
+
+The code is store in the `client-react` folder.
+
+The project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+
+### Configuration of the connection with the server for the React client
+
+The connection with the server is configured using the mechanism provided by [Create React App to set environment variables](https://create-react-app.dev/docs/adding-custom-environment-variables#adding-development-environment-variables-in-env).
+
+The connection string needs to be set using the `REACT_APP_SERVER_ADDRESS` variable defined in the following files
+
+- .env.development for the development environment
+- .env.production for the production environment
+
+These files override what is defined in the `.env` file
+
+For instance, in case a local installation of the server is used, the configuration looks like
+
+`REACT_APP_SERVER_ADDRESS=ws://localhost:8080/osteria`
+
+### Launch a development web server
+
+To launch a development web server, run the following command
+`npm run start`
+
+### Build the front end app for deployment to production
+
+To build the application for deployment to production, run the command
+`npm run build`
+
+## CI/CD scripts
+
+The scripts to automatically build and deploy the client and the server parts of the app are contained in the `serverless-cd` folder.
+
+### Deploy the server as a Lambda function
+
+To deploy the server as a Lambda function move to the `serverless-cd/server-lambda` folder and run the command
+
+- `bash deploy-server-to-lambda.sh`
+
+At the end of the execution, if successful, the script prints the address of the Lambda server to be used in the configuration of the clients with a message similar to this
+
+`endpoints: wss://abcdef.execute-api.us-east-1.amazonaws.com/dev`
+
+The address `wss://abcdef.execute-api.us-east-1.amazonaws.com/dev` has to be used as the url of the remote server in the configuration of the Angulra and React clients (see above instruction to know how to set this value for the different clients).
+
+### Deploy the Angular client to an S3 bucket and set the bucket for website hosting
+
+To build the Angular client for production and deploy it on an S3 bucket configure to host websites, move to the `serverless-cd/client-ng-s3` folder and run the command
+
+- `bash build-deploy-ng-front-end.sh`
+
+### Deploy the React client to an S3 bucket and set the bucket for website hosting
+
+To build the React client for production and deploy it on an S3 bucket configure to host websites, move to the `serverless-cd/client-react-s3` folder and run the command
+
+- `bash build-deploy-react-front-end.sh`
