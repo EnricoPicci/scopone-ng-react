@@ -5,9 +5,8 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { HandComponent } from './hand.component';
 import { MaterialModule } from 'src/app/material.module';
 import { CardsComponent } from '../cards/cards.component';
-import { AddPlayerComponent } from '../add-player/add-player.component';
-import { TeamsComponent } from '../teams/teams.component';
 import { ErrorComponent } from '../error/error.component';
+import { TableComponent } from '../table/table.component';
 
 describe('HandComponent', () => {
   let component: HandComponent;
@@ -18,9 +17,8 @@ describe('HandComponent', () => {
       declarations: [
         HandComponent,
         CardsComponent,
-        AddPlayerComponent,
-        TeamsComponent,
         ErrorComponent,
+        TableComponent,
       ],
       imports: [
         MaterialModule,
