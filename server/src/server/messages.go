@@ -4,9 +4,9 @@ package server
 import (
 	"time"
 
-	"go-scopone/src/deck"
-	"go-scopone/src/player"
-	"go-scopone/src/scopone"
+	"go-scopone/src/game-logic/deck"
+	"go-scopone/src/game-logic/player"
+	"go-scopone/src/game-logic/scopone"
 
 	"github.com/spf13/viper"
 )

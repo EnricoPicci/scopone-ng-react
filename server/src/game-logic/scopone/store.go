@@ -1,6 +1,6 @@
 package scopone
 
-import "go-scopone/src/player"
+import "go-scopone/src/game-logic/player"
 
 // PlayerWriter adds, updates, deletes a Player in the sotre
 type PlayerWriter interface {

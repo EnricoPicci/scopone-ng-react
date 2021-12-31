@@ -11,7 +11,7 @@ import (
 	"net/http"
 	"time"
 
-	"go-scopone/src/scopone"
+	"go-scopone/src/game-logic/scopone"
 
 	"github.com/gorilla/websocket"
 )

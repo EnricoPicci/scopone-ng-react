@@ -1,7 +1,7 @@
 // Package player implements the player
 package player
 
-import "go-scopone/src/deck"
+import "go-scopone/src/game-logic/deck"
 
 // PlayerStatus is the type for the status of a player
 type PlayerStatus string

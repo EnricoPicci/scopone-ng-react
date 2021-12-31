@@ -1,7 +1,7 @@
 package team
 
 import (
-	"go-scopone/src/player"
+	"go-scopone/src/game-logic/player"
 	"strings"
 	"testing"
 )

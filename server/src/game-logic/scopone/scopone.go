@@ -7,9 +7,9 @@ import (
 	"sort"
 	"strconv"
 
-	"go-scopone/src/deck"
-	"go-scopone/src/player"
-	"go-scopone/src/team"
+	"go-scopone/src/game-logic/deck"
+	"go-scopone/src/game-logic/player"
+	"go-scopone/src/game-logic/team"
 
 	"github.com/spf13/viper"
 )
@@ -29,8 +29,8 @@ func New(playerStore PlayerWriter, gameStore GameReadWriter) *Scopone {
 	viper.SetDefault("VERSION", "no version set")
 
 	viper.SetConfigType("env")
-	viper.AddConfigPath(".")     // config path for runtime
-	viper.AddConfigPath("../..") // config path for test
+	viper.AddConfigPath(".")        // config path for runtime
+	viper.AddConfigPath("../../..") // config path for test
 	viper.SetConfigName("app")
 
 	err := viper.ReadInConfig()

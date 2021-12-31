@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	"go-scopone/src/scopone"
+	"go-scopone/src/game-logic/scopone"
 	"go-scopone/src/server/srvlambda/lambdamongo"
 
 	"github.com/aws/aws-lambda-go/events"

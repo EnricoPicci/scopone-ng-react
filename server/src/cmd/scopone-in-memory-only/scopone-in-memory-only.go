@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"go-scopone/src/scopone"
+	"go-scopone/src/game-logic/scopone"
 	"go-scopone/src/server/srvgorilla"
 )
 

@@ -5,9 +5,9 @@ import (
 	"sort"
 	"testing"
 
-	"go-scopone/src/deck"
-	"go-scopone/src/player"
-	"go-scopone/src/team"
+	"go-scopone/src/game-logic/deck"
+	"go-scopone/src/game-logic/player"
+	"go-scopone/src/game-logic/team"
 )
 
 func newTestGameFactory(scopone *Scopone, gName string) *Game {

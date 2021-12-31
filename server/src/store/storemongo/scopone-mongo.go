@@ -7,8 +7,8 @@ import (
 	"os"
 	"time"
 
-	"go-scopone/src/player"
-	"go-scopone/src/scopone"
+	"go-scopone/src/game-logic/player"
+	"go-scopone/src/game-logic/scopone"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"

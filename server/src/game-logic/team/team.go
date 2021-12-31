@@ -2,8 +2,8 @@
 package team
 
 import (
-	"go-scopone/src/deck"
-	"go-scopone/src/player"
+	"go-scopone/src/game-logic/deck"
+	"go-scopone/src/game-logic/player"
 )
 
 // Team is made of 2 Players, has some Cards taken and can have some SCOPE_OF_SCOPONE

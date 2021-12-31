@@ -3,7 +3,7 @@ package scopone
 import (
 	"testing"
 
-	"go-scopone/src/player"
+	"go-scopone/src/game-logic/player"
 )
 
 func TestAddPlayerToNewGameAndGameState(t *testing.T) {

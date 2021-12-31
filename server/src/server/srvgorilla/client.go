@@ -9,9 +9,9 @@ import (
 	"sync"
 	"time"
 
-	"go-scopone/src/deck"
-	"go-scopone/src/player"
-	"go-scopone/src/scopone"
+	"go-scopone/src/game-logic/deck"
+	"go-scopone/src/game-logic/player"
+	"go-scopone/src/game-logic/scopone"
 	"go-scopone/src/server"
 
 	"github.com/gorilla/websocket"
