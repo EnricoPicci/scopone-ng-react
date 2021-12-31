@@ -9,7 +9,7 @@ import (
 	"go-scopone/src/game-logic/deck"
 	"go-scopone/src/game-logic/player"
 	"go-scopone/src/game-logic/scopone"
-	"go-scopone/src/server"
+	server "go-scopone/src/server/messages"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-sdk-go/aws"
@@ -63,7 +63,10 @@ func handleCommand(ctx context.Context, event events.APIGatewayWebsocketProxyReq
 		handViewForPlayers, alreadyIn := scopone.PlayerEnters(playerName)
 		if alreadyIn {
 			// Player is already in the osteria
-			connectionStore.MarkConnectionIDDisconnected(ctx, connectionID)
+			err := connectionStore.MarkConnectionIDDisconnected(ctx, connectionID)
+			if err != nil {
+				panic(err)
+			}
 			resp := server.NewMessageToOnePlayer(server.PlayerIsAlreadyInOsteria, playerName)
 			resp.Error = fmt.Sprintf("Player \"%v\" is already in the Osteria", playerName)
 			sendMessage(ctx, resp, &connectionID)

@@ -12,7 +12,7 @@ import (
 	"go-scopone/src/game-logic/deck"
 	"go-scopone/src/game-logic/player"
 	"go-scopone/src/game-logic/scopone"
-	"go-scopone/src/server"
+	server "go-scopone/src/server/messages"
 
 	"github.com/gorilla/websocket"
 )
