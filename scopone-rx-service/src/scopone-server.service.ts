@@ -1,3 +1,7 @@
+// The way this class has been coded requires that the strict mode is turned off from typescript
+// https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-7.html#strict-class-initialization
+// This is why we have added a tsconfig.json file in the same folder as this file
+
 import { ReplaySubject, Observable, from, pipe, merge } from "rxjs";
 import {
   tap,
@@ -9,6 +13,7 @@ import {
   shareReplay,
   take,
   distinctUntilChanged,
+  catchError,
 } from "rxjs/operators";
 
 import {
@@ -32,6 +37,7 @@ import {
 import { openSocket, messages } from "./observable-websocket";
 import { PlayerView } from "./player-view";
 import { Card, Suits, TypeValues } from "./card";
+import { ScoponeErrors } from "./scopone-errors";
 
 export class ScoponeServerService {
   // ====================================================================================================
@@ -88,15 +94,20 @@ export class ScoponeServerService {
   // Properties holding state. Clients can read them but setting their value is private
   // In this way we can have state which is updated internally in a reactive way. The idea is to get the benefit of reactive
   // programming and the convenience of variables holding state when required
+
   private _playerName: string;
   get playerName() {
     return this._playerName;
   }
-  private gameName: string;
+  // observing is true if the Game is entered as an Observer of the Game and not as a Player
   private _observing = false;
   get observing() {
     return this._observing;
   }
+
+  // ====================================================================================================
+  // Private properties
+  private gameName: string;
 
   constructor() {
     this.initialize();
@@ -110,12 +121,7 @@ export class ScoponeServerService {
       : this._connect$.pipe(
           switchMap((ws) => this.messages(ws)),
           tap((d) => console.log("Message received from server", d)),
-          // it is important to shareReplay all the messages received since it may be possible that
-          // the messages arrive before the Angular Components are initialized and therefore without shareReplay they
-          // may get lost. This is particularly tru if you have a local websocket server for testing purposes
-          // the server can be very fast in responding and therefore respond faster that the Angular components
-          // setup specifically if you start the angular app on a browser tab just opened fresh
-          // shareReplay()
+          // we share the source stream to make sure that all downstream transformations share the same source
           share()
         );
 
@@ -250,14 +256,15 @@ export class ScoponeServerService {
       })
     );
 
-    this.myCurrentOpenGameWithAll4PlayersIn_ShareReplay$ = this.myCurrentOpenGame_ShareReplay$.pipe(
-      map(
-        (game) =>
-          Object.values(game.players).filter(
-            (p) => p.status === PlayerState.playerPlaying
-          ).length === 4
-      )
-    );
+    this.myCurrentOpenGameWithAll4PlayersIn_ShareReplay$ =
+      this.myCurrentOpenGame_ShareReplay$.pipe(
+        map(
+          (game) =>
+            Object.values(game.players).filter(
+              (p) => p.status === PlayerState.playerPlaying
+            ).length === 4
+        )
+      );
 
     this.myCurrentGameClosed$ = this.allMyGames$.pipe(
       map((games) => games.find((g) => g.name === this.gameName)),
@@ -390,7 +397,22 @@ export class ScoponeServerService {
       );
     }
     return openSocket(url).pipe(
-      tap((socket) => (this.socket = socket)),
+      tap((socket) => {
+        this.socket = socket;
+        console.log(socket);
+      }),
+      // manage errors that can be raised during connection
+      catchError((err) => {
+        console.error("Connection error to the server failed", err);
+        switch (err.type) {
+          case "error":
+            throw ScoponeErrors.ConnectionError;
+          case "close":
+            throw ScoponeErrors.Closed;
+          default:
+            throw ScoponeErrors.GenericConnectionError;
+        }
+      }),
       tap((socket) => this._connect$.next(socket)),
       // the websocket is not returned since it is inteded to be private to this class
       map(() => null),
@@ -426,7 +448,7 @@ export class ScoponeServerService {
   }
 
   // ====================================================================================================
-  // From here we have the methods which represent the requests we can send to the server
+  // From here we have the methods which represent the requests we can sent to the server
   public close() {
     this.closedByClient = true;
     this.socket.close();
@@ -542,11 +564,11 @@ export class ScoponeServerService {
     // https://stackoverflow.com/a/55298156/5699993
     return this.combinationsOfCards(table).filter(
       (subsetOfCards) =>
-        subsetOfCards.reduce(this.add, 0) === TypeValues[cardPlayed.type]
+        subsetOfCards.reduce(this.add, 0) === TypeValues.get(cardPlayed.type)
     );
   }
   private add(sum: number, card: Card) {
-    return sum + TypeValues[card.type];
+    return sum + TypeValues.get(card.type);
   }
   combinationsOfCards(cards: Card[]) {
     return (
@@ -559,7 +581,9 @@ export class ScoponeServerService {
   }
 
   sortCardsByType(cards: Card[]) {
-    return cards.sort((a, b) => TypeValues[b.type] - TypeValues[a.type]);
+    return cards.sort(
+      (a, b) => TypeValues.get(b.type) - TypeValues.get(a.type)
+    );
   }
   groupCardsBySuit(cards: Card[]) {
     return cards.reduce((acc, card) => {

@@ -5,7 +5,7 @@ import {
   Card as PlayingCard,
   Suits,
   Types,
-} from "../../rx-services/scopone-rx-service/card";
+} from "../../../../scopone-rx-service/src/card";
 
 enum TypesView {
   Ace = "1",

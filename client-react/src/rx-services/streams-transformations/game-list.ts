@@ -1,7 +1,7 @@
 import { combineLatest } from "rxjs";
 import { map } from "rxjs/operators";
-import { Game } from "../scopone-rx-service/messages";
-import { ScoponeServerService } from "../scopone-rx-service/scopone-server.service";
+import { Game } from "../../../../scopone-rx-service/src/messages";
+import { ScoponeServerService } from "../../../../scopone-rx-service/src/scopone-server.service";
 
 export type GameForList = Game & { canBeObservedOnly: boolean };
 

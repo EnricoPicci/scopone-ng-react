@@ -2,6 +2,12 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+If you install the required packages with the command `npm i` you can get a lot of security warnings about many vulnerabilities.
+
+According to the authors of `Create React App` these warnings can be ignored and the right way to run an audit is via the command `npm audit --production`.
+
+See [this github post](https://github.com/facebook/create-react-app/issues/11174) for more details.
+
 ## Available Scripts
 
 In the project directory, you can run:

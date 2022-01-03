@@ -6,7 +6,7 @@ import { ServerContext } from "../../context/server-context";
 import { SignIn } from "../sign-in/sign-in";
 import { switchMap, tap } from "rxjs/operators";
 import { merge } from "rxjs";
-import { PlayerState } from "../../rx-services/scopone-rx-service/messages";
+import { PlayerState } from "../../../../scopone-rx-service/src/messages";
 import { Card, CardContent, CardHeader } from "@material-ui/core";
 
 import "./game.css";

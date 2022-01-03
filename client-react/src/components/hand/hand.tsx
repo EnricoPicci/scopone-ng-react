@@ -4,12 +4,12 @@ import { useHistory } from "react-router-dom";
 import { combineLatest, interval, merge } from "rxjs";
 import { delayWhen, share, switchMap, tap } from "rxjs/operators";
 import { ServerContext } from "../../context/server-context";
-import { Card, TypeValues } from "../../rx-services/scopone-rx-service/card";
+import { Card, TypeValues } from "../../../../scopone-rx-service/src/card";
 import {
   HandState,
   Player,
   Team,
-} from "../../rx-services/scopone-rx-service/messages";
+} from "../../../../scopone-rx-service/src/messages";
 import { Cards } from "../cards/cards";
 import { Table } from "../table/table";
 import { CardsPicker } from "./cards-picker-dialogue";
@@ -58,14 +58,10 @@ export const Hand: FC = () => {
     showStartButton: false,
     enablePlay: false,
   });
-  const [
-    cardsPlayedTakenReactState,
-    setCardsPlayedTakenReactState,
-  ] = useState<CardsPlayedTakenReactState>();
-  const [
-    cardsTakeableReactState,
-    setCardsTakeableReactState,
-  ] = useState<CardsTakeableReactState>();
+  const [cardsPlayedTakenReactState, setCardsPlayedTakenReactState] =
+    useState<CardsPlayedTakenReactState>();
+  const [cardsTakeableReactState, setCardsTakeableReactState] =
+    useState<CardsTakeableReactState>();
 
   useEffect(() => {
     console.log("=======>>>>>>>>>>>>  Use Effect run in Hand");

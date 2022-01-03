@@ -1,6 +1,6 @@
 import { merge } from "rxjs";
 import { map } from "rxjs/operators";
-import { ScoponeServerService } from "../scopone-rx-service/scopone-server.service";
+import { ScoponeServerService } from "../../../../scopone-rx-service/src/scopone-server.service";
 
 export const title$ = (server: ScoponeServerService) => {
   return merge(

@@ -1,9 +1,6 @@
 import React, { FC } from "react";
-import { Card as CardObj } from "../../rx-services/scopone-rx-service/card";
-import {
-  PlayerState,
-  Team,
-} from "../../rx-services/scopone-rx-service/messages";
+import { Card as CardObj } from "../../../../scopone-rx-service/src/card";
+import { PlayerState, Team } from "../../../../scopone-rx-service/src/messages";
 import { Card } from "../card/card";
 
 import "./table.css";
@@ -91,9 +88,6 @@ export const Table: FC<ITableProps> = ({ teams, currentPlayerName, cards }) => {
                 </tr>
               </tbody>
             </table>
-            {/* {cards?.length > 0 && (
-              <Cards cards={cards} name="Table" initialLayout="spread"></Cards>
-            )} */}
             {cards?.map((card, i) => (
               <Card
                 card={card}
@@ -102,14 +96,6 @@ export const Table: FC<ITableProps> = ({ teams, currentPlayerName, cards }) => {
                 key={`${card.suit}${card.type}`}
               ></Card>
             ))}
-            {/* <div *ngFor="let card of cards; index as i">
-        <scopone-card
-          [card]="card"
-          class="card"
-          [style.margin-left]="marginLeft(i)"
-        >
-        </scopone-card>
-      </div> */}
           </div>
         </div>
       </div>

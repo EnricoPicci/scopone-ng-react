@@ -8,7 +8,7 @@ import {
 } from "@material-ui/core";
 
 import { ServerContext } from "../../context/server-context";
-import { Card as CardObj } from "../../rx-services/scopone-rx-service/card";
+import { Card as CardObj } from "../../../../scopone-rx-service/src/card";
 import { Cards } from "../cards/cards";
 import { merge } from "rxjs";
 import { tap } from "rxjs/operators";
@@ -38,10 +38,8 @@ export const HandResult: FC = () => {
 
   const [handResultState, setHandResultState] = useState<HandResultState>();
 
-  const [
-    terminateGameState,
-    setTerminateGameState,
-  ] = useState<TerminateGameState>();
+  const [terminateGameState, setTerminateGameState] =
+    useState<TerminateGameState>();
 
   useEffect(() => {
     console.log("=======>>>>>>>>>>>>  Use Effect run in HandResult");

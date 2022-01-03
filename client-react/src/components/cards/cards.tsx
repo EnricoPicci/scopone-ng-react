@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader } from "@material-ui/core";
 import React, { FC } from "react";
-import { Card as CardObj } from "../../rx-services/scopone-rx-service/card";
+import { Card as CardObj } from "../../../../scopone-rx-service/src/card";
 import { Card as PlayingCard } from "../card/card";
 
 import "./cards.css";
@@ -34,9 +34,7 @@ export const Cards: FC<ICardsProps> = ({
   const _cardSize = calculateCardSize(cards.length, layout);
   let _initialOver: number;
   let _over: number;
-  let _styleType: (
-    i: number
-  ) => {
+  let _styleType: (i: number) => {
     zIndex: number;
     transform?: string;
   };

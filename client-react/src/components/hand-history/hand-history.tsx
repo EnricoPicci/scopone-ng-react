@@ -11,7 +11,7 @@ import {
 import { merge } from "rxjs";
 import { tap } from "rxjs/operators";
 import { ServerContext } from "../../context/server-context";
-import { HandHistory as HandHistoryObj } from "../../rx-services/scopone-rx-service/player-view";
+import { HandHistory as HandHistoryObj } from "../../../../scopone-rx-service/src/player-view";
 import { handHistoryShareReplay$ } from "../../rx-services/streams-transformations/hand-history";
 import { HandHistoryCardPlay } from "./hand-history-card-play";
 

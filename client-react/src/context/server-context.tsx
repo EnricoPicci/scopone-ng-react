@@ -1,5 +1,5 @@
 import React from "react";
-import { ScoponeServerService } from "../rx-services/scopone-rx-service/scopone-server.service";
+import { ScoponeServerService } from "../../../scopone-rx-service/src/scopone-server.service";
 
 const service = new ScoponeServerService();
 

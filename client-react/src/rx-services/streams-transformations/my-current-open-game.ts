@@ -1,6 +1,6 @@
 import { merge } from "rxjs";
 
-import { ScoponeServerService } from "../scopone-rx-service/scopone-server.service";
+import { ScoponeServerService } from "../../../../scopone-rx-service/src/scopone-server.service";
 
 export const myCurrentOpenGame$ = (server: ScoponeServerService) => {
   return merge(

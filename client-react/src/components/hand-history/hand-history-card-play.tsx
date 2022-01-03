@@ -12,7 +12,7 @@ import {
 } from "@material-ui/core";
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
-import { CardPlay } from "../../rx-services/scopone-rx-service/player-view";
+import { CardPlay } from "../../../../scopone-rx-service/src/player-view";
 import { Card } from "../card/card";
 
 interface IHandHistoryCardPlayProps {
