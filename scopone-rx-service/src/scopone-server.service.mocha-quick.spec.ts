@@ -1,18 +1,17 @@
-import { describe, it } from 'mocha';
-import { expect } from 'chai';
-import { ScoponeServerService } from './scopone-server.service';
-import { Subject } from 'rxjs';
-import { MessageFromServer, MessageFromServerIds } from './messages';
-import { Card, Suits, Types } from './card';
+import { describe, it } from "mocha";
+import { expect } from "chai";
+import { ScoponeServerService } from "./scopone-server.service";
+import { Subject } from "rxjs";
+import { MessageFromServer, MessageFromServerIds } from "./messages";
+import { Card, Suits, Types } from "./card";
+import { PlayerView } from "./player-view";
 
-describe('Mocha - ScoponeServerService receives messages from the scopone server', () => {
+describe("Mocha - ScoponeServerService receives messages from the scopone server", () => {
   it(`when a message of hand view is received specifying that the currentPlayer is the one registered with the scoponeServerService, 
   then isMyTurnToPlay$ emits true`, (done) => {
-    const playerName = 'thePlayer';
-    const scoponeServer = new ScoponeServerService();
-    scoponeServer.playerName = playerName;
     const messages$ = new Subject<MessageFromServer>();
-    scoponeServer.initialize(messages$);
+    const playerName = "thePlayer";
+    const scoponeServer = new ScoponeServerService(messages$, playerName);
 
     scoponeServer.isMyTurnToPlay$.subscribe({
       next: (d) => {
@@ -20,7 +19,7 @@ describe('Mocha - ScoponeServerService receives messages from the scopone server
         done();
       },
       error: (err) => {
-        console.error('Should not error', err);
+        console.error("Should not error", err);
         throw new Error(err);
       },
     });
@@ -29,16 +28,15 @@ describe('Mocha - ScoponeServerService receives messages from the scopone server
       id: MessageFromServerIds.HandView,
       handPlayerView: {
         currentPlayerName: playerName,
-      },
+        gameName: "a test game",
+      } as PlayerView,
     });
   });
   it(`when a message of hand view is received specifying a currentPlayer which is not the one registered with the scoponeServerService, 
   then isMyTurnToPlay$ emits false`, (done) => {
-    const playerName = 'thePlayer';
-    const scoponeServer = new ScoponeServerService();
-    scoponeServer.playerName = playerName;
     const messages$ = new Subject<MessageFromServer>();
-    scoponeServer.initialize(messages$);
+    const playerName = "thePlayer";
+    const scoponeServer = new ScoponeServerService(messages$, playerName);
 
     scoponeServer.isMyTurnToPlay$.subscribe({
       next: (d) => {
@@ -46,7 +44,7 @@ describe('Mocha - ScoponeServerService receives messages from the scopone server
         done();
       },
       error: (err) => {
-        console.error('Should not error', err);
+        console.error("Should not error", err);
         throw new Error(err);
       },
     });
@@ -54,7 +52,8 @@ describe('Mocha - ScoponeServerService receives messages from the scopone server
     messages$.next({
       id: MessageFromServerIds.HandView,
       handPlayerView: {
-        currentPlayerName: 'not ' + playerName,
+        currentPlayerName: "not " + playerName,
+        gameName: "a test game",
       },
     });
   });
@@ -63,7 +62,7 @@ describe('Mocha - ScoponeServerService receives messages from the scopone server
 describe(`Mocha - ScoponeServerService calculates cardsToTake`, () => {
   describe(`When [7-denari] are on the table`, () => {
     const table: Card[] = [{ type: Types.SEVEN, suit: Suits.DENARI }];
-    it('if a 2-spade is played than no card is taken from the table', () => {
+    it("if a 2-spade is played than no card is taken from the table", () => {
       const scoponeServer = new ScoponeServerService();
 
       const cardPlayed: Card = { type: Types.TWO, suit: Suits.SPADE };
@@ -72,7 +71,7 @@ describe(`Mocha - ScoponeServerService calculates cardsToTake`, () => {
 
       cardsAreSame(cardsToTake, expectedCards);
     });
-    it('if a 7 is played than 7-denari taken from the table', () => {
+    it("if a 7 is played than 7-denari taken from the table", () => {
       const scoponeServer = new ScoponeServerService();
 
       const cardPlayed: Card = { type: Types.SEVEN, suit: Suits.SPADE };
@@ -118,7 +117,7 @@ describe(`Mocha - ScoponeServerService calculates cardsToTake`, () => {
       ];
       cardsAreSame(possibleCombinations, expectedCombinations);
     });
-    it('if a 2-spade is played than 2-coppe is taken from the table', () => {
+    it("if a 2-spade is played than 2-coppe is taken from the table", () => {
       const scoponeServer = new ScoponeServerService();
 
       const cardPlayed: Card = { type: Types.TWO, suit: Suits.SPADE };
@@ -127,7 +126,7 @@ describe(`Mocha - ScoponeServerService calculates cardsToTake`, () => {
 
       cardsAreSame(cardsToTake, expectedCards);
     });
-    it('if a Jack is played than 2 and 6 are taken from the table', () => {
+    it("if a Jack is played than 2 and 6 are taken from the table", () => {
       const scoponeServer = new ScoponeServerService();
 
       const cardPlayed: Card = { type: Types.JACK, suit: Suits.SPADE };
@@ -141,7 +140,7 @@ describe(`Mocha - ScoponeServerService calculates cardsToTake`, () => {
 
       cardsAreSame(cardsToTake, expectedCards);
     });
-    it('if a 3 is played than no card is taken from the table', () => {
+    it("if a 3 is played than no card is taken from the table", () => {
       const scoponeServer = new ScoponeServerService();
 
       const cardPlayed: Card = { type: Types.THREE, suit: Suits.SPADE };
@@ -158,7 +157,7 @@ describe(`Mocha - ScoponeServerService calculates cardsToTake`, () => {
       { type: Types.SEVEN, suit: Suits.BASTONI },
       { type: Types.TWO, suit: Suits.COPPE },
     ];
-    it('if a 7-spade is played than the player can take from the table either of the 2 7s', () => {
+    it("if a 7-spade is played than the player can take from the table either of the 2 7s", () => {
       const scoponeServer = new ScoponeServerService();
 
       const cardPlayed: Card = { type: Types.SEVEN, suit: Suits.SPADE };
@@ -178,7 +177,7 @@ describe(`Mocha - ScoponeServerService calculates cardsToTake`, () => {
       { type: Types.TWO, suit: Suits.BASTONI },
       { type: Types.ACE, suit: Suits.COPPE },
     ];
-    it('if a 6-spade is played than the player takes the whole table', () => {
+    it("if a 6-spade is played than the player takes the whole table", () => {
       const scoponeServer = new ScoponeServerService();
 
       const cardPlayed: Card = { type: Types.SIX, suit: Suits.SPADE };
@@ -195,7 +194,7 @@ describe(`Mocha - ScoponeServerService calculates cardsToTake`, () => {
       { type: Types.ACE, suit: Suits.COPPE },
       { type: Types.SIX, suit: Suits.DENARI },
     ];
-    it('if a 6-spade is played than the player can take only the 6-denari', () => {
+    it("if a 6-spade is played than the player can take only the 6-denari", () => {
       const scoponeServer = new ScoponeServerService();
 
       const cardPlayed: Card = { type: Types.SIX, suit: Suits.SPADE };
@@ -213,7 +212,7 @@ describe(`Mocha - ScoponeServerService calculates cardsToTake`, () => {
       { type: Types.THREE, suit: Suits.COPPE },
       { type: Types.TWO, suit: Suits.DENARI },
     ];
-    it('if a 5-spade is played than the player has 4 choices in terms of cards to be taken', () => {
+    it("if a 5-spade is played than the player has 4 choices in terms of cards to be taken", () => {
       const scoponeServer = new ScoponeServerService();
 
       const cardPlayed: Card = { type: Types.FIVE, suit: Suits.SPADE };
@@ -239,7 +238,7 @@ describe(`Mocha - ScoponeServerService calculates cardsToTake`, () => {
 
       cardsAreSame(cardsToTake, expectedCards);
     });
-    it('if a Queen is played than the player can not take any card', () => {
+    it("if a Queen is played than the player can not take any card", () => {
       const scoponeServer = new ScoponeServerService();
 
       const cardPlayed: Card = { type: Types.QUEEN, suit: Suits.SPADE };

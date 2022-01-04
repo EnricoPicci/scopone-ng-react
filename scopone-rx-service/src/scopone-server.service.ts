@@ -105,36 +105,39 @@ export class ScoponeServerService {
   title$: Observable<string>;
 
   // ====================================================================================================
-  // Properties holding state. Clients can read them but setting their value is private
-  // In this way we can have state which is updated internally in a reactive way. The idea is to get the benefit of reactive
-  // programming and the convenience of variables holding state when required
-
-  private _playerName: string;
-  get playerName() {
-    return this._playerName;
-  }
-  // observing is true if the Game is entered as an Observer of the Game and not as a Player
-  private _observing = false;
-  get observing() {
-    return this._observing;
-  }
-
-  // ====================================================================================================
   // Private properties
-  private gameName: string;
+  private _playerName: string;
+  private _gameName: string;
 
-  constructor() {
-    this.initialize();
+  private _logMessages = true;
+  set logMessages(log: boolean) {
+    this._logMessages = log;
+  }
+  // END Private properties
+
+  // parameters have to be passed to the constructor if, for instance for testing purposes, we want to set the stateof the service
+  // For instance an rxJs.Subject can be passed as messagesSource if we want to simulate the stream of messages coming from the web socket
+  constructor(
+    messagesSource?: Observable<MessageFromServer>,
+    _playerName?: string,
+    _gameName?: string
+  ) {
+    this.initialize(messagesSource);
+    this._playerName = _playerName;
+    this._gameName = _gameName;
   }
 
-  // this has to be called if we want to override the source of the messages, e.g. for testing purposes
   initialize(messagesSource?: Observable<MessageFromServer>) {
     // messages$ is the source Observable for everything
     this.messages$ = messagesSource
       ? messagesSource
       : this._connect$.pipe(
           switchMap((ws) => this.messages(ws)),
-          tap((d) => console.log("Message received from server", d)),
+          tap((d) => {
+            if (this._logMessages) {
+              console.log("Message received from server", d);
+            }
+          }),
           // we share the source stream to make sure that all downstream transformations share the same source
           share()
         );
@@ -148,7 +151,7 @@ export class ScoponeServerService {
     );
 
     this.playerEnteredOsteria$ = this.players$.pipe(
-      map((players) => players.find((p) => p.name === this.playerName)),
+      map((players) => players.find((p) => p.name === this._playerName)),
       filter((p) => !!p),
       // close after first notification - otherwise this would emit any time we receive a refreshed list of players
       take(1),
@@ -188,7 +191,7 @@ export class ScoponeServerService {
                 (g.state === GameState.GameOpen ||
                   g.state === GameState.GameSuspended) &&
                 Object.keys(g.players).length === 4 &&
-                !Object.keys(g.players).includes(this.playerName)
+                !Object.keys(g.players).includes(this._playerName)
             )
           : []
       ),
@@ -211,7 +214,7 @@ export class ScoponeServerService {
               return [
                 ...Object.keys(g.players || []),
                 ...Object.keys(g.observers || []),
-              ].includes(this.playerName);
+              ].includes(this._playerName);
             })
           : []
       ),
@@ -229,8 +232,6 @@ export class ScoponeServerService {
         const gamesObservable = gObservable.map(
           (g) => ({ ...g, canBeObservedOnly: true } as GameForList)
         );
-        console.log("========>>>>>>>>>>>", gamesNotStarted);
-        console.log("========>>>>>>>>>>>", gamesObservable);
         return [...gamesNotStarted, ...gamesObservable];
       })
     );
@@ -243,18 +244,18 @@ export class ScoponeServerService {
       shareReplay(1),
       map((myGames) =>
         myGames.filter(
-          (g) => g.state !== GameState.GameClosed && g.players[this.playerName]
+          (g) => g.state !== GameState.GameClosed && g.players[this._playerName]
         )
       ),
       filter((games) => games.length > 0),
       map((games) => {
         if (games.length > 1) {
           throw new Error(
-            `${this.playerName} is playing more than one game which is not closed`
+            `${this._playerName} is playing more than one game which is not closed`
           );
         }
         const game = games[0];
-        this.gameName = game.name;
+        this._gameName = game.name;
         return game;
       })
     );
@@ -270,19 +271,18 @@ export class ScoponeServerService {
           (g) =>
             g.state !== GameState.GameClosed &&
             g.observers &&
-            g.observers[this.playerName]
+            g.observers[this._playerName]
         )
       ),
       filter((games) => games.length > 0),
       map((games) => {
         if (games.length > 1) {
           throw new Error(
-            `${this.playerName} is observing more than one game which is not closed`
+            `${this._playerName} is observing more than one game which is not closed`
           );
         }
         const game = games[0];
-        this.gameName = game.name;
-        this._observing = true;
+        this._gameName = game.name;
         return game;
       })
     );
@@ -303,7 +303,7 @@ export class ScoponeServerService {
       );
 
     this.myCurrentGameClosed$ = this.allMyGames$.pipe(
-      map((games) => games.find((g) => g.name === this.gameName)),
+      map((games) => games.find((g) => g.name === this._gameName)),
       filter((game) => !!game && game.state === GameState.GameClosed),
       // we want to notify only once when a game has been closed, hence the use of distinctUnitlChanged
       distinctUntilChanged((a, b) => a.name === b.name)
@@ -317,12 +317,12 @@ export class ScoponeServerService {
       map((m) => {
         const games = m.games;
         const myOpenGames = games.filter(
-          (g) => g.state === "open" && !!g.players[this.playerName]
+          (g) => g.state === "open" && !!g.players[this._playerName]
         );
         if (myOpenGames.length > 1) {
           throw new Error(
             `Player ${
-              this.playerName
+              this._playerName
             } is in more than one open Game \n ${JSON.stringify(
               myOpenGames,
               null,
@@ -425,7 +425,7 @@ export class ScoponeServerService {
       map((hv) => hv.currentPlayerName)
     );
     this.isMyTurnToPlay$ = this.currentPlayer$.pipe(
-      map((name) => name === this.playerName),
+      map((name) => name === this._playerName),
       share()
     );
     this.enablePlay$ = combineLatest([
@@ -439,7 +439,7 @@ export class ScoponeServerService {
       // title shown when the Player enters the game
       this.myCurrentOpenGame_ShareReplay$.pipe(
         map((game) => {
-          let title = `${this.playerName} - Game "${game.name}"`;
+          let title = `${this._playerName} - Game "${game.name}"`;
           title =
             title +
             (game.hands.length > 0
@@ -451,7 +451,7 @@ export class ScoponeServerService {
       // title shown when the Observer enters the game
       this.myCurrentObservedGame_ShareReplay$.pipe(
         map((game) => {
-          let title = `${this.playerName} - Observing Game "${game.name}"`;
+          let title = `${this._playerName} - Observing Game "${game.name}"`;
           title =
             title +
             (game.hands.length > 0
@@ -463,14 +463,14 @@ export class ScoponeServerService {
       // title shown to the Player when a new of an hand is received, i.e. after a card has been played
       this.handView_ShareReplay$.pipe(
         map((hv) => {
-          return `${this.playerName} - Game "${hv.gameName}" - Hand ${hv.id} ("us" ${hv.ourCurrentGameScore} - "them" ${hv.theirCurrentGameScore})`;
+          return `${this._playerName} - Game "${hv.gameName}" - Hand ${hv.id} ("us" ${hv.ourCurrentGameScore} - "them" ${hv.theirCurrentGameScore})`;
         })
       ),
       // title shown to the Ibserver when a new of an hand is received, i.e. after a card has been played
       this.allHandViews_ShareReplay$.pipe(
         map((handViews) => {
           const hv = Object.values(handViews)[0];
-          return `${this.playerName} - Observing "${hv.currentPlayerName}" playing Game "${hv.gameName}" - Hand ${hv.id} ("${hv.currentPlayerName} team" ${hv.ourCurrentGameScore} - "the other team" ${hv.theirCurrentGameScore})`;
+          return `${this._playerName} - Observing "${hv.currentPlayerName}" playing Game "${hv.gameName}" - Hand ${hv.id} ("${hv.currentPlayerName} team" ${hv.ourCurrentGameScore} - "the other team" ${hv.theirCurrentGameScore})`;
         })
       )
     );
@@ -485,7 +485,6 @@ export class ScoponeServerService {
     return openSocket(url).pipe(
       tap((socket) => {
         this.socket = socket;
-        console.log(socket);
       }),
       // manage errors that can be raised during connection
       catchError((err) => {
@@ -553,7 +552,7 @@ export class ScoponeServerService {
   }
 
   public closeCurrentGame() {
-    const closeGameMsg = new CloseGame(this.gameName);
+    const closeGameMsg = new CloseGame(this._gameName);
     this.send(closeGameMsg);
   }
 
@@ -563,23 +562,23 @@ export class ScoponeServerService {
 
   public addPlayerToGame(playerName: string, gameName: string) {
     this._playerName = playerName;
-    this.gameName = gameName;
+    this._gameName = gameName;
     const addPlayerMsg = new AddPlayerToGameMessage(playerName, gameName);
     this.send(addPlayerMsg);
   }
 
   public addObserverToGame(observerName: string, gameName: string) {
     this._playerName = observerName;
-    this.gameName = gameName;
+    this._gameName = gameName;
     const addPlayerMsg = new AddObserverToGameMessage(observerName, gameName);
     this.send(addPlayerMsg);
   }
 
   public newHand() {
-    if (!this.gameName) {
+    if (!this._gameName) {
       throw new Error("Game name not set");
     }
-    const newHandMsg = new NewHand(this.gameName);
+    const newHandMsg = new NewHand(this._gameName);
     this.send(newHandMsg);
   }
 
@@ -589,7 +588,7 @@ export class ScoponeServerService {
   // (e.g the table has 4, Ace, 3, and 2 - the player plays a 5 - then the player needs to decide whether to take 4+Ace or 3+2)
   public playCardForPlayer(playerName: string, card: Card, cardsTaken: Card[]) {
     const playCardMsg = new PlayCardMessage(
-      this.gameName,
+      this._gameName,
       playerName,
       card,
       cardsTaken
@@ -601,11 +600,11 @@ export class ScoponeServerService {
   public playCard(card: Card, table: Card[]) {
     const _cardsTakeable = this.cardsTakeable(card, table);
     if (_cardsTakeable.length === 1) {
-      this.playCardForPlayer(this.playerName, card, _cardsTakeable[0]);
+      this.playCardForPlayer(this._playerName, card, _cardsTakeable[0]);
       return;
     }
     if (_cardsTakeable.length === 0) {
-      this.playCardForPlayer(this.playerName, card, []);
+      this.playCardForPlayer(this._playerName, card, []);
       return;
     }
     if (_cardsTakeable.length > 1) {

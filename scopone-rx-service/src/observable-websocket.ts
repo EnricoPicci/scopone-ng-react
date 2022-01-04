@@ -1,22 +1,20 @@
-import { Observable, Subscriber, TeardownLogic } from 'rxjs';
+import { Observable, Subscriber, TeardownLogic } from "rxjs";
 
 export function openSocket(url: string) {
-  return new Observable(
-    (subscriber: Subscriber<WebSocket>): TeardownLogic => {
-      const conn = new WebSocket(url);
-      conn.onopen = () => {
-        subscriber.next(conn);
-      };
-      conn.onerror = (err) => {
-        console.error('Websocket errored', err);
-        subscriber.error(err);
-      };
-      conn.onclose = (ev) => {
-        console.log('Websocket closed', ev);
-        subscriber.complete();
-      };
-    }
-  );
+  return new Observable((subscriber: Subscriber<WebSocket>): TeardownLogic => {
+    const conn = new WebSocket(url);
+    conn.onopen = () => {
+      subscriber.next(conn);
+    };
+    conn.onerror = (err) => {
+      console.error("Websocket errored", err);
+      subscriber.error(err);
+    };
+    conn.onclose = (_ev) => {
+      console.log("Websocket closed");
+      subscriber.complete();
+    };
+  });
 }
 
 export function messages(socket: WebSocket) {
@@ -26,11 +24,11 @@ export function messages(socket: WebSocket) {
         subscriber.next(msg);
       };
       socket.onerror = (err) => {
-        console.error('Websocket errored', err);
+        console.error("Websocket errored", err);
         subscriber.error(err);
       };
-      socket.onclose = (ev) => {
-        console.log('Websocket closed', ev);
+      socket.onclose = (_ev) => {
+        console.log("Websocket closed");
         subscriber.complete();
       };
     }
