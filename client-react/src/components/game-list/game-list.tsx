@@ -11,7 +11,7 @@ import {
 import React, { FC, useContext, useEffect, useState } from "react";
 import { ServerContext } from "../../context/server-context";
 import { Game } from "../../../../scopone-rx-service/src/messages";
-import { gameList$ } from "../../rx-services/streams-transformations/game-list";
+import { tap } from "rxjs/operators";
 
 type GameForList = Game & { canBeObservedOnly: boolean };
 
@@ -38,9 +38,14 @@ export const GameList: FC = () => {
       "=======<<<<<<<<<<<<<<<>>>>>>>>>>>>  Use Effect run in GameList"
     );
 
-    const subscription = gameList$(server).subscribe((games) =>
-      setGameListReactState((prevState) => ({ ...prevState, games }))
-    );
+    const subscription = server.gameList$
+      .pipe(
+        tap({
+          next: (games) =>
+            setGameListReactState((prevState) => ({ ...prevState, games })),
+        })
+      )
+      .subscribe();
 
     return () => {
       console.log("Unsubscribe GameList subscription");

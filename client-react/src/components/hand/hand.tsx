@@ -1,7 +1,7 @@
 import { Button } from "@material-ui/core";
 import React, { FC, useContext, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { combineLatest, interval, merge } from "rxjs";
+import { interval, merge } from "rxjs";
 import { delayWhen, share, switchMap, tap } from "rxjs/operators";
 import { ServerContext } from "../../context/server-context";
 import { Card, TypeValues } from "../../../../scopone-rx-service/src/card";
@@ -88,7 +88,7 @@ export const Hand: FC = () => {
       })
     );
 
-    // handView$ Observable sets teams and showSartButton state as a side effect
+    // handView$ Observable sets teams as a side effect
     // when the updated info about my current OBSERVED game is notified on the server stream
     const myObservedGame$ = server.myCurrentObservedGame_ShareReplay$.pipe(
       tap((game) => {
@@ -138,8 +138,9 @@ export const Hand: FC = () => {
         });
       }),
       // use delayWhen to enable a variable delay time
-      // if delay operator is used, then the delay time is fixed to the number set when the pipe chain is executed
-      // to create the Observable, in this case cardPlayedAndCardsTakenFromTable$
+      // if the simple delay operator were used, then the delay time would be fixed to the number set when the pipe chain is executed
+      // on the contrary, in this case, we want to have a shorter delay if a card is played and no cards are taken and
+      // a longer delay if some cards are taken, to give the player the time to look at the cards taken
       delayWhen((event) =>
         interval(event?.cardsTaken?.length > 0 ? 4000 : 2000)
       ),
@@ -147,17 +148,16 @@ export const Hand: FC = () => {
       share()
     );
 
+    // this is an exception to the rule that the pipe in the Components should show only side effects, but the exception is justified by
+    // the situation. In this case we need to react to the fact that the hand is finished (notified by handClosed$) and THEN WAIT for the pop up
+    // showing the last cards played and taken before navigating to the "/hand-result" page
     const handClosed$ = server.handClosed$.pipe(
       switchMap(() => cardPlayedAndCardsTakenFromTable$),
       tap(() => history.push("/hand-result"))
     );
 
-    const enablePlay$ = combineLatest([
-      server.isMyTurnToPlay$,
-      server.myCurrentOpenGameWithAll4PlayersIn_ShareReplay$,
-    ]).pipe(
-      tap(([isMyTurn, all4PlayersIn]) => {
-        const enablePlay = isMyTurn && all4PlayersIn;
+    const enablePlay$ = server.enablePlay$.pipe(
+      tap((enablePlay) => {
         setHandReactState((prevState) => ({ ...prevState, enablePlay }));
       })
     );

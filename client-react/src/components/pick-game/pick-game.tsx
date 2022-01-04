@@ -6,7 +6,6 @@ import { ErrorContext } from "../../context/error-context";
 
 import { ServerContext } from "../../context/server-context";
 import { GameState } from "../../../../scopone-rx-service/src/messages";
-import { myCurrentOpenGame$ } from "../../rx-services/streams-transformations/my-current-open-game";
 import { GameList } from "../game-list/game-list";
 import { NewGame } from "../new-game/new-game";
 
@@ -20,7 +19,7 @@ export const PickGame: FC = () => {
     console.log("=======>>>>>>>>>>>>  Use Effect run in PickGame");
 
     // navigate$ Observable manages navigation as a side effect when a Game is picked
-    const navigate$ = myCurrentOpenGame$(server).pipe(
+    const navigate$ = server.myCurrentGame$.pipe(
       tap((game) => {
         errorService.setError(null);
         game.state !== GameState.GameClosed

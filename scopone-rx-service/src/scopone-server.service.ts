@@ -2,7 +2,14 @@
 // https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-7.html#strict-class-initialization
 // This is why we have added a tsconfig.json file in the same folder as this file
 
-import { ReplaySubject, Observable, from, pipe, merge } from "rxjs";
+import {
+  ReplaySubject,
+  Observable,
+  from,
+  pipe,
+  merge,
+  combineLatest,
+} from "rxjs";
 import {
   tap,
   share,
@@ -32,10 +39,11 @@ import {
   CloseGame,
   PlayerState,
   AddObserverToGameMessage,
+  GameForList,
 } from "./messages";
 
 import { openSocket, messages } from "./observable-websocket";
-import { PlayerView } from "./player-view";
+import { HandHistory, PlayerView } from "./player-view";
 import { Card, Suits, TypeValues } from "./card";
 import { ScoponeErrors } from "./scopone-errors";
 
@@ -59,6 +67,7 @@ export class ScoponeServerService {
   gamesOpen$: Observable<Game[]>;
   gamesNotYetStarted$: Observable<Game[]>;
   gamesWhichCanBeObserved$: Observable<Game[]>;
+  gameList$: Observable<GameForList[]>;
   gameWithSameNamePresent_ShareReplay$: Observable<string>;
 
   allMyGames$: Observable<Game[]>;
@@ -67,6 +76,7 @@ export class ScoponeServerService {
   myCurrentGameClosed$: Observable<Game>;
   myCurrentGameClosed_ShareReplay$: Observable<Game>;
   myCurrentObservedGame_ShareReplay$: Observable<Game>;
+  myCurrentGame$: Observable<Game>;
 
   canStartGame$: Observable<Game>;
 
@@ -76,6 +86,7 @@ export class ScoponeServerService {
   handView_ShareReplay$: Observable<PlayerView>;
   handClosed$: Observable<PlayerView>;
   handClosed_ShareReplay$: Observable<PlayerView>;
+  handHistory$: Observable<HandHistory>;
 
   cardsPlayedAndTaken$: Observable<{
     cardPlayed: Card;
@@ -89,6 +100,9 @@ export class ScoponeServerService {
 
   currentPlayer$: Observable<string>;
   isMyTurnToPlay$: Observable<boolean>;
+  enablePlay$: Observable<boolean>;
+
+  title$: Observable<string>;
 
   // ====================================================================================================
   // Properties holding state. Clients can read them but setting their value is private
@@ -204,6 +218,23 @@ export class ScoponeServerService {
       shareReplay(1)
     );
 
+    this.gameList$ = combineLatest([
+      this.gamesNotYetStarted$,
+      this.gamesWhichCanBeObserved$,
+    ]).pipe(
+      map(([gNotStarted, gObservable]) => {
+        const gamesNotStarted = gNotStarted.map(
+          (g) => ({ ...g, canBeObservedOnly: false } as GameForList)
+        );
+        const gamesObservable = gObservable.map(
+          (g) => ({ ...g, canBeObservedOnly: true } as GameForList)
+        );
+        console.log("========>>>>>>>>>>>", gamesNotStarted);
+        console.log("========>>>>>>>>>>>", gamesObservable);
+        return [...gamesNotStarted, ...gamesObservable];
+      })
+    );
+
     this.myCurrentOpenGame_ShareReplay$ = this.allMyGames$.pipe(
       // we place shareReplay before filtering for not-closed games since we do not want to emit
       // anything if there are no not-closed games. In other words, if the current game is closed
@@ -254,6 +285,11 @@ export class ScoponeServerService {
         this._observing = true;
         return game;
       })
+    );
+
+    this.myCurrentGame$ = merge(
+      this.myCurrentOpenGame_ShareReplay$,
+      this.myCurrentObservedGame_ShareReplay$
     );
 
     this.myCurrentOpenGameWithAll4PlayersIn_ShareReplay$ =
@@ -369,6 +405,10 @@ export class ScoponeServerService {
         .pipe(finalHandViewPipe)
     );
 
+    this.handHistory$ = this.handView_ShareReplay$.pipe(
+      map((handView) => handView.history)
+    );
+
     this.cardsPlayedAndTaken$ = this.messages$.pipe(
       filter((m) => m.id === MessageFromServerIds.CardsPlayedAndTaken),
       map((m) => {
@@ -387,6 +427,52 @@ export class ScoponeServerService {
     this.isMyTurnToPlay$ = this.currentPlayer$.pipe(
       map((name) => name === this.playerName),
       share()
+    );
+    this.enablePlay$ = combineLatest([
+      this.isMyTurnToPlay$,
+      this.myCurrentOpenGameWithAll4PlayersIn_ShareReplay$,
+    ]).pipe(map(([isMyTurn, all4PlayersIn]) => isMyTurn && all4PlayersIn));
+
+    this.title$ = merge(
+      // when the Player enters the Osteria the title is simply its name
+      this.playerEnteredOsteria$.pipe(map((player) => `${player.name}`)),
+      // title shown when the Player enters the game
+      this.myCurrentOpenGame_ShareReplay$.pipe(
+        map((game) => {
+          let title = `${this.playerName} - Game "${game.name}"`;
+          title =
+            title +
+            (game.hands.length > 0
+              ? ` - Hand ${game.hands.length}`
+              : " not yet started");
+          return title;
+        })
+      ),
+      // title shown when the Observer enters the game
+      this.myCurrentObservedGame_ShareReplay$.pipe(
+        map((game) => {
+          let title = `${this.playerName} - Observing Game "${game.name}"`;
+          title =
+            title +
+            (game.hands.length > 0
+              ? ` - Hand ${game.hands.length}`
+              : " not yet started");
+          return title;
+        })
+      ),
+      // title shown to the Player when a new of an hand is received, i.e. after a card has been played
+      this.handView_ShareReplay$.pipe(
+        map((hv) => {
+          return `${this.playerName} - Game "${hv.gameName}" - Hand ${hv.id} ("us" ${hv.ourCurrentGameScore} - "them" ${hv.theirCurrentGameScore})`;
+        })
+      ),
+      // title shown to the Ibserver when a new of an hand is received, i.e. after a card has been played
+      this.allHandViews_ShareReplay$.pipe(
+        map((handViews) => {
+          const hv = Object.values(handViews)[0];
+          return `${this.playerName} - Observing "${hv.currentPlayerName}" playing Game "${hv.gameName}" - Hand ${hv.id} ("${hv.currentPlayerName} team" ${hv.ourCurrentGameScore} - "the other team" ${hv.theirCurrentGameScore})`;
+        })
+      )
     );
   }
 

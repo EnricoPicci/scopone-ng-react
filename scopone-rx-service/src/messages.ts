@@ -1,14 +1,14 @@
-import { Card } from './card';
-import { PlayerView } from './player-view';
+import { Card } from "./card";
+import { PlayerView } from "./player-view";
 
 export enum MessageToServerIds {
-  PLAYER_ENTERS_OSTERIA = 'playerEntersOsteria',
-  NEW_GAME = 'newGame',
-  ADD_PLAYER_TO_GAME = 'addPlayerToGame',
-  ADD_OBSERVER_TO_GAME = 'addObserverToGame',
-  NEW_HAND = 'newHand',
-  PLAY_CARD = 'playCard',
-  CLOSE_GAME = 'closeGame',
+  PLAYER_ENTERS_OSTERIA = "playerEntersOsteria",
+  NEW_GAME = "newGame",
+  ADD_PLAYER_TO_GAME = "addPlayerToGame",
+  ADD_OBSERVER_TO_GAME = "addObserverToGame",
+  NEW_HAND = "newHand",
+  PLAY_CARD = "playCard",
+  CLOSE_GAME = "closeGame",
 }
 
 export abstract class MessageToServer {
@@ -95,18 +95,18 @@ export class CloseGame extends MessageToServer {
 }
 
 export enum MessageFromServerIds {
-  Players = 'Players',
-  PlayerAdded = 'PlayerAdded',
-  playerLeffMsgID = 'PlayerLeftOsteria',
-  PlayerIsAlreadyInOsteria = 'PlayerIsAlreadyInOsteria',
-  Games = 'Games',
-  ErrorAddingPlayerToGame = 'ErrorAddingPlayerToGame',
-  GameWithSameNamePresent = 'GameWithSameNamePresent',
-  CardsPlayedAndTaken = 'CardsPlayedAndTaken',
+  Players = "Players",
+  PlayerAdded = "PlayerAdded",
+  playerLeffMsgID = "PlayerLeftOsteria",
+  PlayerIsAlreadyInOsteria = "PlayerIsAlreadyInOsteria",
+  Games = "Games",
+  ErrorAddingPlayerToGame = "ErrorAddingPlayerToGame",
+  GameWithSameNamePresent = "GameWithSameNamePresent",
+  CardsPlayedAndTaken = "CardsPlayedAndTaken",
 
-  TeamsFormed = 'TeamsFormed',
-  NewHandReady = 'NewHandReady',
-  HandView = 'HandView',
+  TeamsFormed = "TeamsFormed",
+  NewHandReady = "NewHandReady",
+  HandView = "HandView",
 }
 
 export type MessageFromServer = {
@@ -140,12 +140,14 @@ export type Game = {
   closedBy: string;
 };
 
+export type GameForList = Game & { canBeObservedOnly: boolean };
+
 export enum GameState {
-  GameCreated = 'created',
-  TeamsForming = 'teamsForming',
-  GameOpen = 'open',
-  GameSuspended = 'suspended',
-  GameClosed = 'closed',
+  GameCreated = "created",
+  TeamsForming = "teamsForming",
+  GameOpen = "open",
+  GameSuspended = "suspended",
+  GameClosed = "closed",
 }
 
 export type Player = {
@@ -154,11 +156,11 @@ export type Player = {
 };
 
 export enum PlayerState {
-  playerPlaying = 'playing',
-  playerLookingAtHandResult = 'lookingAtHandResult',
-  playerNotPlaying = 'notPlayingAnyGame',
-  playerLeftTheGame = 'leftOsteriaMaybeMomentarely',
-  playerObservingGames = 'observingGames',
+  playerPlaying = "playing",
+  playerLookingAtHandResult = "lookingAtHandResult",
+  playerNotPlaying = "notPlayingAnyGame",
+  playerLeftTheGame = "leftOsteriaMaybeMomentarely",
+  playerObservingGames = "observingGames",
 }
 
 export type Team = {
@@ -172,6 +174,6 @@ export type Hand = {
 };
 
 export enum HandState {
-  active = 'active',
-  closed = 'closed',
+  active = "active",
+  closed = "closed",
 }

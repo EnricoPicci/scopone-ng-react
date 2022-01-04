@@ -10,7 +10,6 @@ import {
 import { ServerContext } from "../../context/server-context";
 import { Card as CardObj } from "../../../../scopone-rx-service/src/card";
 import { Cards } from "../cards/cards";
-import { merge } from "rxjs";
 import { tap } from "rxjs/operators";
 import { useHistory } from "react-router-dom";
 import { TerminateDialogue } from "./terminate-game-dialogue";
@@ -60,7 +59,7 @@ export const HandResult: FC = () => {
       })
     );
 
-    const subscription = merge(finalHandView$).subscribe();
+    const subscription = finalHandView$.subscribe();
 
     return () => {
       console.log("Unsubscribe HandResult subscription");

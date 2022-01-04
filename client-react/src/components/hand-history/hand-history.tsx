@@ -12,7 +12,6 @@ import { merge } from "rxjs";
 import { tap } from "rxjs/operators";
 import { ServerContext } from "../../context/server-context";
 import { HandHistory as HandHistoryObj } from "../../../../scopone-rx-service/src/player-view";
-import { handHistoryShareReplay$ } from "../../rx-services/streams-transformations/hand-history";
 import { HandHistoryCardPlay } from "./hand-history-card-play";
 
 export const HandHistory: FC = () => {
@@ -23,7 +22,7 @@ export const HandHistory: FC = () => {
   useEffect(() => {
     console.log("=======>>>>>>>>>>>>  Use Effect run in HandHistory");
 
-    const _handHistoryShareReplay$ = handHistoryShareReplay$(server).pipe(
+    const _handHistoryShareReplay$ = server.handHistory$.pipe(
       tap((handHistory) => {
         setHandHistory(handHistory);
       })

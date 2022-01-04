@@ -14,7 +14,6 @@ import { PickGame } from "../pick-game/pick-game";
 import { Hand } from "../hand/hand";
 import { HandResult } from "../hand-result/hand-result";
 import { Error } from "../error/error";
-import { title$ } from "../../rx-services/streams-transformations/title";
 import { ErrorContext } from "../../context/error-context";
 import { Bye } from "../bye/bye";
 import { HandHistory } from "../hand-history/hand-history";
@@ -85,7 +84,7 @@ export const Game: FC = () => {
     );
 
     // title$ sets the title as a side effect
-    const _title$ = title$(server).pipe(
+    const _title$ = server.title$.pipe(
       tap((newTitle) =>
         setGameReactState((prevState) => ({ ...prevState, title: newTitle }))
       )
