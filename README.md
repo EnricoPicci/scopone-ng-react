@@ -206,7 +206,7 @@ The Client is a React application, currently using version 17 of the library.
 
 The code is store in the `client-react` folder.
 
-The project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+The project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app). Read more details in the `readme.md` file in the folder of the React client.
 
 ### Configuration of the connection with the server for the React client
 

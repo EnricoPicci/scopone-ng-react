@@ -1,6 +1,5 @@
 // These tests test the correct behaviour when one single player enters the Osteria and starts a game
-// It tests only one single player, not a real game with different players
-
+// It tests only the "start" scenarios since these are the ones that make sense with one single player
 import { describe, it } from "mocha";
 import { expect } from "chai";
 

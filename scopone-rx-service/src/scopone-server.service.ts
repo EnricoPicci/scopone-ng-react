@@ -40,6 +40,7 @@ import {
   PlayerState,
   AddObserverToGameMessage,
   GameForList,
+  Team,
 } from "./messages";
 
 import { openSocket, messages } from "./observable-websocket";
@@ -72,6 +73,8 @@ export class ScoponeServerService {
 
   allMyGames$: Observable<Game[]>;
   myCurrentOpenGame_ShareReplay$: Observable<Game>;
+  myCurrentOpenGameTeams$: Observable<[Team, Team]>;
+  showStartButton$: Observable<boolean>;
   myCurrentOpenGameWithAll4PlayersIn_ShareReplay$: Observable<boolean>;
   myCurrentGameClosed$: Observable<Game>;
   myCurrentGameClosed_ShareReplay$: Observable<Game>;
@@ -107,7 +110,19 @@ export class ScoponeServerService {
   // ====================================================================================================
   // Private properties
   private _playerName: string;
+  get playerName() {
+    return this._playerName;
+  }
   private _gameName: string;
+  get gameName() {
+    return this._gameName;
+  }
+
+  // observing is true if the Game is entered as an Observer of the Game and not as a Player
+  private _observing = false;
+  get observing() {
+    return this._observing;
+  }
 
   private _logMessages = true;
   set logMessages(log: boolean) {
@@ -257,6 +272,33 @@ export class ScoponeServerService {
         const game = games[0];
         this._gameName = game.name;
         return game;
+      })
+    );
+
+    this.myCurrentOpenGameTeams$ = this.myCurrentOpenGame_ShareReplay$.pipe(
+      map((game) => {
+        return game.teams;
+      }),
+      distinctUntilChanged(
+        (prev, curr) =>
+          prev[0].Players[0]?.name === curr[0].Players[0]?.name &&
+          prev[0].Players[1]?.name === curr[0].Players[1]?.name &&
+          prev[1].Players[0]?.name === curr[1].Players[0]?.name &&
+          prev[1].Players[1]?.name === curr[1].Players[1]?.name
+      )
+    );
+
+    this.showStartButton$ = this.myCurrentOpenGame_ShareReplay$.pipe(
+      map((game) => {
+        // decide whether to show or not the Start Game button
+        const gameWith4PlayersAndNoHand =
+          Object.keys(game.players).length === 4 && game.hands.length === 0;
+        const lastHandClosed = game.hands
+          ? game.hands.length > 0
+            ? game.hands[game.hands.length - 1].state === HandState.closed
+            : false
+          : false;
+        return gameWith4PlayersAndNoHand || lastHandClosed;
       })
     );
 

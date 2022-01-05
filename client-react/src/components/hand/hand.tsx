@@ -5,11 +5,7 @@ import { interval, merge } from "rxjs";
 import { delayWhen, share, switchMap, tap } from "rxjs/operators";
 import { ServerContext } from "../../context/server-context";
 import { Card, TypeValues } from "../../../../scopone-rx-service/src/card";
-import {
-  HandState,
-  Player,
-  Team,
-} from "../../../../scopone-rx-service/src/messages";
+import { Player, Team } from "../../../../scopone-rx-service/src/messages";
 import { Cards } from "../cards/cards";
 import { Table } from "../table/table";
 import { CardsPicker } from "./cards-picker-dialogue";
@@ -66,29 +62,30 @@ export const Hand: FC = () => {
   useEffect(() => {
     console.log("=======>>>>>>>>>>>>  Use Effect run in Hand");
 
-    // myCurrentGame$ Observable sets teams and showSartButton state as a side effect
+    // myCurrentGameTeams$ Observable sets teams state as a side effect
     // when the updated info about my current game is notified on the server stream
-    const myCurrentGame$ = server.myCurrentOpenGame_ShareReplay$.pipe(
-      tap((game) => {
-        const teams = game.teams;
-        // decide whether to show or not the Start Game button
-        const gameWith4PlayersAndNoHand =
-          Object.keys(game.players).length === 4 && game.hands.length === 0;
-        const lastHandClosed = game.hands
-          ? game.hands.length > 0
-            ? game.hands[game.hands.length - 1].state === HandState.closed
-            : false
-          : false;
-        const showStartButton = gameWith4PlayersAndNoHand || lastHandClosed;
+    const myCurrentGameTeams$ = server.myCurrentOpenGameTeams$.pipe(
+      tap((_teams) => {
+        const teams = _teams;
         setHandReactState((prevState) => ({
           ...prevState,
           teams,
+        }));
+      })
+    );
+
+    // showStartButton$ Observable sets the showSartButton state as a side effect
+    // when the updated info about my current game is notified on the server stream
+    const showStartButton$ = server.showStartButton$.pipe(
+      tap((showStartButton) => {
+        setHandReactState((prevState) => ({
+          ...prevState,
           showStartButton,
         }));
       })
     );
 
-    // handView$ Observable sets teams as a side effect
+    // myObservedGame$ Observable sets teams as a side effect
     // when the updated info about my current OBSERVED game is notified on the server stream
     const myObservedGame$ = server.myCurrentObservedGame_ShareReplay$.pipe(
       tap((game) => {
@@ -97,7 +94,7 @@ export const Hand: FC = () => {
       })
     );
 
-    // myCurrentGame$ Observable sets cards, scope and currentPlayerName as a side effect
+    // handView$ Observable sets cards, scope and currentPlayerName as a side effect
     // when new hand views are notified on the server stream
     const handView$ = server.handView_ShareReplay$.pipe(
       tap((hv) => {
@@ -163,7 +160,8 @@ export const Hand: FC = () => {
     );
 
     const subscription = merge(
-      myCurrentGame$,
+      myCurrentGameTeams$,
+      showStartButton$,
       myObservedGame$,
       handView$,
       enablePlay$,
