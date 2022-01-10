@@ -4,11 +4,9 @@ import {
   Input,
   ChangeDetectionStrategy,
 } from '@angular/core';
-import { Card } from '../../../../../scopone-rx-service/src/card';
-import {
-  PlayerState,
-  Team,
-} from '../../../../../scopone-rx-service/src/messages';
+import { Card } from '../../../../../scopone-rx-service/src/model/card';
+import { PlayerState } from '../../../../../scopone-rx-service/src/model/player';
+import { Team } from '../../../../../scopone-rx-service/src/model/team';
 
 @Component({
   selector: 'scopone-table',

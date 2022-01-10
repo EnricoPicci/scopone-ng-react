@@ -16,10 +16,10 @@ import {
   ignoreElements,
 } from "rxjs/operators";
 
-import { ScoponeServerService } from "./scopone-server.service";
-import { environment } from "./environments/environment";
+import { ScoponeServerService } from "../scopone-server.service";
+import { environment } from "../environments/environment";
 // import { environment } from '../../environments/environment.prod';
-import { MessageFromServer } from "./messages";
+import { MessageFromServer } from "../messages";
 import { merge, interval, Subject } from "rxjs";
 
 (global as any).WebSocket = require("ws");

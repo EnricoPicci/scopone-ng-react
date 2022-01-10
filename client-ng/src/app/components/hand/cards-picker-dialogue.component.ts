@@ -1,6 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Card } from '../../../../../scopone-rx-service/src/card';
+import { Card } from '../../../../../scopone-rx-service/src/model/card';
 
 @Component({
   selector: 'scopone-cards-picker',

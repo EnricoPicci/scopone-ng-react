@@ -10,7 +10,7 @@ import {
 
 import React, { FC, useContext, useEffect, useState } from "react";
 import { ServerContext } from "../../context/server-context";
-import { Game } from "../../../../scopone-rx-service/src/messages";
+import { Game } from "../../../../scopone-rx-service/src/model/game";
 import { tap } from "rxjs/operators";
 
 type GameForList = Game & { canBeObservedOnly: boolean };

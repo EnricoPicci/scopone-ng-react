@@ -8,7 +8,7 @@ import {
 } from "@material-ui/core";
 
 import { ServerContext } from "../../context/server-context";
-import { Card as CardObj } from "../../../../scopone-rx-service/src/card";
+import { Card as CardObj } from "../../../../scopone-rx-service/src/model/card";
 import { Cards } from "../cards/cards";
 import { tap } from "rxjs/operators";
 import { useHistory } from "react-router-dom";

@@ -13,9 +13,9 @@ import {
   take,
 } from "rxjs/operators";
 
-import { ScoponeServerService } from "./scopone-server.service";
-import { environment } from "./environments/environment";
-import { MessageFromServerIds, MessageFromServer } from "./messages";
+import { ScoponeServerService } from "../scopone-server.service";
+import { environment } from "../environments/environment";
+import { MessageFromServerIds, MessageFromServer } from "../scopone-messages";
 
 (global as any).WebSocket = require("ws");
 

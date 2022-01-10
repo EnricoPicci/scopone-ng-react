@@ -1,7 +1,7 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Card } from '../../../../../scopone-rx-service/src/card';
-import { Player } from '../../../../../scopone-rx-service/src/messages';
+import { Card } from '../../../../../scopone-rx-service/src/model/card';
+import { Player } from '../../../../../scopone-rx-service/src/model/player';
 import { ScoponeService } from '../../scopone/scopone.service';
 
 @Component({
@@ -68,9 +68,10 @@ export class CardsTakenDialogueComponent implements OnInit {
     return this.data.finalTableTake.Cards;
   }
   tableTakenBy() {
-    const hasOurTeamTakenTheTable = this.data.finalTableTake.TeamTakingTable.find(
-      (p) => p.name === this.scoponeService.playerName
-    );
+    const hasOurTeamTakenTheTable =
+      this.data.finalTableTake.TeamTakingTable.find(
+        (p) => p.name === this.scoponeService.playerName
+      );
     const usOrThem = hasOurTeamTakenTheTable ? 'Us' : 'Them';
     return `Table taken by ${usOrThem}`;
   }

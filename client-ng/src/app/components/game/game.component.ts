@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { ScoponeService } from '../../scopone/scopone.service';
 import { Observable, Subscription, merge } from 'rxjs';
 import { startWith, map, tap, catchError, switchMap } from 'rxjs/operators';
-import { PlayerState } from '../../../../../scopone-rx-service/src/messages';
+import { PlayerState } from '../../../../../scopone-rx-service/src/model/player';
 import { ErrorService } from 'src/app/errors/error-service';
 import { ScoponeErrors } from 'src/app/errors/scopone-errors';
 import { environment } from 'src/environments/environment';
@@ -84,14 +84,15 @@ export class GameComponent implements OnInit, OnDestroy {
     );
 
     // this Observable notifies if the Player is already in the Osteria and navigate to Error page
-    const playerAlreadyInOsteria$ = this.scoponeServer.playerIsAlreadyInOsteria$.pipe(
-      tap((pName) => {
-        const errMsg = `Player "${pName}" is already in the Osteria`;
-        this.errorService.error = { message: errMsg };
-        console.error(errMsg);
-        this.router.navigate(['error']);
-      })
-    );
+    const playerAlreadyInOsteria$ =
+      this.scoponeServer.playerIsAlreadyInOsteria$.pipe(
+        tap((pName) => {
+          const errMsg = `Player "${pName}" is already in the Osteria`;
+          this.errorService.error = { message: errMsg };
+          console.error(errMsg);
+          this.router.navigate(['error']);
+        })
+      );
 
     this.title$ = merge(
       this.scoponeServer.playerEnteredOsteria$.pipe(

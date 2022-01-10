@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader } from "@material-ui/core";
 import React, { FC } from "react";
-import { Card as CardObj } from "../../../../scopone-rx-service/src/card";
+import { Card as CardObj } from "../../../../scopone-rx-service/src/model/card";
 import { Card as PlayingCard } from "../card/card";
 
 import "./cards.css";

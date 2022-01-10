@@ -4,8 +4,12 @@ import { useHistory } from "react-router-dom";
 import { interval, merge } from "rxjs";
 import { delayWhen, share, switchMap, tap } from "rxjs/operators";
 import { ServerContext } from "../../context/server-context";
-import { Card, TypeValues } from "../../../../scopone-rx-service/src/card";
-import { Player, Team } from "../../../../scopone-rx-service/src/messages";
+import {
+  Card,
+  TypeValues,
+} from "../../../../scopone-rx-service/src/model/card";
+import { Player } from "../../../../scopone-rx-service/src/model/player";
+import { Team } from "../../../../scopone-rx-service/src/model/team";
 import { Cards } from "../cards/cards";
 import { Table } from "../table/table";
 import { CardsPicker } from "./cards-picker-dialogue";

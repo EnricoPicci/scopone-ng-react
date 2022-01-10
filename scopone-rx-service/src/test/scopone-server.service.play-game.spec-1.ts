@@ -34,9 +34,9 @@ import {
   toArray,
 } from "rxjs/operators";
 
-import { ScoponeServerService } from "./scopone-server.service";
-import { environment } from "./environments/environment";
-import { MessageFromServer, GameState } from "./messages";
+import { ScoponeServerService } from "../scopone-server.service";
+import { environment } from "../environments/environment";
+import { MessageFromServer, GameState } from "../messages";
 import { merge, interval, forkJoin } from "rxjs";
 
 (global as any).WebSocket = require("ws");

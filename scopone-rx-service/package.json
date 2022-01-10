@@ -15,7 +15,7 @@
   },
   "scripts": {
     "tsc": "tsc",
-    "test": "mocha -r ts-node/register --require source-map-support/register --recursive src/*.spec.ts ",
+    "test": "mocha -r ts-node/register --require source-map-support/register --recursive src/**/*.spec.ts ",
     "test-rx-service": "TS_NODE_PROJECT='./src/scopone-rx-service/tsconfig.json' mocha -r ts-node/register src/scopone-rx-service/scopone-server.service.mocha-play-game.ts"
   }
 }

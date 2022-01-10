@@ -5,7 +5,7 @@ import { tap } from "rxjs/operators";
 import { ErrorContext } from "../../context/error-context";
 
 import { ServerContext } from "../../context/server-context";
-import { GameState } from "../../../../scopone-rx-service/src/messages";
+import { GameState } from "../../../../scopone-rx-service/src/model/game";
 import { GameList } from "../game-list/game-list";
 import { NewGame } from "../new-game/new-game";
 

@@ -32,20 +32,17 @@ import {
   PlayCardMessage,
   PlayerEntersOsteriaMessage,
   NewGame,
-  Game,
-  Player,
-  HandState,
-  GameState,
   CloseGame,
-  PlayerState,
   AddObserverToGameMessage,
-  GameForList,
-  Team,
-} from "./messages";
+} from "./scopone-messages";
+import { HandState } from "./model/hand";
+import { Team } from "./model/team";
+import { Player, PlayerState } from "./model/player";
+import { Game, GameState, GameForList } from "./model/game";
 
 import { openSocket, messages } from "./observable-websocket";
-import { HandHistory, PlayerView } from "./player-view";
-import { Card, Suits, TypeValues } from "./card";
+import { HandHistory, PlayerView } from "./model/player-view";
+import { Card, Suits, TypeValues } from "./model/card";
 import { ScoponeErrors } from "./scopone-errors";
 
 export class ScoponeServerService {
@@ -63,6 +60,7 @@ export class ScoponeServerService {
   players$: Observable<Player[]>;
   playerEnteredOsteria$: Observable<Player>;
   playerIsAlreadyInOsteria$: Observable<string>;
+  playerLeftOsteria$: Observable<string>;
 
   games_ShareReplay$: Observable<Game[]>;
   gamesOpen$: Observable<Game[]>;
@@ -179,6 +177,12 @@ export class ScoponeServerService {
       share()
     );
 
+    this.playerLeftOsteria$ = this.messages$.pipe(
+      filter((m) => m.id === MessageFromServerIds.playerLeffMsgID),
+      map((m) => m.playerName),
+      share()
+    );
+
     this.games_ShareReplay$ = this.messages$.pipe(
       filter((m) => m.id === MessageFromServerIds.Games),
       map((m) => m.games),
@@ -282,9 +286,13 @@ export class ScoponeServerService {
       distinctUntilChanged(
         (prev, curr) =>
           prev[0].Players[0]?.name === curr[0].Players[0]?.name &&
+          prev[0].Players[0]?.status === curr[0].Players[0]?.status &&
           prev[0].Players[1]?.name === curr[0].Players[1]?.name &&
+          prev[0].Players[1]?.status === curr[0].Players[1]?.status &&
           prev[1].Players[0]?.name === curr[1].Players[0]?.name &&
-          prev[1].Players[1]?.name === curr[1].Players[1]?.name
+          prev[1].Players[0]?.status === curr[1].Players[0]?.status &&
+          prev[1].Players[1]?.name === curr[1].Players[1]?.name &&
+          prev[1].Players[1]?.status === curr[1].Players[1]?.status
       )
     );
 

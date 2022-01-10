@@ -1,17 +1,18 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ScoponeService } from '../../scopone/scopone.service';
-import { Card, TypeValues } from '../../../../../scopone-rx-service/src/card';
+import {
+  Card,
+  TypeValues,
+} from '../../../../../scopone-rx-service/src/model/card';
 import { tap, takeUntil, concatMap, switchMap, map } from 'rxjs/operators';
 import { Observable, Subject, merge, combineLatest } from 'rxjs';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { CardsPickerDialogueComponent } from './cards-picker-dialogue.component';
 import { Router } from '@angular/router';
 import { ErrorService } from 'src/app/errors/error-service';
-import {
-  Player,
-  HandState,
-  Team,
-} from '../../../../../scopone-rx-service/src/messages';
+import { Player } from '../../../../../scopone-rx-service/src/model/player';
+import { HandState } from '../../../../../scopone-rx-service/src/model/hand';
+import { Team } from '../../../../../scopone-rx-service/src/model/team';
 import { CardsTakenDialogueComponent } from './cards-taken-dialogue.component';
 
 @Component({
@@ -47,27 +48,29 @@ export class HandComponent implements OnInit, OnDestroy {
     if (!this.scoponeService.playerName) {
       this.router.navigate(['']);
     }
-    const myCurrentGame$ = this.scoponeService.myCurrentOpenGame_ShareReplay$.pipe(
-      tap((game) => {
-        this.teams = game.teams;
-        // decide whether to show or not the Start Game button
-        const gameWith4PlayersAndNoHand =
-          Object.keys(game.players).length === 4 && game.hands.length === 0;
-        const lastHandClosed = game.hands
-          ? game.hands.length > 0
-            ? game.hands[game.hands.length - 1].state === HandState.closed
-            : false
-          : false;
-        this.showStartButton = gameWith4PlayersAndNoHand || lastHandClosed;
-      })
-    );
+    const myCurrentGame$ =
+      this.scoponeService.myCurrentOpenGame_ShareReplay$.pipe(
+        tap((game) => {
+          this.teams = game.teams;
+          // decide whether to show or not the Start Game button
+          const gameWith4PlayersAndNoHand =
+            Object.keys(game.players).length === 4 && game.hands.length === 0;
+          const lastHandClosed = game.hands
+            ? game.hands.length > 0
+              ? game.hands[game.hands.length - 1].state === HandState.closed
+              : false
+            : false;
+          this.showStartButton = gameWith4PlayersAndNoHand || lastHandClosed;
+        })
+      );
 
-    const myObservedGame$ = this.scoponeService.myCurrentObservedGame_ShareReplay$.pipe(
-      tap((game) => {
-        this.teams = game.teams;
-        this.showStartButton = false;
-      })
-    );
+    const myObservedGame$ =
+      this.scoponeService.myCurrentObservedGame_ShareReplay$.pipe(
+        tap((game) => {
+          this.teams = game.teams;
+          this.showStartButton = false;
+        })
+      );
 
     const handView$ = this.scoponeService.handView_ShareReplay$.pipe(
       tap((hv) => {
@@ -102,27 +105,28 @@ export class HandComponent implements OnInit, OnDestroy {
     // CardsTakenDialogueComponent is closed, so that the players can see the card played and the cards taken also
     // after the last play of the hand
     let cardsTakenDialogueRef: MatDialogRef<CardsTakenDialogueComponent, any>;
-    const cardPlayedAndCardsTakenFromTable$ = this.scoponeService.cardsPlayedAndTaken$.pipe(
-      concatMap(
-        ({ cardPlayed, cardsTaken, cardPlayedByPlayer, finalTableTake }) => {
-          cardsTakenDialogueRef = this.dialog.open(
-            CardsTakenDialogueComponent,
-            {
-              width: '650px',
-              height: heightOfCardsTakenDialogue(cardsTaken, finalTableTake),
-              data: {
-                cardPlayed,
-                cardsTaken,
-                cardPlayedByPlayer,
-                finalTableTake,
-              },
-            }
-          );
-          cardsTakenDialogueRef.disableClose = true;
-          return cardsTakenDialogueRef.afterClosed();
-        }
-      )
-    );
+    const cardPlayedAndCardsTakenFromTable$ =
+      this.scoponeService.cardsPlayedAndTaken$.pipe(
+        concatMap(
+          ({ cardPlayed, cardsTaken, cardPlayedByPlayer, finalTableTake }) => {
+            cardsTakenDialogueRef = this.dialog.open(
+              CardsTakenDialogueComponent,
+              {
+                width: '650px',
+                height: heightOfCardsTakenDialogue(cardsTaken, finalTableTake),
+                data: {
+                  cardPlayed,
+                  cardsTaken,
+                  cardPlayedByPlayer,
+                  finalTableTake,
+                },
+              }
+            );
+            cardsTakenDialogueRef.disableClose = true;
+            return cardsTakenDialogueRef.afterClosed();
+          }
+        )
+      );
     const heightOfCardsTakenDialogue = (
       cardsTaken: Card[],
       finalTableTake: {

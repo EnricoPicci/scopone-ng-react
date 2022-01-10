@@ -1,5 +1,7 @@
-import { Card } from "./card";
-import { PlayerView } from "./player-view";
+import { Card } from "./model/card";
+import { Game } from "./model/game";
+import { Player } from "./model/player";
+import { PlayerView } from "./model/player-view";
 
 export enum MessageToServerIds {
   PLAYER_ENTERS_OSTERIA = "playerEntersOsteria",
@@ -129,51 +131,3 @@ export type MessageFromServer = {
     TeamTakingTable: [Player, Player];
   };
 };
-
-export type Game = {
-  name: string;
-  teams: [Team, Team];
-  players: { [name: string]: Player };
-  observers: { [name: string]: Player };
-  hands: Hand[];
-  state: GameState;
-  closedBy: string;
-};
-
-export type GameForList = Game & { canBeObservedOnly: boolean };
-
-export enum GameState {
-  GameCreated = "created",
-  TeamsForming = "teamsForming",
-  GameOpen = "open",
-  GameSuspended = "suspended",
-  GameClosed = "closed",
-}
-
-export type Player = {
-  name: string;
-  status: PlayerState;
-};
-
-export enum PlayerState {
-  playerPlaying = "playing",
-  playerLookingAtHandResult = "lookingAtHandResult",
-  playerNotPlaying = "notPlayingAnyGame",
-  playerLeftTheGame = "leftOsteriaMaybeMomentarely",
-  playerObservingGames = "observingGames",
-}
-
-export type Team = {
-  Players: Player[];
-  TakenCards: Card[];
-  ScopeDiScopone: Card[];
-};
-
-export type Hand = {
-  state: HandState;
-};
-
-export enum HandState {
-  active = "active",
-  closed = "closed",
-}

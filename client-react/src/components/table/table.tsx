@@ -1,6 +1,7 @@
 import React, { FC } from "react";
-import { Card as CardObj } from "../../../../scopone-rx-service/src/card";
-import { PlayerState, Team } from "../../../../scopone-rx-service/src/messages";
+import { Card as CardObj } from "../../../../scopone-rx-service/src/model/card";
+import { PlayerState } from "../../../../scopone-rx-service/src/model/player";
+import { Team } from "../../../../scopone-rx-service/src/model/team";
 import { Card } from "../card/card";
 
 import "./table.css";

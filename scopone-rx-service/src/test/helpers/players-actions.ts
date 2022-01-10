@@ -1,13 +1,13 @@
 import { interval } from "rxjs";
-import { switchMap, tap, take, filter } from "rxjs/operators";
+import { switchMap, tap, take, filter, delay } from "rxjs/operators";
 import { environment } from "../../environments/environment.test";
 import { ScoponeServerService } from "../../scopone-server.service";
 
 // creates the services for different players
-export function servicesForPlayers(playerNames: string[]) {
+export function servicesForPlayers(playerNames: string[], log = false) {
   return playerNames.map((player) => {
     const service = new ScoponeServerService();
-    service.logMessages = false;
+    service.logMessages = log;
     return {
       service,
       player,
@@ -18,13 +18,15 @@ export function servicesForPlayers(playerNames: string[]) {
 // connect all players - each connection is separated by a time interval to avoid jamming the WebSocket channel
 export function connectServices(
   services: ScoponeServerService[],
-  interalMs: number
+  interalMs = 100
 ) {
   return interval(interalMs).pipe(
     switchMap((i) =>
       services[i].connect(environment.serverAddress).pipe(
         tap({
-          next: () => console.log(`Service${i} connected`),
+          next: () => {
+            console.log(`Service${i} connected`);
+          },
           error: (err) =>
             console.error(`Error ${err} while connecting for service ${i}`),
         })
@@ -54,8 +56,22 @@ export function playerCreatesNewGame(
   gameName: string
 ) {
   return service.playerEnteredOsteria$.pipe(
-    // after the first player has enetered Osteria, it will create a new game
+    // after a player enters the Osteria, it creates a new game
     tap(() => service.newGame(gameName))
+  );
+}
+
+// notifies when a game has been created
+export function gameCreated(service: ScoponeServerService, gameName: string) {
+  return service.gameList$.pipe(
+    // the player enters the game as soon as it receives the message that the game has been created
+    filter(
+      (list) =>
+        !!list.find((g) => {
+          return g.name === gameName;
+        })
+    ),
+    take(1)
   );
 }
 
@@ -68,8 +84,8 @@ export function playersJoinTheGame(
   gameName: string
 ) {
   return servicesAndPlayers.map(({ service, player }) => {
-    return service.gameList$.pipe(
-      // the player enters the game as soon as it receives the message that the game has been created
+    // the player enters the game as soon as it receives the message that the game has been created
+    return gameCreated(service, gameName).pipe(
       filter(
         (list) =>
           !!list.find((g) => {
@@ -82,6 +98,25 @@ export function playersJoinTheGame(
       })
     );
   });
+}
+
+// a player starts a game with the first hand
+export function playerStartsFirstHand(service: ScoponeServerService) {
+  return service.canStartGame$.pipe(
+    // a player starts the game after it receives the notification that it can start it
+    tap(() => service.newHand()),
+    take(1)
+  );
+}
+
+// a player starts a game with the first hand and then, after some time, exits the Osteria
+export function playersStartsFirstHandAndExits(service: ScoponeServerService) {
+  return playerStartsFirstHand(service).pipe(
+    // after some time
+    delay(100),
+    // exit the game
+    tap(() => service.close())
+  );
 }
 
 // close all the services

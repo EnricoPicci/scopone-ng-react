@@ -1,5 +1,5 @@
 import { Card } from "./card";
-import { HandState } from "./messages";
+import { HandState } from "./hand";
 
 export type PlayerView = {
   id?: string;

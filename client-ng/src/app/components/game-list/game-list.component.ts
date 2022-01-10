@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { combineLatest, Observable, zip } from 'rxjs';
-import { Game } from '../../../../../scopone-rx-service/src/messages';
+import { Game } from '../../../../../scopone-rx-service/src/model/game';
 import { ScoponeService } from '../../scopone/scopone.service';
 import { MatDialog } from '@angular/material/dialog';
 import { MatListOption } from '@angular/material/list';

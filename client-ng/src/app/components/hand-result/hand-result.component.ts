@@ -5,9 +5,9 @@ import { ScoponeService } from '../../scopone/scopone.service';
 import { MatDialog } from '@angular/material/dialog';
 import { CloseGameDialogueComponent } from './close-game-dialogue.component';
 import { Observable } from 'rxjs';
-import { PlayerView } from '../../../../../scopone-rx-service/src/player-view';
+import { PlayerView } from '../../../../../scopone-rx-service/src/model/player-view';
 import { map, share, tap } from 'rxjs/operators';
-import { Card } from '../../../../../scopone-rx-service/src/card';
+import { Card } from '../../../../../scopone-rx-service/src/model/card';
 
 @Component({
   selector: 'scopone-hand-result',

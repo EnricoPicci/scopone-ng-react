@@ -1,10 +1,12 @@
+// these tests do not require a server running
+
 import { describe, it } from "mocha";
 import { expect } from "chai";
-import { ScoponeServerService } from "./scopone-server.service";
+import { ScoponeServerService } from "../scopone-server.service";
 import { Subject } from "rxjs";
-import { MessageFromServer, MessageFromServerIds } from "./messages";
-import { Card, Suits, Types } from "./card";
-import { PlayerView } from "./player-view";
+import { MessageFromServer, MessageFromServerIds } from "../scopone-messages";
+import { Card, Suits, Types } from "../model/card";
+import { PlayerView } from "../model//player-view";
 
 describe("Mocha - ScoponeServerService receives messages from the scopone server", () => {
   it(`when a message of hand view is received specifying that the currentPlayer is the one registered with the scoponeServerService, 

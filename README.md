@@ -68,6 +68,18 @@ If Mongo db is not used, then if the server stops, all information will be lost 
 
 The commands to launch the standard Gorilla WebSocket server are the main packages found as subfolders in `server/src/cmd`.
 
+### Launch the Gorilla WebSocket server in debug mode
+
+The Gorilla WebSocket server can be launched in debug mode from within VSCode.
+
+Launch VSCode from within the workspace folder `scopone-ng-react` and open in VSCode one of the commands that launch the server (the commands can be found in `server/src/cmd`).
+
+Then go to the `Run and Debug` view of VSCode and launch the configuration named `Launch (scopone-ng-react)`. This command launches the server in debug mode. In this mode it is possible to add breackpoints in the server code. Such breakpoints will interrupt the execution of the server commands which are triggered by the clients which are connected.
+
+In other words, once the server is run in debug mode, any client can connect to the server (on 8080 port as default) and then start interacting with it as normal. Once any command issued by any client hits a breackpoint, the server execution is interrupted and we can step through the code execution.
+
+The configuration of the debug mode can be found in `scopone-ng-react/launch.json`.
+
 ### WebSocket server deployed as AWS Lambda function
 
 In case we deploy the WebSocket server as AWS Lambda function, the entry point of the server application is the `main` function in the `main.go` file in `src/server/srvlambda` folder.
@@ -129,7 +141,9 @@ If the deployment succeeds, it prints on the console the url for the endpoint of
 
 ## Test WebSocket server APIs
 
-### Test the server from VSCode playing an entire game with standalone service (e.g. with the service in "scopone-rx-service" folder)
+### Test the server using just the standalone service
+
+It is possible to test the server APIs running some integration tests which use exclusively the ScoponeService code, e.g. with the code in the `scopone-rx-service` folder
 
 Start the server in one of the possible ways:
 
@@ -140,6 +154,12 @@ Start the server in one of the possible ways:
 If mongodb is used, then make sure the database is clean. i.e. there are no collection related to Scopone app. All tests can be repeated without having to cleanup the DB, but it may happen that for uncontrolled reasons the DB is left in a state which does not allow to complete the tests, so it is convenient to clean up the db to run the first set of tests.
 
 Set the WebSocket server url as value of the property `serverAddress` in the file `scopone-rx-service/src/environments/environment.ts`. If the WebSocket server has been launched locally, then the url is probably something like this `ws://localhost:8080/osteria`. Otherwise specify the url to be used (e.g. in case of Lambda server, the url would look something like this `wss://my-end-point.execute-api.us-east-1.amazonaws.com/dev`).
+
+Run the test launching the command `npm run test` from the folder `scopone-rx-service`.
+
+### Test the server from VSCode playing an entire game with standalone service (e.g. with the service in "scopone-rx-service" folder)
+
+Start the server as described [here](#test-the-server-using-just-the-standalone-service).
 
 Go to the scopone-rx-service (`cd scopone-rx-service` from the workspace folder. Open VSCode from there with the command `code .` and from within VSCode, open the file `service.mocha-play-game.ts`. Go to the VSCode Debug window, select "Current TS Tests File" in the Run drop down list and launch.
 
