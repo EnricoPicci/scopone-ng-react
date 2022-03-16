@@ -3,16 +3,22 @@ import { switchMap, tap, take, filter, delay } from "rxjs/operators";
 import { environment } from "../../environments/environment.test";
 import { ScoponeServerService } from "../../scopone-server.service";
 
-// creates the services for different players
-export function servicesForPlayers(playerNames: string[], log = false) {
-  return playerNames.map((player) => {
+// creates the names of 4 players
+function playerNames(numOfPlayers = 4) {
+  return new Array(numOfPlayers)
+    .fill(null)
+    .map((_, i) => `Player ${i} - ` + Date.now());
+}
+
+// creates the player names and their respective services
+export function playersAndServices(numOfPlayers = 4, log = false) {
+  const _playerNames = playerNames(numOfPlayers);
+  const services = _playerNames.map(() => {
     const service = new ScoponeServerService();
     service.logMessages = log;
-    return {
-      service,
-      player,
-    };
+    return service;
   });
+  return [_playerNames, services] as [string[], ScoponeServerService[]];
 }
 
 // connect all players - each connection is separated by a time interval to avoid jamming the WebSocket channel
@@ -38,12 +44,11 @@ export function connectServices(
 
 // players enter the Osteria
 export function playersEnterOsteria(
-  servicesAndPlayers: {
-    service: ScoponeServerService;
-    player: string;
-  }[]
+  playerNames: string[],
+  services: ScoponeServerService[]
 ) {
-  return servicesAndPlayers.map(({ service, player }) => {
+  return services.map((service, i) => {
+    const player = playerNames[i];
     return service.connect$.pipe(
       tap(() => service.playerEntersOsteria(player))
     );
@@ -77,13 +82,12 @@ export function gameCreated(service: ScoponeServerService, gameName: string) {
 
 // players join a game
 export function playersJoinTheGame(
-  servicesAndPlayers: {
-    service: ScoponeServerService;
-    player: string;
-  }[],
+  playerNames: string[],
+  services: ScoponeServerService[],
   gameName: string
 ) {
-  return servicesAndPlayers.map(({ service, player }) => {
+  return services.map((service, i) => {
+    const player = playerNames[i];
     // the player enters the game as soon as it receives the message that the game has been created
     return gameCreated(service, gameName).pipe(
       filter(

@@ -21,31 +21,25 @@ import {
   connectServices,
   gameCreated,
   playerCreatesNewGame,
-  playersEnterOsteria,
-  playersJoinTheGame,
   playersStartsFirstHandAndExits,
   playerStartsFirstHand,
-  servicesForPlayers,
+  playersAndServices,
+  playersEnterOsteria,
+  playersJoinTheGame,
 } from "./helpers/players-actions";
 
 (global as any).WebSocket = require("ws");
 
 describe(`When four players enter the Osteria`, () => {
   it(`the first player receives 4 messages from the server, one after the other, telling that one after the other the 4 players enter the Osteria`, (done) => {
-    // creates the players names
-    const playerNames = new Array(4)
-      .fill(null)
-      .map((_, i) => `Player ${i} - ` + Date.now());
-
-    // creates the services - one service per player - each service represents a separate client
-    const _servicesAndPlayers = servicesForPlayers(playerNames);
-    const _services = _servicesAndPlayers.map((data) => data.service);
+    // creates the players and the services
+    const [_playerNames, _services] = playersAndServices();
 
     // create an array of Observables representing the fact that the different clients connect with the remote server
     const _connectServices = connectServices(_services);
 
     // create an array of Observables representing the fact that the players, after connecting their service, enter the Ostaria with their name
-    const _playersEnterOsteria = playersEnterOsteria(_servicesAndPlayers);
+    const _playersEnterOsteria = playersEnterOsteria(_playerNames, _services);
 
     // create the Observable that represents the test
     // the first player that connects to its service receives 4 messages, on the players$ stream, containing all the names of
@@ -59,10 +53,10 @@ describe(`When four players enter the Osteria`, () => {
           next: (playersNotifications) => {
             playersNotifications.forEach((players, i) => {
               // each subsequent notification contains one more player
-              const expectedPlayers = playerNames.slice(0, i + 1);
-              const notExpectedPlayers = playerNames.slice(
+              const expectedPlayers = _playerNames.slice(0, i + 1);
+              const notExpectedPlayers = _playerNames.slice(
                 i + 1,
-                playerNames.length
+                _playerNames.length
               );
               expectedPlayers.forEach((name) => {
                 const pFound = players.filter((p) => p.name === name);
@@ -96,19 +90,13 @@ describe(`When four players enter the Osteria`, () => {
 
   it(`the last player receives a message from the server telling that the 4 players are in the Osteria`, (done) => {
     // creates the players names
-    const playerNames = new Array(4)
-      .fill(null)
-      .map((_, i) => `Player ${i} - ` + Date.now());
-
-    // creates the services - one service per player - each service represents a separate client
-    const _servicesAndPlayers = servicesForPlayers(playerNames);
-    const _services = _servicesAndPlayers.map((data) => data.service);
+    const [_playerNames, _services] = playersAndServices();
 
     // create an array of Observables representing the fact that the different clients connect with the remote server
     const _connectServices = connectServices(_services);
 
-    // create an array of Observables representin the fact that the players, after connecting their service, enter the Ostaria with their name
-    const _playersEnterOsteria = playersEnterOsteria(_servicesAndPlayers);
+    // create an array of Observables representing the fact that the players, after connecting their service, enter the Ostaria with their name
+    const _playersEnterOsteria = playersEnterOsteria(_playerNames, _services);
 
     // create the Observable that represents the test
     // the last player that connects to its service receives a message, on the players$ stream, containing all the names of
@@ -118,7 +106,7 @@ describe(`When four players enter the Osteria`, () => {
       .pipe(
         tap({
           next: (players) => {
-            playerNames.forEach((name) => {
+            _playerNames.forEach((name) => {
               const pFound = players.filter((p) => p.name === name);
               expect(pFound.length).equal(1);
             });
@@ -148,24 +136,18 @@ describe(`When four players enter the Osteria`, () => {
 describe(`When one player creates a new game`, () => {
   it(`all players will receive a message with the newly created game`, (done) => {
     // creates the players names
-    const playerNames = new Array(4)
-      .fill(null)
-      .map((_, i) => `Player ${i} - ` + Date.now());
-
-    const gameName = "A new game " + Date.now();
-
-    // creates the services - one service per player - each service represents a separate client
-    const _servicesAndPlayers = servicesForPlayers(playerNames);
-    const _services = _servicesAndPlayers.map((data) => data.service);
-
-    // saves the first player service in a variable representing the first player client
-    const firstPlayerService = _services[0];
+    const [_playerNames, _services] = playersAndServices();
 
     // create an array of Observables representing the fact that the different clients connect with the remote server
     const _connectServices = connectServices(_services);
 
     // create an array of Observables representing the fact that the players, after connecting their service, enter the Ostaria with their name
-    const _playersEnterOsteria = playersEnterOsteria(_servicesAndPlayers);
+    const _playersEnterOsteria = playersEnterOsteria(_playerNames, _services);
+
+    const gameName = "A new game " + Date.now();
+
+    // saves the first player service in a variable representing the first player client
+    const firstPlayerService = _services[0];
 
     // create an Observable representing the fact that the first player creates a new game
     const _firstPlayerCreatesNewGame = playerCreatesNewGame(
@@ -209,24 +191,18 @@ describe(`When one player creates a new game`, () => {
 describe(`When four players enter a game`, () => {
   it(`the first player receives 4 messages from the server, one after the other, telling that one after the other the 4 players have joined the game`, (done) => {
     // creates the players names
-    const playerNames = new Array(4)
-      .fill(null)
-      .map((_, i) => `Player ${i} - ` + Date.now());
-
-    const gameName = "A new game " + Date.now();
-
-    // creates the services - one service per player - each service represents a separate client
-    const _servicesAndPlayers = servicesForPlayers(playerNames);
-    const _services = _servicesAndPlayers.map((data) => data.service);
-
-    // saves the first player service in a variable representing the first player client
-    const firstPlayerService = _services[0];
+    const [_playerNames, _services] = playersAndServices();
 
     // create an array of Observables representing the fact that the different clients connect with the remote server
     const _connectServices = connectServices(_services);
 
     // create an array of Observables representing the fact that the players, after connecting their service, enter the Ostaria with their name
-    const _playersEnterOsteria = playersEnterOsteria(_servicesAndPlayers);
+    const _playersEnterOsteria = playersEnterOsteria(_playerNames, _services);
+
+    const gameName = "A new game " + Date.now();
+
+    // saves the first player service in a variable representing the first player client
+    const firstPlayerService = _services[0];
 
     // create an Observable representing the fact that the first player creates a new game
     const _firstPlayerCreatesNewGame = playerCreatesNewGame(
@@ -237,7 +213,8 @@ describe(`When four players enter a game`, () => {
     // create an array of Observables representing the fact that the players, after receiving the notification that a new game has been created,
     // join that game
     const _playersJoinTheGame = playersJoinTheGame(
-      _servicesAndPlayers,
+      _playerNames,
+      _services,
       gameName
     );
 
@@ -252,10 +229,10 @@ describe(`When four players enter a game`, () => {
           next: (teamsNotifications) => {
             teamsNotifications.forEach((teams, i) => {
               // each subsequent notification contains one more player
-              const expectedPlayers = playerNames.slice(0, i + 1);
-              const notExpectedPlayers = playerNames.slice(
+              const expectedPlayers = _playerNames.slice(0, i + 1);
+              const notExpectedPlayers = _playerNames.slice(
                 i + 1,
-                playerNames.length
+                _playerNames.length
               );
               const players = [...teams[0].Players, ...teams[1].Players];
               expectedPlayers.forEach((name) => {
@@ -293,26 +270,21 @@ describe(`When four players enter a game`, () => {
     });
   }).timeout(10000);
 
-  it(`a player can start the game and the game points to the right players`, (done) => {
+  it(`a player receives a notification that says that it can start the game and all the players that joined the game
+  are correctly stored in  the game returned`, (done) => {
     // creates the players names
-    const playerNames = new Array(4)
-      .fill(null)
-      .map((_, i) => `Player ${i} - ` + Date.now());
-
-    const gameName = "A new game that starts " + Date.now();
-
-    // creates the services - one service per player - each service represents a separate client
-    const _servicesAndPlayers = servicesForPlayers(playerNames);
-    const _services = _servicesAndPlayers.map((data) => data.service);
-
-    // saves the first player service in a variable representing the first player client
-    const firstPlayerService = _services[0];
+    const [_playerNames, _services] = playersAndServices();
 
     // create an array of Observables representing the fact that the different clients connect with the remote server
     const _connectServices = connectServices(_services);
 
     // create an array of Observables representing the fact that the players, after connecting their service, enter the Ostaria with their name
-    const _playersEnterOsteria = playersEnterOsteria(_servicesAndPlayers);
+    const _playersEnterOsteria = playersEnterOsteria(_playerNames, _services);
+
+    const gameName = "A new game that can start" + Date.now();
+
+    // saves the first player service in a variable representing the first player client
+    const firstPlayerService = _services[0];
 
     // create an Observable representing the fact that the first player creates a new game
     const _firstPlayerCreatesNewGame = playerCreatesNewGame(
@@ -323,7 +295,8 @@ describe(`When four players enter a game`, () => {
     // create an array of Observables representing the fact that the players, after receiving the notification that a new game has been created,
     // join that game
     const _playersJoinTheGame = playersJoinTheGame(
-      _servicesAndPlayers,
+      _playerNames,
+      _services,
       gameName
     );
 
@@ -336,7 +309,7 @@ describe(`When four players enter a game`, () => {
         take(1),
         tap({
           next: (_game) => {
-            playerNames.forEach((_name) => {
+            _playerNames.forEach((_name) => {
               // each player is one of the players of the game
               expect(_game.players[_name]).not.undefined;
               // each team has 2 players
@@ -380,25 +353,19 @@ describe(`When four players enter a game`, () => {
 
   it(`should not be possible to add a fifth player`, (done) => {
     // creates the players names - in these case there are 5 players
-    const playerNames = new Array(5)
-      .fill(null)
-      .map((_, i) => `Player ${i} - ` + Date.now());
-
-    const gameName =
-      "A new game where we try to add a fifth player " + Date.now();
-
-    // creates the services - one service per player - each service represents a separate client
-    const _servicesAndPlayers = servicesForPlayers(playerNames);
-    const _services = _servicesAndPlayers.map((data) => data.service);
-
-    // saves the first player service in a variable representing the first player client
-    const firstPlayerService = _services[0];
+    const [_playerNames, _services] = playersAndServices(5);
 
     // create an array of Observables representing the fact that the different clients connect with the remote server
     const _connectServices = connectServices(_services);
 
     // create an array of Observables representing the fact that the players, after connecting their service, enter the Ostaria with their name
-    const _playersEnterOsteria = playersEnterOsteria(_servicesAndPlayers);
+    const _playersEnterOsteria = playersEnterOsteria(_playerNames, _services);
+
+    const gameName =
+      "A new game where we try to add a fifth player " + Date.now();
+
+    // saves the first player service in a variable representing the first player client
+    const firstPlayerService = _services[0];
 
     // create an Observable representing the fact that the first player creates a new game
     const _firstPlayerCreatesNewGame = playerCreatesNewGame(
@@ -408,13 +375,13 @@ describe(`When four players enter a game`, () => {
 
     // the first 4 players, after receiving the notification that a new game has been created, join that game
     const _playersJoinTheGame = playersJoinTheGame(
-      _servicesAndPlayers.slice(0, 4),
+      _playerNames.slice(0, 4),
+      _services.slice(0, 4),
       gameName
     );
 
-    const fifthServiceAndPlayer = _servicesAndPlayers[4];
-    const fifthPlayer = fifthServiceAndPlayer.player;
-    const fifthPlayerService = fifthServiceAndPlayer.service;
+    const fifthPlayer = _playerNames[4];
+    const fifthPlayerService = _services[4];
     // once the 4 players have joined the game, try to add the fifth player
     const _addFifthPlayer = fifthPlayerService.gameList$.pipe(
       // select the first notification that contains the game created and the fact the the game can only be observed,
@@ -433,11 +400,7 @@ describe(`When four players enter a game`, () => {
     // create the Observable that represents the test
     // the fifth player an error notification since it can not join the game
     fifthPlayerService.messages$
-      //       find((msg) => msg.id == MessageFromServerIds.ErrorAddingPlayerToGame)
       .pipe(
-        tap((m) => {
-          console.log("==========>>>>>>>>>>", m);
-        }),
         find((msg) => msg.id == MessageFromServerIds.ErrorAddingPlayerToGame),
         tap({
           next: (_message) => {
@@ -474,25 +437,19 @@ describe(`When four players enter a game`, () => {
 describe(`When a player starts a game`, () => {
   it(`all the players receive 10 cards and there are no cards on the table`, (done) => {
     // creates the players names
-    const playerNames = new Array(4)
-      .fill(null)
-      .map((_, i) => `Player ${i} - ` + Date.now());
-
-    const gameName = "A new game that starts " + Date.now();
-
-    // creates the services - one service per player - each service represents a separate client
-    const _servicesAndPlayers = servicesForPlayers(playerNames);
-    const _services = _servicesAndPlayers.map((data) => data.service);
-
-    // saves the first player service in a variable representing the first player client
-    const firstPlayerService = _services[0];
-    const firstPlayerName = _servicesAndPlayers[0].player;
+    const [_playerNames, _services] = playersAndServices();
 
     // create an array of Observables representing the fact that the different clients connect with the remote server
     const _connectServices = connectServices(_services);
 
     // create an array of Observables representing the fact that the players, after connecting their service, enter the Ostaria with their name
-    const _playersEnterOsteria = playersEnterOsteria(_servicesAndPlayers);
+    const _playersEnterOsteria = playersEnterOsteria(_playerNames, _services);
+
+    const gameName = "A new game that starts " + Date.now();
+
+    // saves the first player name and service in variables representing the first player client
+    const firstPlayerName = _playerNames[0];
+    const firstPlayerService = _services[0];
 
     // create an Observable representing the fact that the first player creates a new game
     const _firstPlayerCreatesNewGame = playerCreatesNewGame(
@@ -500,19 +457,21 @@ describe(`When a player starts a game`, () => {
       gameName
     );
 
-    // the players, after receiving the notification that a new game has been created,
+    // create an array of Observables representing the fact that the players, after receiving the notification that a new game has been created,
     // join that game
     const _playersJoinTheGame = playersJoinTheGame(
-      _servicesAndPlayers,
+      _playerNames,
+      _services,
       gameName
     );
 
-    // a player, the first in this test, after receiving the notification that a new game can be started, starts the first hand
+    // create an Observable representing the fact a player, the first in this test, after receiving the notification that a new game can be started,
+    // starts the first hand
     const _playersStartsFirstHand = playerStartsFirstHand(firstPlayerService);
 
     // create the Observable that represents the test
     // all players receive 10 cards and there are no cards on the table
-    const _playersReceiveFirst10Cards = _servicesAndPlayers.map(({ service }) =>
+    const _playersReceiveFirst10Cards = _services.map((service) =>
       service.handView_ShareReplay$.pipe(take(1))
     );
     forkJoin(_playersReceiveFirst10Cards)
@@ -552,24 +511,18 @@ describe(`When a player starts a game`, () => {
 
   it(`only the first player can play`, (done) => {
     // creates the players names
-    const playerNames = new Array(4)
-      .fill(null)
-      .map((_, i) => `Player ${i} - ` + Date.now());
-
-    const gameName = "A new game that starts " + Date.now();
-
-    // creates the services - one service per player - each service represents a separate client
-    const _servicesAndPlayers = servicesForPlayers(playerNames);
-    const _services = _servicesAndPlayers.map((data) => data.service);
-
-    // saves the first player service in a variable representing the first player client
-    const firstPlayerService = _services[0];
+    const [_playerNames, _services] = playersAndServices();
 
     // create an array of Observables representing the fact that the different clients connect with the remote server
     const _connectServices = connectServices(_services);
 
     // create an array of Observables representing the fact that the players, after connecting their service, enter the Ostaria with their name
-    const _playersEnterOsteria = playersEnterOsteria(_servicesAndPlayers);
+    const _playersEnterOsteria = playersEnterOsteria(_playerNames, _services);
+
+    const gameName = "A new game that starts " + Date.now();
+
+    // saves the first player service in a variable representing the first player client
+    const firstPlayerService = _services[0];
 
     // create an Observable representing the fact that the first player creates a new game
     const _firstPlayerCreatesNewGame = playerCreatesNewGame(
@@ -577,10 +530,11 @@ describe(`When a player starts a game`, () => {
       gameName
     );
 
-    // the players, after receiving the notification that a new game has been created,
+    // create an array of Observables representing the fact that the players, after receiving the notification that a new game has been created,
     // join that game
     const _playersJoinTheGame = playersJoinTheGame(
-      _servicesAndPlayers,
+      _playerNames,
+      _services,
       gameName
     );
 
@@ -589,7 +543,7 @@ describe(`When a player starts a game`, () => {
 
     // create the Observable that represents the test
     // only the first player can play a card all others can not
-    const _playersCanPlayCard = _servicesAndPlayers.map(({ service }) =>
+    const _playersCanPlayCard = _services.map((service) =>
       service.isMyTurnToPlay$.pipe(take(1))
     );
     forkJoin(_playersCanPlayCard)
@@ -628,24 +582,18 @@ describe(`When a player starts a game`, () => {
   describe(`and then a player exits the Osteria`, () => {
     it(`all the remaining players receive a message stating that that player has left`, (done) => {
       // creates the players names
-      const playerNames = new Array(4)
-        .fill(null)
-        .map((_, i) => `Player ${i} - ` + Date.now());
-
-      const gameName = "A new game that starts " + Date.now();
-
-      // creates the services - one service per player - each service represents a separate client
-      const _servicesAndPlayers = servicesForPlayers(playerNames);
-      const _services = _servicesAndPlayers.map((data) => data.service);
-
-      // saves the first player service in a variable representing the first player client
-      const firstPlayerService = _services[0];
+      const [_playerNames, _services] = playersAndServices();
 
       // create an array of Observables representing the fact that the different clients connect with the remote server
       const _connectServices = connectServices(_services);
 
       // create an array of Observables representing the fact that the players, after connecting their service, enter the Ostaria with their name
-      const _playersEnterOsteria = playersEnterOsteria(_servicesAndPlayers);
+      const _playersEnterOsteria = playersEnterOsteria(_playerNames, _services);
+
+      const gameName = "A new game that starts " + Date.now();
+
+      // saves the first player service in a variable representing the first player client
+      const firstPlayerService = _services[0];
 
       // create an Observable representing the fact that the first player creates a new game
       const _firstPlayerCreatesNewGame = playerCreatesNewGame(
@@ -653,10 +601,11 @@ describe(`When a player starts a game`, () => {
         gameName
       );
 
-      // the players, after receiving the notification that a new game has been created,
+      // create an array of Observables representing the fact that the players, after receiving the notification that a new game has been created,
       // join that game
       const _playersJoinTheGame = playersJoinTheGame(
-        _servicesAndPlayers,
+        _playerNames,
+        _services,
         gameName
       );
 
@@ -672,18 +621,16 @@ describe(`When a player starts a game`, () => {
 
       // create the Observable that represents the test
       // after a player exits the game, all the remaining players receive a message stating that a player has left
-      const _playerLeftNotifications = _servicesAndPlayers
-        .slice(1)
-        .map(({ service }) =>
-          service.myCurrentOpenGameTeams$.pipe(
-            // if we find a message which states that the first player has left the game, then this Observable is completed
-            find((_teams) => {
-              return (
-                _teams[0].Players[0].status === PlayerState.playerLeftTheGame
-              );
-            })
-          )
-        );
+      const _playerLeftNotifications = _services.slice(1).map((service) =>
+        service.myCurrentOpenGameTeams$.pipe(
+          // if we find a message which states that the first player has left the game, then this Observable is completed
+          find((_teams) => {
+            return (
+              _teams[0].Players[0].status === PlayerState.playerLeftTheGame
+            );
+          })
+        )
+      );
       _playersStartsFirstHandAndExits
         .pipe(
           // each of the Observables contained in the array _playerLeftNotifications completes if it finds that the first player has left the Osteria
@@ -722,26 +669,22 @@ describe(`When a player starts a game`, () => {
     describe(`and then the player who exited enters again in the Osteria`, () => {
       it(`all the remaining players receive a refresh of the handviews`, (done) => {
         // creates the players names
-        const playerNames = new Array(4)
-          .fill(null)
-          .map((_, i) => `Player ${i} - ` + Date.now());
-
-        const gameName = "A new game that starts " + Date.now();
-
-        // creates the services - one service per player - each service represents a separate client
-        const _servicesAndPlayers = servicesForPlayers(playerNames);
-        const _services = _servicesAndPlayers.map((data) => data.service);
-
-        // saves the first player service in a variable representing the first player client
-        const firstServiceAndPlayer = _servicesAndPlayers[0];
-        const firstPlayerService = firstServiceAndPlayer.service;
-        const firstPlayerName = firstServiceAndPlayer.player;
+        const [_playerNames, _services] = playersAndServices();
 
         // create an array of Observables representing the fact that the different clients connect with the remote server
         const _connectServices = connectServices(_services);
 
         // create an array of Observables representing the fact that the players, after connecting their service, enter the Ostaria with their name
-        const _playersEnterOsteria = playersEnterOsteria(_servicesAndPlayers);
+        const _playersEnterOsteria = playersEnterOsteria(
+          _playerNames,
+          _services
+        );
+
+        const gameName = "A new game that starts " + Date.now();
+
+        // saves the first player name and service in variables representing the first player client
+        const firstPlayerName = _playerNames[0];
+        const firstPlayerService = _services[0];
 
         // create an Observable representing the fact that the first player creates a new game
         const _firstPlayerCreatesNewGame = playerCreatesNewGame(
@@ -749,10 +692,11 @@ describe(`When a player starts a game`, () => {
           gameName
         );
 
-        // the players, after receiving the notification that a new game has been created,
+        // create an array of Observables representing the fact that the players, after receiving the notification that a new game has been created,
         // join that game
         const _playersJoinTheGame = playersJoinTheGame(
-          _servicesAndPlayers,
+          _playerNames,
+          _services,
           gameName
         );
 
@@ -772,13 +716,15 @@ describe(`When a player starts a game`, () => {
           delay(100),
           // and then enter again
           concatMap(() => connectServices([firstPlayerService])),
-          concatMap(() => playersEnterOsteria([firstServiceAndPlayer]))
+          concatMap(() =>
+            playersEnterOsteria([_playerNames[0]], [_services[0]])
+          )
         );
 
         // create the Observable that represents the test
         // after the player enters again the game, all the players receive a refresh of the hand view
-        const _playersReceiveRefreshedHandView = _servicesAndPlayers.map(
-          ({ service }) => service.handView$.pipe(take(1))
+        const _playersReceiveRefreshedHandView = _services.map((service) =>
+          service.handView$.pipe(take(1))
         );
         _playersStartsFirstHandAndExits
           .pipe(

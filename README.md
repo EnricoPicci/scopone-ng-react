@@ -145,9 +145,9 @@ If the deployment succeeds, it prints on the console the url for the endpoint of
 
 It is possible to test the server APIs running some integration tests which use exclusively the ScoponeService code, e.g. with the code in the `scopone-rx-service` folder
 
-Start the server in one of the possible ways:
+Start the server in one of the possible ways as specified [here](#gorilla-websocket-server):
 
-- go to the server folder with `cd server`and launch the server with `~/go/bin/server`
+- as local server: go to the server folder with `cd server` and launch the server with `./scopone-app`
 - launch with Docker with the command `docker run -p 8080:8080 scopone-server`
 - deploying the server as a Lambda web socket server
 
@@ -161,13 +161,13 @@ Run the test launching the command `npm run test` from the folder `scopone-rx-se
 
 Start the server as described [here](#test-the-server-using-just-the-standalone-service).
 
-Go to the scopone-rx-service (`cd scopone-rx-service` from the workspace folder. Open VSCode from there with the command `code .` and from within VSCode, open the file `service.mocha-play-game.ts`. Go to the VSCode Debug window, select "Current TS Tests File" in the Run drop down list and launch.
+Go to the scopone-rx-service (`cd scopone-rx-service` from the workspace folder. Open VSCode from there with the command `code .` and from within VSCode, open the file `src/test/service.mocha-play-game.spec-1.ts`. Go to the VSCode Debug window, select "Current TS Tests File" in the Run drop down list and launch.
 
 This test creates a new game and plays an entire hand (i.e. plays all 40 cards) and checks that everything works from a WebSockets API point of view.
 
 ### Start the first hand of a game and play 36 cards
 
-Do the same steps described in the "Test the server from VSCode" section, but launch the file `scopone-server.service.play-39-cards.ts`. This test creates a new game and plays the first hand for 36 cards.
+Do the same steps described in the "Test the server from VSCode" section, but launch the file `src/test/scopone-server.service.play-36-cards.spec-1.ts`. This test creates a new game and plays the first hand for 36 cards.
 This allows a tester to log in the server from the front end and test the end of an hand without having to play all cards.
 
 ## Client architecture and logical structure

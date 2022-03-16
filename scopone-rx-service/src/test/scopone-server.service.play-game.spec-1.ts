@@ -36,7 +36,8 @@ import {
 
 import { ScoponeServerService } from "../scopone-server.service";
 import { environment } from "../environments/environment";
-import { MessageFromServer, GameState } from "../messages";
+import { MessageFromServer } from "../scopone-messages";
+import { GameState } from "../model/game";
 import { merge, interval, forkJoin } from "rxjs";
 
 (global as any).WebSocket = require("ws");

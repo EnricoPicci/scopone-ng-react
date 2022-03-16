@@ -34,8 +34,7 @@
     "start": "craco start",
     "build": "craco build",
     "test": "craco test",
-    "eject": "react-scripts eject",
-    "test-rx-service": "TS_NODE_PROJECT='./src/scopone-rx-service/tsconfig.json' mocha -r ts-node/register src/scopone-rx-service/scopone-server.service.mocha-play-game.ts"
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [
