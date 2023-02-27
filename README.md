@@ -259,6 +259,8 @@ The scripts to automatically build and deploy the client and the server parts of
 
 ### Deploy the server as a Lambda function
 
+Check that the file `server/.env` contains the right connection string for the MongoDB instance to be used.
+
 To deploy the server as a Lambda function move to the `serverless-cd/server-lambda` folder and run the command
 
 - `bash deploy-server-to-lambda.sh`
@@ -267,7 +269,7 @@ At the end of the execution, if successful, the script prints the address of the
 
 `endpoints: wss://abcdef.execute-api.us-east-1.amazonaws.com/dev`
 
-The address `wss://abcdef.execute-api.us-east-1.amazonaws.com/dev` has to be used as the url of the remote server in the configuration of the Angulra and React clients (see above instruction to know how to set this value for the different clients).
+The address `wss://abcdef.execute-api.us-east-1.amazonaws.com/dev` has to be used as the url of the remote server in the configuration of the Angular and React clients (see above instruction to know how to set this value for the different clients).
 
 ### Deploy the Angular client to an S3 bucket and set the bucket for website hosting
 
